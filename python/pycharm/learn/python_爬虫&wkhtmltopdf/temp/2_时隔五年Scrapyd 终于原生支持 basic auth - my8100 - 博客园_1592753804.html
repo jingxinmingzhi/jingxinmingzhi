@@ -1,0 +1,67 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapyd-basic-auth.html">
+    <span>时隔五年，Scrapyd 终于原生支持 basic auth</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+    <div id="cnblogs_post_description" style="display: none">
+        `pip install -U git+https://github.com/my8100/scrapyd.git@add_basic_auth`
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>Issue in 2014</h2>
+<p><a href="https://github.com/scrapy/scrapyd/issues/43" target="_blank">scrapy/scrapyd/issues/43</a></p>
+<p><img src="https://img2018.cnblogs.com/blog/892328/201905/892328-20190509160623075-109590743.png" alt=""></p>
+<h2>Pull request in 2019</h2>
+<p><a href="https://github.com/scrapy/scrapyd/pull/326" target="_blank">scrapy/scrapyd/pull/326</a><br><img src="https://img2018.cnblogs.com/blog/892328/201905/892328-20190509160637693-880328557.png" alt=""></p>
+<h2><br>试用</h2>
+<p>1. 安装： <span class="cnblogs_code">pip <span style="color: #0000ff;">install</span> -U git+https:<span style="color: #008000;">//</span><span style="color: #008000;">github.com/my8100/scrapyd.git@add_basic_auth</span></span> <br>2. 更新配置文件 <em>scrapyd.conf</em>，其余配置项详见<a href="https://scrapyd.readthedocs.io/en/latest/config.html#example-configuration-file" target="_blank">官方文档</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">[scrapyd]
+username </span>=<span style="color: #000000;"> yourusername
+password </span>= yourpassword</pre>
+</div>
+<p> </p>
+<p><br>3. 启动： <span class="cnblogs_code">scrapyd</span> </p>
+<div class="cnblogs_code">
+<pre>In [1]: <span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+
+In [</span>2]: requests.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:6800/</span><span style="color: #800000;">'</span><span style="color: #000000;">).status_code
+Out[</span>2]: 401<span style="color: #000000;">
+
+In [</span>3]: requests.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:6800/</span><span style="color: #800000;">'</span>, auth=(<span style="color: #800000;">'</span><span style="color: #800000;">admin</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">admin</span><span style="color: #800000;">'</span><span style="color: #000000;">)).status_code
+Out[</span>3]: 401<span style="color: #000000;">
+
+In [</span>4]: requests.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:6800/</span><span style="color: #800000;">'</span>, auth=(<span style="color: #800000;">'</span><span style="color: #800000;">yourusername</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">yourpassword</span><span style="color: #800000;">'</span><span style="color: #000000;">)).status_code
+Out[</span>4]: 200</pre>
+</div>
+<p> </p>
+<p>4. 由于 Scrapyd 的 GitHub 最新提交已经<a href="https://github.com/scrapy/scrapyd/pull/256" target="_blank">重构了 Jobs 页面</a>，如果正在使用 <a href="https://github.com/my8100/scrapydweb" target="_blank">ScrapydWeb</a> 管理 Scrapyd，则需同步更新 ScrapydWeb：</p>
+<p> <span class="cnblogs_code">pip <span style="color: #0000ff;">install</span> -U git+https:<span style="color: #008000;">//</span><span style="color: #008000;">github.com/my8100/scrapydweb.git</span></span> </p>
+<h2><br>GitHub</h2>
+<p><a href="https://github.com/my8100/scrapyd" target="_blank">my8100/scrapyd</a></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2019-05-09 16:14</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=10839086" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(10839086);return false;">收藏</a></div>
+        </div>

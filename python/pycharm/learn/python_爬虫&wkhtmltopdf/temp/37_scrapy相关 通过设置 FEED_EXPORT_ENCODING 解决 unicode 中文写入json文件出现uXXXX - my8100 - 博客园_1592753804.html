@@ -1,0 +1,175 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/feed_export_encoding.html">
+    <span>scrapy相关 通过设置 FEED_EXPORT_ENCODING 解决 unicode 中文写入json文件出现`\uXXXX`</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.问题现象</h2>
+<p>爬取 item：</p>
+<div class="cnblogs_code">
+<pre>2017-10-16 18:17:33 [scrapy.core.scraper] DEBUG: Scraped <span style="color: #0000ff;">from</span> &lt;200 https://www.huxiu.com/v2_action/article_list&gt;<span style="color: #000000;">
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">author</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">\u5546\u4e1a\u8bc4\u8bba\u7cbe\u9009\xa9</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">cmt</span><span style="color: #800000;">'</span>: 5<span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">fav</span><span style="color: #800000;">'</span>: 194<span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">time</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">4\u5929\u524d</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">title</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">\u96f7\u519b\u8c08\u5c0f\u7c73\u201c\u65b0\u96f6\u552e\u201d\uff1a\u50cfZara\u4e00\u6837\u5f00\u5e97\uff0c\u8981\u505a\u5f97\u6bd4Costco\u66f4\u597d</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">url</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">/article/217755.html</span><span style="color: #800000;">'</span>}</pre>
+</div>
+<p> </p>
+<p>写入jsonline jl 文件</p>
+<div class="cnblogs_code">
+<pre>{<span style="color: #800000;">"</span><span style="color: #800000;">title</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">\u8fd9\u4e00\u5468\uff1a\u8d2b\u7a77\u66b4\u51fb</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">url</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">/article/217997.html</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">\u864e\u55c5</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">fav</span><span style="color: #800000;">"</span>: 8, <span style="color: #800000;">"</span><span style="color: #800000;">time</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">2\u5929\u524d</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cmt</span><span style="color: #800000;">"</span>: 5<span style="color: #000000;">}
+{</span><span style="color: #800000;">"</span><span style="color: #800000;">title</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">\u502a\u840d\u8001\u516c\u7684\u65b0\u620f\u6251\u8857\u4e86\uff0c\u9ec4\u6e24\u6301\u80a1\u7684\u516c\u53f8\u8981\u8d54\u60e8\u4e86</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">url</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">/article/217977.html</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">\u5a31\u4e50\u8d44\u672c\u8bba</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">fav</span><span style="color: #800000;">"</span>: 5, <span style="color: #800000;">"</span><span style="color: #800000;">time</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">2\u5929\u524d</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cmt</span><span style="color: #800000;">"</span>: 3}</pre>
+</div>
+<p> </p>
+<h3><span style="background-color: #ffff00;">item 被转 str，默认 ensure_ascii = True，则非 ASCII 字符被转化为 `\uXXXX`，每一个 ‘{xxx}’ 单位被写入文件</span></h3>
+<p>目标：<span style="color: #ff00ff;">注意最后用 chrome 或 notepad++ 打开确认，firefox 打开 jl 可能出现中文乱码，需要手动指定编码。 </span></p>
+<div class="cnblogs_code">
+<pre>{<span style="color: #800000;">"</span><span style="color: #800000;">title</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">这一周：贫穷暴击</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">url</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">/article/217997.html</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">虎嗅</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">fav</span><span style="color: #800000;">"</span>: 8, <span style="color: #800000;">"</span><span style="color: #800000;">time</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">2天前</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cmt</span><span style="color: #800000;">"</span>: 5<span style="color: #000000;">}
+{</span><span style="color: #800000;">"</span><span style="color: #800000;">title</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">倪萍老公的新戏扑街了，黄渤持股的公司要赔惨了</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">url</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">/article/217977.html</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">娱乐资本论</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">fav</span><span style="color: #800000;">"</span>: 5, <span style="color: #800000;">"</span><span style="color: #800000;">time</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">2天前</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cmt</span><span style="color: #800000;">"</span>: 3}</pre>
+</div>
+<p> </p>
+<h2>1.参考资料</h2>
+<p><a id="cb_post_title_url" href="http://www.cnblogs.com/juedui0769/p/4839731.html">scrapy抓取到中文,保存到json文件为unicode,如何解决.</a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('f0cddac2-00ec-4d79-bca9-f510663c5e09')"><img id="code_img_closed_f0cddac2-00ec-4d79-bca9-f510663c5e09" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_f0cddac2-00ec-4d79-bca9-f510663c5e09" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('f0cddac2-00ec-4d79-bca9-f510663c5e09',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_f0cddac2-00ec-4d79-bca9-f510663c5e09" class="cnblogs_code_hide">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> json
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> codecs
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> JsonWithEncodingPipeline(object):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self):
+        self.file </span>= codecs.open(<span style="color: #800000;">'</span><span style="color: #800000;">scraped_data_utf8.json</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">w</span><span style="color: #800000;">'</span>, encoding=<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+    </span><span style="color: #0000ff;">def</span> process_item(self, item, spider):^<span style="color: #000000;">M
+        line </span>= json.dumps(dict(item), ensure_ascii=False) + <span style="color: #800000;">"</span><span style="color: #800000;">\n</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        self.file.write(line)
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> item
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> close_spider(self, spider):
+        self.file.close()</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><a href="http://www.cnblogs.com/dahu-daqing/p/7528642.html" target="_blank">scrapy中输出中文保存中文</a></p>
+<p><a href="https://segmentfault.com/q/1010000000519595" target="_blank">Scrapy爬虫框架抓取中文结果为Unicode编码，如何转换UTF-8编码</a></p>
+<p><a href="https://gitee.com/ldshuang/imax-spider/commit/1d05d7bafdf7758f7b422cc1133abf493bf55086" target="_blank">lidashuang / imax-spider</a></p>
+<p> </p>
+<h3>以上资料实际上就是官方文档举的 pipeline 例子，另外指定  ensure_ascii=False</h3>
+<h4>Write items to a JSON file</h4>
+<p>The following pipeline stores all scraped items (from all spiders) into a single <code class="docutils literal"><span class="pre">items.jl</span></code> file, containing one item per line serialized in JSON format:</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> json
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> JsonWriterPipeline(object):
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> open_spider(self, spider):
+        self.file </span>= open(<span style="color: #800000;">'</span><span style="color: #800000;">items.jl</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">w</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> close_spider(self, spider):
+        self.file.close()
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> process_item(self, item, spider):
+        line </span>= json.dumps(dict(item)) + <span style="color: #800000;">"</span><span style="color: #800000;">\n</span><span style="color: #800000;">"  #另外指定  ensure_ascii=False</span><span style="color: #000000;">
+        self.file.write(line)
+        </span><span style="color: #0000ff;">return</span> item</pre>
+</div>
+<p class="first admonition-title">Note</p>
+<p class="last">The purpose of JsonWriterPipeline is just to introduce how to write item pipelines. If you really want to store all scraped items into a JSON file you should use the <a class="reference internal" href="https://doc.scrapy.org/en/latest/topics/feed-exports.html#topics-feed-exports">Feed exports</a>.</p>
+<p class="last"> </p>
+<h2 class="last">2.更好的解决办法：</h2>
+<p class="last"><a href="https://segmentfault.com/q/1010000000367894" target="_blank">scrapy 使用item export输出中文到json文件，内容为unicode码，如何输出为中文？</a></p>
+<p><a href="http://stackoverflow.com/questions/18337407/saving-utf-8-texts-in-json-dumps-as-utf8-not-as-u-escape-sequence" rel="nofollow" target="_blank">http://stackoverflow.com/questions/18337407/saving-utf-8-texts-in-json-dumps-as-utf8-not-as-u-escape-sequence</a> 里面有提到，将 JSONEncoder 的 <code>ensure_ascii</code> 参数设为 False 即可。</p>
+<p>而 scrapy 的 item export 文档里有提到</p>
+<blockquote>
+<p>The additional constructor arguments are passed to the<br>BaseItemExporter constructor, and the leftover arguments to the<br>JSONEncoder constructor, so you can use any JSONEncoder constructor<br>argument to customize this exporter.</p>
+
+
+
+
+
+
+
+
+
+
+</blockquote>
+<p>因此就在调用 <code>scrapy.contrib.exporter.JsonItemExporter</code> 的时候额外指定 <code>ensure_ascii=False</code> 就可以啦。</p>
+<p> </p>
+<h2>3.根据上述解答，结合官网和源代码，直接解决办法：</h2>
+<h3>1.可以通过修改 project settings.py 补充 FEED_EXPORT_ENCODING = 'utf-8'</h3>
+<h3>2.或在cmd中传入 G:\pydata\pycode\scrapy\huxiu_com&gt;scrapy crawl -o new.jl -s FEED_EXPORT_ENCODING='utf-8' huxiu</h3>
+<p> </p>
+<p><a href="https://doc.scrapy.org/en/latest/topics/feed-exports.html#feed-export-encoding" target="_blank">https://doc.scrapy.org/en/latest/topics/feed-exports.html#feed-export-encoding</a></p>
+<h4>FEED_EXPORT_ENCODING</h4>
+<p>Default: <code class="docutils literal"><span class="pre">None</span></code></p>
+<p>The encoding to be used for the feed.</p>
+<p>If unset or set to <code class="docutils literal"><span class="pre">None</span></code> (default) it uses UTF-8 for everything except JSON output, which uses safe numeric encoding (<code class="docutils literal"><span class="pre">\uXXXX</span></code> sequences) for historic reasons.</p>
+<p><span style="color: #000000; background-color: #ffff00;">Use <code class="docutils literal"><span class="pre">utf-8</span></code> if you want UTF-8 for JSON too.</span></p>
+<p> </p>
+<p> </p>
+<div class="cnblogs_code">
+<pre>In [615<span style="color: #000000;">]: json.dump?
+Signature: json.dump(obj, fp, skipkeys</span>=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, encoding=<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>, default=None, sort_keys=False, **<span style="color: #000000;">kw)
+Docstring:
+Serialize ``obj`` as a JSON formatted stream to ``fp`` (a
+``.write()``</span>-supporting file-<span style="color: #000000;">like object).
+
+
+
+<span style="color: #ff00ff;">If ``ensure_ascii`` </span></span><span style="color: #ff00ff;">is true (the default)</span>, all non-ASCII characters <span style="color: #0000ff;">in</span><span style="color: #000000;"> the
+output are escaped with ``\uXXXX`` sequences, </span><span style="color: #0000ff;">and</span> the result <span style="color: #0000ff;">is</span><span style="color: #000000;"> a ``str``
+instance consisting of ASCII characters only. If ``ensure_ascii`` </span><span style="color: #0000ff;">is</span><span style="color: #000000;">
+``False``, some chunks written to ``fp`` may be ``unicode`` instances.
+This usually happens because the input contains unicode strings </span><span style="color: #0000ff;">or</span><span style="color: #000000;"> the
+``encoding`` parameter </span><span style="color: #0000ff;">is</span><span style="color: #000000;"> used. Unless ``fp.write()`` explicitly
+understands ``unicode`` (as </span><span style="color: #0000ff;">in</span> ``codecs.getwriter``) this <span style="color: #0000ff;">is</span><span style="color: #000000;"> likely to
+cause an error.</span></pre>
+</div>
+<p> </p>
+<p class="last"> </p>
+<p class="last">C:\Program Files\Anaconda2\Lib\site-packages\scrapy\exporters.py</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">class</span><span style="color: #000000;"> JsonLinesItemExporter(BaseItemExporter):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span>(self, file, **<span style="color: #000000;">kwargs):
+        kwargs.setdefault(</span><span style="color: #800000;">'</span><span style="color: #800000;">ensure_ascii</span><span style="color: #800000;">'</span>, <span style="color: #0000ff;">not</span><span style="color: #000000;"> self.encoding)
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> JsonItemExporter(BaseItemExporter):
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span>(self, file, **<span style="color: #000000;">kwargs):
+        kwargs.setdefault(</span><span style="color: #800000;">'</span><span style="color: #800000;">ensure_ascii</span><span style="color: #800000;">'</span>, <span style="color: #0000ff;">not</span><span style="color: #000000;"> self.encoding)
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> XmlItemExporter(BaseItemExporter):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span>(self, file, **<span style="color: #000000;">kwargs):
+        </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> self.encoding:
+            self.encoding </span>= <span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-16 18:30</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7678221" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7678221);return false;">收藏</a></div>
+        </div>

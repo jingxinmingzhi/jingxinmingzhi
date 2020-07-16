@@ -1,0 +1,64 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/8044068.html">
+    <span>MySQl 查询性能优化相关</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p> </p>
+<p> </p>
+<h2>1.参考</h2>
+<p><a href="http://blog.jobbole.com/113222/" target="_blank">提升网站访问速度的 SQL 查询优化技巧</a></p>
+<p>缓存一切数据，读取内存而不是硬盘IO</p>
+<p>如果你的服务器默认情况下没有使用MySQL查询缓存，那么你应该开启缓存。开启缓存意味着MySQL 会把所有的语句和语句执行的结果保存下来，如果随后有一条与缓存中完全相同的语句需要执行，那么MySQL 就会返回缓存的结果。缓存不会过时，因为MySQL 会在表数据更新后刷新缓存。</p>
+<p><a href="http://twei.site/2017/08/20/MySQL%E7%BC%93%E5%AD%98-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BC%93%E5%AD%98query-cache/" target="_blank">MySQL缓存--服务器缓存query cache</a></p>
+<p><a href="https://dba.stackexchange.com/questions/109030/cant-enable-mysql-5-6-query-cache" target="_blank">https://dba.stackexchange.com/questions/109030/cant-enable-mysql-5-6-query-cache</a></p>
+<p>Look for the <code>[mysqld]</code> group header in <code>my.cnf</code> and put those lines under it</p>
+<pre class="lang-sql prettyprint prettyprinted"><code><span class="pun">[<span class="pln">mysqld<span class="pun">]<span class="pln">
+query_cache_type <span class="pun">=<span class="pln"> <span class="lit">1<span class="pln">
+query_cache_size <span class="pun">=<span class="pln"> <span class="lit">4096<span class="pln">M
+query_cache_limit <span class="pun">=<span class="pln"> <span class="lit">2<span class="pln">M
+query_cache_strip_comments <span class="pun">=<span class="lit">1</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code><br><br></pre>
+<p>Every change to a table requires scanning the 4GB to purge entries for that table.  一旦数据更新，会清空内存的所有缓存并更新，所以应该合理设置缓存总大小 query_cache_size</p>
+<h2>2.MySQL 查询缓存</h2>
+<h3>当前设置</h3>
+<p>mysql&gt; show variables like "query_cache%";<br>+------------------------------+---------+<br>| Variable_name                | Value   |<br>+------------------------------+---------+<br>| query_cache_limit            | 1048576 |　　　　#单条最大 1MB，1000条数据返回45KB，这里设置为 51200 比较合适<br>| query_cache_min_res_unit     | 4096    |     #100条数据返回4.8KB，这里设置为 5120 比较合适，不够会再申请一块<br>| query_cache_size             | 1048576 |　　　　#总共分配1MB，修改为 52428800，即50MB，能够缓存 1w 个 100条查询结果。<br><span style="color: #ff0000;">| query_cache_type             | OFF     |　　　　　　#修改为 1 或 ON 缓存除了以 SELECT SQL_NO_CACHE 开头的所有查询结果。另一个选项是 2 或 DEMAND 只缓存以 SELECT SQL_CACHE 开头的查询结果。</span></p>
+<p>| query_cache_wlock_invalidate | OFF     |  #表锁定时认为缓存不可用，修改为 ON<br>+------------------------------+---------+<br>5 rows in set (0.01 sec)</p>
+<p>mysql&gt; select @@query_cache_type;<br>+--------------------+<br>| @@query_cache_type |<br>+--------------------+<br>| OFF                |<br>+--------------------+<br>1 row in set, 1 warning (0.00 sec)</p>
+<p>mysql&gt; set @@query_cache_type=ON;<br>ERROR 1651 (HY000): Query cache is disabled; restart the server with query_cache_type=1 to enable it<br>mysql&gt; exit;</p>
+<h3>修改缓存设置  vi /etc/my.cnf 重启 service mysqld restart</h3>
+<p><span style="color: #ff00ff;">query_cache_limit = 50K</span><br><span style="color: #ff00ff;">query_cache_min_res_unit = 5K</span><br><span style="color: #ff00ff;">query_cache_size = 50M</span><br><span style="color: #ff00ff;">query_cache_type = 1</span><br><span style="color: #ff00ff;">query_cache_wlock_invalidate = ON</span></p>
+<h3>查询缓存状态</h3>
+<p>mysql&gt; show status like "Qcache%";<br>+-------------------------+----------+<br>| Variable_name           | Value    |<br>+-------------------------+----------+<br>| Qcache_free_blocks      | 1        |　　　#太多碎片，最小分配内存单位设置不合理？<br>| Qcache_free_memory      | 52365352 |<br>| Qcache_hits             | 0        |  　　　　　　#命中缓存的查询次数<br>| Qcache_inserts          | 12       |　　　　#插入次数<br>| Qcache_lowmem_prunes    | 0        |   #总缓存空间不足？<br>| Qcache_not_cached       | 0        |<br>| Qcache_queries_in_cache | 12       |    #现有缓存个数<br>| Qcache_total_blocks     | 26       |<br>+-------------------------+----------+<br>8 rows in set (0.00 sec)</p>
+<p> </p>
+<p> </p>
+<p>设置 query_cache_min_res_unit 为 5K 或 10K 下面结果都是1：2，所以还是设置为 5K？？？</p>
+<p>Qcache_queries_in_cache | 1152 |<br>| Qcache_total_blocks     | 2307     |</p>
+<p> </p>
+<p>3.</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-12-15 17:19</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8044068" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(8044068);return false;">收藏</a></div>
+        </div>

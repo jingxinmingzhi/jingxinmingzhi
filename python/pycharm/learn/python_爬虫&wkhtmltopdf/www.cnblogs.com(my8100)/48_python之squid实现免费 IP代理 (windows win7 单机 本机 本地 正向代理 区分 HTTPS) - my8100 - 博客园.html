@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.目录 1.思路2.windows安装3.相关命令行4.简单配置和初步使用5.问题：squid是否支持HTTPS6.问题：配置多个代理条目，相同ip不同port报错7.问题：根据代理请求区分HTTP" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>python之squid实现免费 IP代理 (windows win7 单机 本机 本地 正向代理 区分 HTTPS) - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7441501.html">
+    <span>python之squid实现免费 IP代理 (windows win7 单机 本机 本地 正向代理 区分 HTTPS)</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p>1.思路<br />2.windows安装<br />3.相关命令行<br />4.简单配置和初步使用<br />5.问题：squid是否支持HTTPS<br />6.问题：配置多个代理条目，相同ip不同port报错<br />7.问题：根据代理请求区分HTTP/HTTPS并选择相应代理条目<br />8.问题：代理IP类型 高匿/匿名/透明<br />9.问题：正向/反向/透明代理<br />10.python脚本更新配置<br />11.log相关<br />12.参考</p>
+<h1>1.思路</h1>
+<p><a href="http://kaito-kidd.com/2015/11/02/proxies-service/" target="_blank">爬虫代理服务</a></p>
+<ol>
+<li>定时监控代理源网站(30分/1小时都可)，解析出所有代理IP，入数据库</li>
+<li>从数据库中取出所有代理，访问某个固定的网站，找出访问成功的代理，更新数据库可用标记和响应时间</li>
+<li>从数据库中加载所有可用代理，通过某种算法，根据响应时间计算使用权重和最大使用次数</li>
+<li>按照squid的cache_peer格式，写入配置文件</li>
+<li>重新加载squid配置文件，刷新squid下的代理列表</li>
+<li>爬虫指定squid的服务IP和端口，进行纯粹的爬取操作</li>
+
+
+
+
+
+
+
+</ol>
+<p>一个完整的代理服务通过这样的方法就可以搭建完成，定时输出高质量代理。爬虫端不用关心代理的采集和测试，只管使用squid的统一服务入口爬取数据即可。</p>
+<h1>2.windows安装</h1>
+<p><a href="http://www.squid-cache.org/Versions/" target="_blank">http://www.squid-cache.org/Versions/</a></p>
+<p>In some cases, you may want (or be forced) to download a&nbsp;<a href="http://wiki.squid-cache.org/SquidFaq/BinaryPackages">binary package of Squid</a>. They are available for a variety of platforms, including Windows.</p>
+<p><a href="https://wiki.squid-cache.org/SquidFaq/BinaryPackages" target="_blank">https://wiki.squid-cache.org/SquidFaq/BinaryPackages</a></p>
+<p><a href="https://wiki.squid-cache.org/KnowledgeBase/Windows" target="_blank">https://wiki.squid-cache.org/KnowledgeBase/Windows</a></p>
+<p class="line874">MSI installer packages for Windows are at:<span id="line-44" class="anchor"></span></p>
+<ul>
+<li>
+<p class="line862">64-bit:&nbsp;<a class="http" href="http://squid.diladele.com/">http://squid.diladele.com/</a></p>
+
+
+
+
+
+
+
+</li>
+
+
+
+
+
+
+
+</ul>
+<p><span style="color: #ff00ff;">直接下载msi，建议安装目录：C:\Squid\</span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #000000;">CentOS 安装：</span></strong></p>
+<p><a href="https://wiki.squid-cache.org/SquidFaq/BinaryPackages" target="_blank"><span style="color: #000000;">https://wiki.squid-cache.org/SquidFaq/BinaryPackages</span></a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('b85aa6c8-345a-410b-83cd-bdf928ec02e4')"><img id="code_img_closed_b85aa6c8-345a-410b-83cd-bdf928ec02e4" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_b85aa6c8-345a-410b-83cd-bdf928ec02e4" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('b85aa6c8-345a-410b-83cd-bdf928ec02e4',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_b85aa6c8-345a-410b-83cd-bdf928ec02e4" class="cnblogs_code_hide">
+<pre><span style="color: #000000;">CentOS
+Squid bundles with CentOS. However there </span><span style="color: #0000ff;">is</span> apparently no publicly available information about where to find the packages <span style="color: #0000ff;">or</span> who <span style="color: #0000ff;">is</span> bundling them. EPEL, DAG <span style="color: #0000ff;">and</span> RPMforge repositories appear to no longer contain any files. Other sources imply that CentOS <span style="color: #0000ff;">is</span> an alias <span style="color: #0000ff;">for</span><span style="color: #000000;"> RHEL (we know otherwise). Although, yes, the RHEL packages should work on CentOS.
+
+Maintainer: unknown
+
+Bug Reporting: http:</span>//bugs.centos.org/search.php?category=squid&amp;sortby=last_updated&amp;hide_status_id=-2<span style="color: #000000;">
+
+Eliezer: </span>25/Apr/2017 - I have tested CentOS 7 RPMs <span style="color: #0000ff;">for</span> squid 3.5.25 on a small scale <span style="color: #0000ff;">and</span> it seems to be stable enough <span style="color: #0000ff;">for</span> 200-300 users as a forward proxy <span style="color: #0000ff;">and</span><span style="color: #000000;"> basic features.
+
+
+Stable Repository Package (like epel</span>-<span style="color: #000000;">release)
+To install run the command:
+
+yum install http:</span>//ngtech.co.il/repo/centos/7/squid-repo-1-1.el7.centos.noarch.rpm -<span style="color: #000000;">y
+</span><span style="color: #0000ff;">or</span><span style="color: #000000;">
+
+rpm </span>-i http://ngtech.co.il/repo/centos/7/squid-repo-1-1<span style="color: #000000;">.el7.centos.noarch.rpm
+</span><span style="color: #0000ff;">and</span><span style="color: #000000;"> then install squid using the command:
+
+yum install squid</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<h1>3.相关命令行</h1>
+<p>帮助信息：</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('40f3767c-cc3b-45ec-a546-ce3aeda693a9')"><img id="code_img_closed_40f3767c-cc3b-45ec-a546-ce3aeda693a9" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_40f3767c-cc3b-45ec-a546-ce3aeda693a9" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('40f3767c-cc3b-45ec-a546-ce3aeda693a9',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_40f3767c-cc3b-45ec-a546-ce3aeda693a9" class="cnblogs_code_hide">
+<pre>C:\Squid\bin&gt;squid -<span style="color: #000000;">h
+Usage: squid [</span>-cdhvzCFNRVYX] [-n name] [-s | -l facility] [-f config-file] [-[au] port] [-<span style="color: #000000;">k signal]
+       </span>-a port   Specify HTTP port number (default: 3128<span style="color: #000000;">).
+       </span>-<span style="color: #000000;">d level  Write debugging to stderr also.
+       </span>-f file   Use given config-<span style="color: #000000;">file instead of
+                 </span>/etc/squid/<span style="color: #000000;">squid.conf
+       </span>-<span style="color: #000000;">h        Print help message.
+       </span>-k reconfigure|rotate|shutdown|restart|interrupt|kill|debug|check|<span style="color: #000000;">parse
+                 Parse configuration file, then send signal to
+                 running copy (</span><span style="color: #0000ff;">except</span> -k parse) <span style="color: #0000ff;">and</span><span style="color: #000000;"> exit.
+       </span>-n name   Specify service name to use <span style="color: #0000ff;">for</span><span style="color: #000000;"> service operations
+                 default </span><span style="color: #0000ff;">is</span><span style="color: #000000;">: squid.
+       </span>-s | -<span style="color: #000000;">l facility
+                 Enable logging to syslog.
+       </span>-u port   Specify ICP port number (default: 3130<span style="color: #000000;">), disable with 0.
+       </span>-<span style="color: #000000;">v        Print version.
+       </span>-z        Create missing swap directories <span style="color: #0000ff;">and</span><span style="color: #000000;"> then exit.
+       </span>-C        Do <span style="color: #0000ff;">not</span><span style="color: #000000;"> catch fatal signals.
+       </span>-D        OBSOLETE. Scheduled <span style="color: #0000ff;">for</span><span style="color: #000000;"> removal.
+       </span>-F        Don<span style="color: #800000;">'</span><span style="color: #800000;">t serve any requests until store is rebuilt.</span>
+       -<span style="color: #000000;">N        No daemon mode.
+       </span>-R        Do <span style="color: #0000ff;">not</span><span style="color: #000000;"> set REUSEADDR on port.
+       </span>-S        Double-<span style="color: #000000;">check swap during rebuild.
+       </span>-<span style="color: #000000;">X        Force full debugging.
+       </span>-Y        Only <span style="color: #0000ff;">return</span> UDP_HIT <span style="color: #0000ff;">or</span> UDP_MISS_NOFETCH during fast reload.</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>启动/停止服务：计算机管理找到Squid for Windows，右键属性显示服务名称为squidsrv</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('7e234d1c-b4fb-41f0-92d8-9fbb26ca6c6b')"><img id="code_img_closed_7e234d1c-b4fb-41f0-92d8-9fbb26ca6c6b" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_7e234d1c-b4fb-41f0-92d8-9fbb26ca6c6b" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('7e234d1c-b4fb-41f0-92d8-9fbb26ca6c6b',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_7e234d1c-b4fb-41f0-92d8-9fbb26ca6c6b" class="cnblogs_code_hide">
+<pre>C:\Squid\bin&gt;<span style="color: #000000;">net start squidsrv
+请求的服务已经启动。
+
+请键入 NET HELPMSG </span>2182<span style="color: #000000;"> 以获得更多的帮助。
+
+
+C:\Squid\bin</span>&gt;<span style="color: #000000;">net stop squidsrv
+Squid </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> Windows 服务正在停止.
+Squid </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> Windows 服务已成功停止。
+
+
+C:\Squid\bin</span>&gt;<span style="color: #000000;">net start squidsrv
+Squid </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> Windows 服务正在启动 ..
+Squid </span><span style="color: #0000ff;">for</span> Windows 服务已经启动成功。</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>重新加载配置</p>
+<div class="cnblogs_code">
+<pre>C:\Squid\bin&gt;squid -k reconfigure</pre>
+</div>
+<h1>4.简单配置和初步使用</h1>
+<p>C:\Squid\etc\squid\squid.conf<span style="color: #ff00ff;"> 复制另存 C:\Squid\etc\squid\squid_backup.conf 备用</span></p>
+<p>确认默认监听端口：</p>
+<p># Squid normally listens to port 3128<br />http_access allow all<br /><span style="color: #ff00ff;">http_port 3128</span></p>
+<p><span style="color: #ff00ff;">不修改原有配置</span>，仅在结尾添加如下两行，<span style="color: #00ff00;">见章节 12.参考 (1)</span>：</p>
+<p>免费代理IP请自行搜索</p>
+<div class="cnblogs_code">
+<pre>cache_peer 58.22.61.211 parent 3128 0 no-<span style="color: #000000;">query 
+never_direct allow all</span></pre>
+</div>
+<p>使用requests确认代理生效：</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('b478dbf2-c371-4a5a-b30c-e913f415f9a5')"><img id="code_img_closed_b478dbf2-c371-4a5a-b30c-e913f415f9a5" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_b478dbf2-c371-4a5a-b30c-e913f415f9a5" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('b478dbf2-c371-4a5a-b30c-e913f415f9a5',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_b478dbf2-c371-4a5a-b30c-e913f415f9a5" class="cnblogs_code_hide">
+<pre>In [7]: os.system(<span style="color: #800000;">'</span><span style="color: #800000;">c:/Squid/bin/squid -k reconfigure</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>7<span style="color: #000000;">]: 0
+
+In [</span>8]: <span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+
+In [</span>9]: s =<span style="color: #000000;"> requests.Session()
+
+In [</span>10]: s.proxies = {<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:3128</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">https</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">https://127.0.0.1:3128</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+
+In [</span>11]: s.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://httpbin.org/ip</span><span style="color: #800000;">'</span>, timeout=10<span style="color: #000000;">).text
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (</span>1): 127.0.0.1<span style="color: #000000;">
+DEBUG:urllib3.connectionpool:http:</span>//127.0.0.1:3128 <span style="color: #800000;">"</span><span style="color: #800000;">GET http://httpbin.org/ip HTTP/1.1</span><span style="color: #800000;">"</span> 200 58<span style="color: #000000;">
+Out[</span>11]: u<span style="color: #800000;">'</span><span style="color: #800000;">{\n  "origin": "127.0.0.1, 163.125.31.126, 58.22.61.211"\n}\n</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>12]: s.get(<span style="color: #800000;">'</span><span style="color: #800000;">https://httpbin.org/ip</span><span style="color: #800000;">'</span>, timeout=10<span style="color: #000000;">).text
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (</span>1<span style="color: #000000;">): httpbin.org
+DEBUG:urllib3.connectionpool:https:</span>//httpbin.org:443 <span style="color: #800000;">"</span><span style="color: #800000;">GET /ip HTTP/1.1</span><span style="color: #800000;">"</span> 200 31<span style="color: #000000;">
+Out[</span>12]: u<span style="color: #800000;">'</span><span style="color: #800000;">{\n  "origin": "58.22.61.211"\n}\n</span><span style="color: #800000;">'</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>官网帮助</p>
+<p><a href="http://www.squid-cache.org/Doc/config/never_direct/" target="_blank">http://www.squid-cache.org/Doc/config/never_direct/</a></p>
+<p>Default Value: Allow DNS results to be used for this request.</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('4ef61391-1a76-4f79-af24-0b5dd78a3ca3')"><img id="code_img_closed_4ef61391-1a76-4f79-af24-0b5dd78a3ca3" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_4ef61391-1a76-4f79-af24-0b5dd78a3ca3" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('4ef61391-1a76-4f79-af24-0b5dd78a3ca3',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_4ef61391-1a76-4f79-af24-0b5dd78a3ca3" class="cnblogs_code_hide">
+<pre>    Usage: never_direct allow|<span style="color: #000000;">deny [!]aclname ...
+
+    never_direct </span><span style="color: #0000ff;">is</span><span style="color: #000000;"> the opposite of always_direct.  Please read
+    the description </span><span style="color: #0000ff;">for</span> always_direct <span style="color: #0000ff;">if</span> you have <span style="color: #0000ff;">not</span><span style="color: #000000;"> already.
+
+    With </span><span style="color: #800000;">'</span><span style="color: #800000;">never_direct</span><span style="color: #800000;">'</span><span style="color: #000000;"> you can use ACL elements to specify
+    requests which should NEVER be forwarded directly to origin
+    servers.  For example, to force the use of a proxy </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> all
+    requests, </span><span style="color: #0000ff;">except</span> those <span style="color: #0000ff;">in</span><span style="color: #000000;"> your local domain use something like:
+
+        acl local</span>-<span style="color: #000000;">servers dstdomain .foo.net
+        never_direct deny local</span>-<span style="color: #000000;">servers
+        never_direct allow all
+
+    </span><span style="color: #0000ff;">or</span> <span style="color: #0000ff;">if</span> Squid <span style="color: #0000ff;">is</span> inside a firewall <span style="color: #0000ff;">and</span><span style="color: #000000;"> there are local intranet
+    servers inside the firewall use something like:
+
+        acl local</span>-<span style="color: #000000;">intranet dstdomain .foo.net
+        acl local</span>-<span style="color: #000000;">external dstdomain external.foo.net
+        always_direct deny local</span>-<span style="color: #000000;">external
+        always_direct allow local</span>-<span style="color: #000000;">intranet
+        never_direct allow all
+
+    This clause supports both fast </span><span style="color: #0000ff;">and</span><span style="color: #000000;"> slow acl types.
+    See http:</span>//wiki.squid-cache.org/SquidFaq/SquidAcl <span style="color: #0000ff;">for</span> details.</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>5.问题：squid是否支持HTTPS</h1>
+<p><a href="http://www.hawu.me/operation/852" target="_blank">使用squid搭建代理服务器</a></p>
+<p>注意，在作为正向代理的时候（squid默认配置），<span style="color: #ff00ff;">http_port 3128端口也可以处理https代理请求，因为作正向代理时squid并不需要参与ssl的加密解密，只需要帮忙从用户到网站的443端口建立tcp连接，然后无脑转发用户到网站之间的加密数据即可。只有当要将squid用作反向代理的时候，才需要用到squid的https_port配置，为squid设置证书。</span></p>
+<h1><span style="color: #000000;">6.问题：配置多个代理条目，相同ip不同port报错</span></h1>
+<p><a href="http://www.jianshu.com/p/0fa977fc8f42" target="_blank">Squid配置多代理动态自动转发</a></p>
+<p>由于有可能有相同ip，而端口不同的代理 会报错</p>
+<p>FATAL: ERROR: cache_peer 42.227.87.205 specified twice</p>
+<p>所以要在最后加上proxy的name</p>
+<div class="cnblogs_code">
+<pre>cache_peer 120.xx.xx.32 parent 80 0 no-query weighted-round-robin weight=2 connect-fail-limit=2 allow-miss max-conn=5 <span style="color: #ff00ff;">name=proxy-90</span></pre>
+</div>
+<p><a href="http://www.squid-cache.org/Doc/config/cache_peer/" target="_blank">&nbsp;http://www.squid-cache.org/Doc/config/cache_peer/</a></p>
+<pre>	name=xxx	Unique name for the peer.
+			Required if you have multiple peers on the same host
+			but different ports.
+			This name can be used in cache_peer_access and similar
+			directives to identify the peer.
+			Can be used by outgoing access controls through the
+			peername ACL type.</pre>
+<h1>7.问题：根据代理请求区分HTTP/HTTPS并选择相应代理条目</h1>
+<p><a href="http://www.squid-cache.org/Doc/config/cache_peer/" target="_blank">http://www.squid-cache.org/Doc/config/cache_peer/</a></p>
+<p><a href="http://www.squid-cache.org/Doc/config/cache_peer_access/" target="_blank">http://www.squid-cache.org/Doc/config/cache_peer_access/</a></p>
+<p><a href="http://www.squid-cache.org/Doc/config/acl/" target="_blank">http://www.squid-cache.org/Doc/config/acl/</a></p>
+<p><a href="http://www.squid-cache.org/Doc/config/access_log/" target="_blank">http://www.squid-cache.org/Doc/config/access_log/</a></p>
+<p>通过ACL实现，还不能百分百确认生效性！！！</p>
+<div class="cnblogs_code">
+<pre>acl acl_deny_http port 80<span style="color: #000000;">
+acl <span style="color: #ff00ff;">acl_deny_https port 443<span style="color: #000000;">
+
+cache_peer 219.156.151.20 parent 53281 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5 name=<span style="color: #000000;"><span style="color: #00ff00;">0_HTTP
+cache_peer_access <span style="color: #00ff00;">0_HTTP deny <span style="color: #ff00ff;">acl_deny_https
+
+<span style="color: #000000;">cache_peer 175.155.248.190 parent 808 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5 name=</span><span style="color: #000000;">83_HTTPS
+cache_peer_access 83_HTTPS deny acl_deny_http</span></span></span></span></span></span></span></span></pre>
+</div>
+<h1>8.问题：代理IP类型 高匿/匿名/透明</h1>
+<p>官网介绍：</p>
+<p><a href="http://www.squid-cache.org/Doc/config/forwarded_for/" target="_blank">http://www.squid-cache.org/Doc/config/forwarded_for/</a></p>
+<p>Default Value: forwarded_for on</p>
+<p> If set to "on", Squid will append your client's IP address<br />	in the HTTP requests it forwards. By default it looks like:</p>
+<p>		X-Forwarded-For: 192.1.2.3</p>
+<p>	If set to "off", it will appear as</p>
+<p>		X-Forwarded-For: unknown</p>
+<p>	If set to "transparent", Squid will not alter the<br />	X-Forwarded-For header in any way.</p>
+<p>	If set to "delete", Squid will delete the entire<br />	X-Forwarded-For header.</p>
+<p>	If set to "truncate", Squid will remove all existing<br />	X-Forwarded-For entries, and place the client IP as the sole entry.</p>
+<p>&nbsp;</p>
+<p><a href="http://www.squid-cache.org/Doc/config/via/" target="_blank">http://www.squid-cache.org/Doc/config/via/</a></p>
+<p>Default Value: via on</p>
+<p>If set (default), Squid will include a Via header in requests and replies as required by RFC2616.</p>
+<p>&nbsp;</p>
+<p><a href="http://www.squid-cache.org/Doc/config/request_header_access/" target="_blank">http://www.squid-cache.org/Doc/config/request_header_access/</a></p>
+<p>Default Value: No limits.</p>
+<p> For example, to achieve the same behavior as the old<br />	'http_anonymizer standard' option, you should use:</p>
+<p>		request_header_access From deny all<br />		request_header_access Referer deny all<br />		request_header_access User-Agent deny all</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>综合参考资料，在squid.conf结尾添加如下内容：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">forwarded_for off
+via off
+forwarded_for transparent
+request_header_access Via deny all
+request_header_access X</span>-Forwarded-<span style="color: #000000;">For deny all
+request_header_access From deny all</span></pre>
+</div>
+<p>前后对比：</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('0e1adf39-6a4c-4dad-b628-45560b917d2f')"><img id="code_img_closed_0e1adf39-6a4c-4dad-b628-45560b917d2f" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_0e1adf39-6a4c-4dad-b628-45560b917d2f" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('0e1adf39-6a4c-4dad-b628-45560b917d2f',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_0e1adf39-6a4c-4dad-b628-45560b917d2f" class="cnblogs_code_hide">
+<pre>In [104]: <span style="color: #0000ff;">from</span> bs4 <span style="color: #0000ff;">import</span><span style="color: #000000;"> BeautifulSoup as BS
+In [</span>106]: os.system(<span style="color: #800000;">'</span><span style="color: #800000;">c:/Squid/bin/squid -k reconfigure</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+     ...: r</span>=s.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://www.iprivacytools.com/proxy-checker-anonymity-test/</span><span style="color: #800000;">'</span>, timeout=10<span style="color: #000000;">)
+     ...: soup</span>=BS(r.text, <span style="color: #800000;">'</span><span style="color: #800000;">lxml</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+     ...: </span><span style="color: #0000ff;">print</span> soup.select(<span style="color: #800000;">'</span><span style="color: #800000;">div.content</span><span style="color: #800000;">'</span>)[1<span style="color: #000000;">].text
+     ...:
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (</span>16): 127.0.0.1<span style="color: #000000;">
+DEBUG:urllib3.connectionpool:http:</span>//127.0.0.1:3128 <span style="color: #800000;">"</span><span style="color: #800000;">GET http://www.iprivacytools.com/proxy-checker-a</span>
+nonymity-test/ HTTP/1.1<span style="color: #800000;">"</span><span style="color: #800000;"> 200 2777</span>
+<span style="color: #000000;">
+Your IP address </span><span style="color: #0000ff;">and</span> hostname: 58.22.61.211 (58.22.61.211<span style="color: #000000;">)
+Here are your headers that could reveal a proxy:
+
+HTTP_VIA: </span>1.1 win7-PC (squid/3.5.26), 1.1 RD2:3128 (squid/2.7<span style="color: #000000;">.STABLE7)
+HTTP_X_FORWARDED_FOR: </span>127.0.0.1, 163.125.31.83<span style="color: #000000;">
+HTTP_FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+HTTP_X_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+HTTP_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+HTTP_CLIENT_IP: anonymous </span>/<span style="color: #000000;"> none
+HTTP_FORWARDED_FOR_IP: anonymous </span>/<span style="color: #000000;"> none
+VIA: anonymous </span>/<span style="color: #000000;"> none
+X_FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+X_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+CLIENT_IP: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED_FOR_IP: anonymous </span>/<span style="color: #000000;"> none
+HTTP_PROXY_CONNECTION: anonymous </span>/<span style="color: #000000;"> none
+
+Proxy detected? YES
+Here</span><span style="color: #800000;">'</span><span style="color: #800000;">s how we know:</span>
+<span style="color: #000000;">
+Your HTTP_VIA header shows: </span>1.1 win7-PC (squid/3.5.26), 1.1 RD2:3128 (squid/2.7<span style="color: #000000;">.STABLE7)
+Your HTTP_X_FORWARDED_FOR header shows: </span>127.0.0.1, 163.125.31.83<span style="color: #000000;">
+
+
+Again, please remember that this should </span><span style="color: #0000ff;">not</span><span style="color: #000000;"> be considered a fullproof
+          test of your anonymous surfing level, as it </span><span style="color: #0000ff;">is</span><span style="color: #000000;"> only analyzing your browser
+          headers. To surf via proxies with greater confidence, we highly suggest
+          using a firewall </span><span style="color: #0000ff;">and</span> disabling all browser plugins <span style="color: #0000ff;">and</span><span style="color: #000000;"> script support.
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 在squid.conf结尾添加如下内容：</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> forwarded_for off</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> via off</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> forwarded_for transparent</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> request_header_access Via deny all</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> request_header_access X-Forwarded-For deny all</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> request_header_access From deny all</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;">结果对比：</span>
+In [107]: os.system(<span style="color: #800000;">'</span><span style="color: #800000;">c:/Squid/bin/squid -k reconfigure</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+     ...: r</span>=s.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://www.iprivacytools.com/proxy-checker-anonymity-test/</span><span style="color: #800000;">'</span>, timeout=10<span style="color: #000000;">)
+     ...: soup</span>=BS(r.text, <span style="color: #800000;">'</span><span style="color: #800000;">lxml</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+     ...: </span><span style="color: #0000ff;">print</span> soup.select(<span style="color: #800000;">'</span><span style="color: #800000;">div.content</span><span style="color: #800000;">'</span>)[1<span style="color: #000000;">].text
+     ...:
+DEBUG:urllib3.connectionpool:Resetting dropped connection: </span>127.0.0.1<span style="color: #000000;">
+DEBUG:urllib3.connectionpool:http:</span>//127.0.0.1:3128 <span style="color: #800000;">"</span><span style="color: #800000;">GET http://www.iprivacytools.com/proxy-checker-a</span>
+nonymity-test/ HTTP/1.1<span style="color: #800000;">"</span><span style="color: #800000;"> 200 2749</span>
+<span style="color: #000000;">
+Your IP address </span><span style="color: #0000ff;">and</span> hostname: 58.22.61.211 (58.22.61.211<span style="color: #000000;">)
+Here are your headers that could reveal a proxy:
+
+HTTP_VIA: </span>1.1 RD2:3128 (squid/2.7<span style="color: #000000;">.STABLE7)
+HTTP_X_FORWARDED_FOR: </span>163.125.31.93<span style="color: #000000;">
+HTTP_FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+HTTP_X_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+HTTP_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+HTTP_CLIENT_IP: anonymous </span>/<span style="color: #000000;"> none
+HTTP_FORWARDED_FOR_IP: anonymous </span>/<span style="color: #000000;"> none
+VIA: anonymous </span>/<span style="color: #000000;"> none
+X_FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED_FOR: anonymous </span>/<span style="color: #000000;"> none
+X_FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED: anonymous </span>/<span style="color: #000000;"> none
+CLIENT_IP: anonymous </span>/<span style="color: #000000;"> none
+FORWARDED_FOR_IP: anonymous </span>/<span style="color: #000000;"> none
+HTTP_PROXY_CONNECTION: anonymous </span>/<span style="color: #000000;"> none
+
+Proxy detected? YES
+Here</span><span style="color: #800000;">'</span><span style="color: #800000;">s how we know:</span>
+<span style="color: #000000;">
+Your HTTP_VIA header shows: </span>1.1 RD2:3128 (squid/2.7<span style="color: #000000;">.STABLE7)
+Your HTTP_X_FORWARDED_FOR header shows: </span>163.125.31.93<span style="color: #000000;">
+
+
+Again, please remember that this should </span><span style="color: #0000ff;">not</span><span style="color: #000000;"> be considered a fullproof
+          test of your anonymous surfing level, as it </span><span style="color: #0000ff;">is</span><span style="color: #000000;"> only analyzing your browser
+          headers. To surf via proxies with greater confidence, we highly suggest
+          using a firewall </span><span style="color: #0000ff;">and</span> disabling all browser plugins <span style="color: #0000ff;">and</span> script support.</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>本机信息被隐藏</p>
+<div class="cnblogs_code">
+<pre>Your HTTP_VIA header shows: 1.1 <span style="color: #ff00ff;">win7-PC (squid/3.5.26)</span>, 1.1 RD2:3128 (squid/2.7<span style="color: #000000;">.STABLE7)
+Your HTTP_X_FORWARDED_FOR header shows: </span><span style="color: #ff00ff;">127.0.0.1</span>, 163.125.31.83</pre>
+</div>
+<h1>9.问题：正向/反向/透明代理</h1>
+<p>xxx</p>
+<h1>10.python脚本更新配置</h1>
+<p>&nbsp;获取可用代理IP列表，格式：　ip_port_type_tuple_list = [('1.1.1.1', '80', 'HTTP'),&nbsp; ('1.1.1.2', '1080', 'HTTPS'),&nbsp; ('1.1.1.3', '3128', 'both')]</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('1676f088-d0e0-4732-8f26-31f648b0998e')"><img id="code_img_closed_1676f088-d0e0-4732-8f26-31f648b0998e" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_1676f088-d0e0-4732-8f26-31f648b0998e" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('1676f088-d0e0-4732-8f26-31f648b0998e',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_1676f088-d0e0-4732-8f26-31f648b0998e" class="cnblogs_code_hide">
+<pre><span style="color: #0000ff;">def</span><span style="color: #000000;"> update_squid_conf():
+    bk_file </span>= <span style="color: #800000;">'</span><span style="color: #800000;">C:/Squid/etc/squid/squid_backup.conf</span><span style="color: #800000;">'</span><span style="color: #000000;"> 
+    conf_file </span>= <span style="color: #800000;">'</span><span style="color: #800000;">C:/Squid/etc/squid/squid.conf</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">cache_peer {ip} parent {port} 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5 name={name}</span><span style="color: #800000;">'</span><span style="color: #000000;">
+ 
+    pre_lines </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">\n#\n#\n#\nhttp_access allow all</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">read_timeout 30 seconds</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">request_timeout 30 seconds</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">acl acl_deny_http port 80</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">acl acl_deny_https port 443</span><span style="color: #800000;">'</span><span style="color: #000000;">,]              
+                
+    post_lines </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">never_direct allow all</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">forwarded_for off</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">via off</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">forwarded_for transparent</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">request_header_access Via deny all</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">request_header_access X-Forwarded-For deny all</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                </span><span style="color: #800000;">'</span><span style="color: #800000;">request_header_access From deny all</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+  
+
+    merge </span>= sorted(list(set(ip_port_type_tuple_list)), key=<span style="color: #0000ff;">lambda</span> x: x[-1<span style="color: #000000;">])    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> for i in merge:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> print i</span>
+<span style="color: #000000;">        
+    count </span>=<span style="color: #000000;"> 0
+    with open(bk_file, </span><span style="color: #800000;">'</span><span style="color: #800000;">r</span><span style="color: #800000;">'</span>) as bk_file, open(conf_file, <span style="color: #800000;">'</span><span style="color: #800000;">w</span><span style="color: #800000;">'</span><span style="color: #000000;">) as conf_file: 
+        conf_file.write(bk_file.read()</span>+<span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        conf_file.write(</span><span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span>.join(pre_lines)+<span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        </span><span style="color: #0000ff;">for</span> index, (ip, port, _type) <span style="color: #0000ff;">in</span><span style="color: #000000;"> enumerate(merge):
+            name </span>= <span style="color: #800000;">'</span><span style="color: #800000;">{}_{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(index, _type)
+            item </span>= fmt.format(ip=ip, port=port, name=<span style="color: #000000;">name)
+            </span><span style="color: #0000ff;">if</span> _type <span style="color: #0000ff;">in</span> [<span style="color: #800000;">'</span><span style="color: #800000;">HTTP</span><span style="color: #800000;">'</span><span style="color: #000000;">]:
+                item </span>+= <span style="color: #800000;">'</span><span style="color: #800000;">\ncache_peer_access %s deny acl_deny_https</span><span style="color: #800000;">'</span> %<span style="color: #000000;">name
+            </span><span style="color: #0000ff;">elif</span> _type <span style="color: #0000ff;">in</span> [<span style="color: #800000;">'</span><span style="color: #800000;">HTTPS</span><span style="color: #800000;">'</span><span style="color: #000000;">]:
+                item </span>+= <span style="color: #800000;">'</span><span style="color: #800000;">\ncache_peer_access %s deny acl_deny_http</span><span style="color: #800000;">'</span> %<span style="color: #000000;">name            
+            conf_file.write(item</span>+<span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+            count </span>+= 1<span style="color: #000000;">
+        conf_file.write(</span><span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span>.join(post_lines)+<span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    </span><span style="color: #0000ff;">assert</span> os.system(<span style="color: #800000;">'</span><span style="color: #800000;">c:/Squid/bin/squid -k reconfigure</span><span style="color: #800000;">'</span>) == 0, <span style="color: #800000;">'</span><span style="color: #800000;">update fail</span><span style="color: #800000;">'</span>
+    <span style="color: #0000ff;">print</span> time.ctime(), <span style="color: #800000;">'</span><span style="color: #800000;">{}/{}</span><span style="color: #800000;">'</span>.format(count, len(merge)) </pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h1>11.log相关</h1>
+<p><a href="http://www.hawu.me/operation/852#531_accesslog" target="_blank">使用squid搭建代理服务器</a></p>
+<p># access_log 设置access日志，daemon表示在后台将日志写入/var/log/squid/access.log文件,<br /># combined是一个预定义的logformat，也可以使用自定义的logformat<br />access_log daemon:/var/log/squid/access.log combined<br /><br /># debug_options, 设置cache.log的log level<br /># ALL表示全部模块，loglevel为1；28表示acl模块，loglevel为5，29表示用户认证模块，loglevel为9<br />debug_options ALL,1 28,5 29,9</p>
+<p>&nbsp;</p>
+<p>也可直接添加：access_log daemon:c:/Squid/var/log/squid/temp.log squid</p>
+<p><span style="color: #ff00ff;">查看log确认使用的父代理：其中访问https会显示 TCP_TUNNEL</span></p>
+<div class="cnblogs_code">
+<pre>1503895567.104   5567 127.0.0.1 TCP_MISS/200 510 GET http://httpbin.org/ip - FIRSTUP_PARENT/58.22.61.211 application/<span style="color: #000000;">json
+</span>1503895643.345  67037 127.0.0.1 TCP_TUNNEL/200 3377 CONNECT httpbin.org:443 - FIRSTUP_PARENT/58.22.61.211 -</pre>
+</div>
+<h1>12.参考</h1>
+<p><span style="color: #ff00ff;">官网： <a href="http://www.squid-cache.org/Doc/config/cache_peer/" target="_blank"><span style="color: #ff00ff;">http://www.squid-cache.org/Doc/config/cache_peer/</span></a></span></p>
+<p><span style="color: #ff00ff;">中文文档： <a href="http://zyan.cc/book/squid/index.html" target="_blank"><span style="color: #ff00ff;">http://zyan.cc/book/squid/index.html</span></a></span></p>
+<p>&nbsp;</p>
+<p>(1) <a href="https://www.suse.com/zh-cn/documentation/sles11/singlehtml/book_sle_admin/cha.squid.html" target="_blank">第 30 章Squid 代理服务器</a></p>
+<p>搜索cache_peer：</p>
+<p><span class="term">cache_peer&nbsp;<em class="replaceable"><code>hostname </code></em><em class="replaceable"><code>type </code></em><em class="replaceable"><code>proxy-port </code></em><em class="replaceable"><code>icp-port</code></em></span></p>
+<p>在此输入父代理（如果您想使用 ISP 的代理）。在<em class="replaceable"><code>主机名</code></em>中输入要使用代理的名称或 IP 地址，在<em class="replaceable"><code>类型</code></em>中输入&nbsp;<code class="option">parent</code>。对于&nbsp;<em class="replaceable"><code>proxy-port</code></em>，输入同样是由父代理运营商设置的在浏览器中使用的端口号（通常为&nbsp;<code class="option">8080</code>）。如果父代理的 ICP 端口未知并且该端口的使用与提供商无关，请将&nbsp;<em class="replaceable"><code>icp-port</code></em>&nbsp;设为&nbsp;<code class="option">7</code>&nbsp;或&nbsp;<code class="option">0</code>。此外，端口号后应指定&nbsp;<code class="option">default</code>&nbsp;和&nbsp;<code class="option">no-query</code>&nbsp;以禁止使用 ICP 协议。借助提供商的代理，Squid 就可以像普通浏览器那样操作了。</p>
+<p><span class="term">never_direct allow&nbsp;<em class="replaceable"><code>acl_name</code></em></span></p>
+<p>要防止 Squid 直接从因特网接受请求，应使用上述命令强制连接到另一个代理。事先必须已在&nbsp;<span class="emphasis"><em>cache_peer</em>中输入该代理。如果将&nbsp;<em class="replaceable"><code>acl_name</code></em>&nbsp;指定为&nbsp;<code class="option">all</code>，会强制所有请求直接转发给<span class="emphasis"><em>父代理</em>。有时这可能是必要的，例如在您的提供商严格规定使用它的代理或拒绝通过其防火墙直接访问因特网时。</span></span></p>
+<p>&nbsp;<span class="term">forwarded_for on</span></p>
+<p>如果将此项设置为&nbsp;<span class="emphasis"><em>off</em>，Squid 会将客户端的 IP 地址和系统名称从 HTTP 请求中删除。否则，它会向标题中添加以下行</span></p>
+<div class="cnblogs_code">
+<pre>X-Forwarded-For: 192.168.0.1</pre>
+</div>
+<p>&nbsp;</p>
+<p>(2) <a href="http://www.hawu.me/operation/852" target="_blank">使用squid搭建代理服务器</a></p>
+<p>注意，在作为正向代理的时候（squid默认配置），<span style="color: #ff00ff;">http_port 3128端口也可以处理https代理请求</span>，因为作正向代理时squid并不需要参与ssl的加密解密，只需要帮忙从用户到网站的443端口建立tcp连接，然后无脑转发用户到网站之间的加密数据即可。只有当要将squid用作反向代理的时候，才需要用到squid的https_port配置，为squid设置证书。</p>
+<p><span class="crayon-p"><span class="crayon-p"># 拒绝所有请求，最后兜底的规则<br />http_access deny all<br />注意：squid的http_access是按照配置文件中定义的顺序依次进行判断的！<span style="color: #ff00ff;">遇到第一个满足条件的http_access（allow或者deny）就立即返回！</span>不再进行后续http_access判断。</span></span></p>
+<p>通过代理访问http://www.hawu.me，打开开发者工具中的网络窗口，检查该请求的状态，可以看到Remote Address为我们设置的代理，在Response Headers里还有我定义的代理服务器名&rdquo;funway.aliyun.proxy&rdquo;，表示这个请求是通过我们的代理服务器返回的。</p>
+<p>squid可以很方便的搭建http代理服务器，但从上面被墙的案例我们看到，单单使用墙外的squid代理是无法进行科学上网的。这时候就需要在墙内用户与墙外squid之间加一个stunnel，将我们发送给squid的请求进行加密。更详细的介绍请看下一篇文章<a href="http://www.hawu.me/operation/886">http://www.hawu.me/operation/886</a></p>
+<p><span id="24">匿名代理</span>： </p>
+<p>http头中有三个信息是用来给服务器鉴别用户的：remote_addr，http_via，http_x_forwarded_for。</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('eb6fe07d-6fac-4345-9eaf-2a32908c1d87')"><img id="code_img_closed_eb6fe07d-6fac-4345-9eaf-2a32908c1d87" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_eb6fe07d-6fac-4345-9eaf-2a32908c1d87" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('eb6fe07d-6fac-4345-9eaf-2a32908c1d87',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_eb6fe07d-6fac-4345-9eaf-2a32908c1d87" class="cnblogs_code_hide">
+<pre><span style="color: #000000;">用户不使用代理直接访问网站时，http头包含如下信息：
+
+remote_addr </span>=<span style="color: #000000;"> 用户真实ip
+http_via </span>=<span style="color: #000000;"> 不包含
+http_x_forwarded_for </span>=<span style="color: #000000;"> 不包含
+
+用户使用普通代理访问时，对方服务器知道用户使用了代理，并且知道用户的真实ip。此时http头包含如下：
+
+remote_addr </span>=<span style="color: #000000;"> 代理服务器ip
+http_via </span>=<span style="color: #000000;"> 代理服务器主机名（squid的visible_hostname）
+http_x_forwarded_for </span>=<span style="color: #000000;"> 用户真实ip（如果用户使用了多层代理，这里应该是不包括最后一跳的整个ip链）
+
+用户使用匿名代理访问时，对方服务器知道用户使用了代理，但不知道用户的真实ip。此时http头包含如下：
+
+remote_addr </span>=<span style="color: #000000;"> 代理服务器ip
+http_via </span>=<span style="color: #000000;"> 代理服务器主机名
+http_x_forwarded_for </span>=<span style="color: #000000;"> 代理服务器ip
+
+用户使用高匿名代理访问时，对方服务器不知道用户使用了代理，也不知道用户真实ip。此时的http头包含如下：
+
+remote_addr </span>=<span style="color: #000000;"> 代理服务器ip
+http_via </span>=<span style="color: #000000;"> 不包含
+http_x_forwarded_for </span>=<span style="color: #000000;"> 不包含
+
+squid默认是作为普通代理的，即开启via，并会写入http_forwarded_for。要想作为匿名代理，只需修改如下两个配置：
+
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 关闭via</span>
+<span style="color: #000000;">via off
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 设置不修改http_forwarded_for</span>
+forwarded_for transparent</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>(3) <a href="https://dirtysalt.github.io/blogs/squid-https-forwarding-proxy.html" target="_blank">用squid做http/https正向代理</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">http_access allow all
+http_port </span>64441<span style="color: #000000;">
+read_timeout </span>10<span style="color: #000000;"> seconds
+request_timeout </span>10<span style="color: #000000;"> seconds
+
+cache_peer ec2</span>-52-197-85-24.ap-northeast-1.compute.amazonaws.com parent 64441 0 no-query round-<span style="color: #000000;">robin
+
+never_direct allow all</span></pre>
+</div>
+<p>&nbsp;(4) <a href="http://www.xnathan.com/2017/03/02/squid-proxy-pool/" target="_blank">自己搭建亿级爬虫IP代理池</a></p>
+<div class="line"><span class="comment"># 将请求转发到父代理</span></div>
+<div class="line">
+<div class="cnblogs_code">
+<pre>cache_peer IP parent PORT 0 no-query weighted-round-robin weight=1 connect-fail-limit=2 allow-miss max-conn=5</pre>
+</div>
+</div>
+<p># 3. 重新加载配置文件</p>
+<p>os.system(<span class="string">'squid -k reconfigure')</span></p>
+<h3 id="使用方法">使用方法</h3>
+<ol>
+<li>按<a title="Squid 搭建正向代理服务器" href="http://www.xnathan.com/2017/02/28/squid-proxy/">Squid 搭建正向代理服务器</a>、<a title="Squid 配置高匿代理" href="http://www.xnathan.com/2017/03/01/squid-anony-proxy/">Squid 配置高匿代理</a>介绍的方法搭建运行Squid高匿服务器</li>
+</ol>
+<p>&nbsp;</p>
+<p><a href="http://www.xnathan.com/2017/02/28/squid-proxy/" target="_blank">Squid 搭建正向代理服务器</a></p>
+<p>文档参考资料：</p>
+<ol>
+<li><a href="http://www.squid-cache.org/Doc/" rel="external" target="_blank">http://www.squid-cache.org/Doc/</a></li>
+<li><a href="http://zyan.cc/book/squid/index.html" rel="external" target="_blank">squid中文权威指南</a></li>
+</ol>
+<p>&nbsp;</p>
+<p><a href="http://www.xnathan.com/2017/03/01/squid-anony-proxy/" target="_blank">Squid 配置高匿代理</a></p>
+<p>要将如下配置加入到配置文件<code>/etc/squid/squid.conf</code>末尾即可。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">request_header_access Via deny all
+request_header_access X</span>-Forwarded-<span style="color: #000000;">For deny all
+request_header_access From deny all</span></pre>
+</div>
+<p>可以访问&nbsp;<a href="http://httpbin.org/ip" rel="external" target="_blank">http://httpbin.org/ip</a>&nbsp;，如果仅返回squid服务器ip，则表明高匿生效。</p>
+<p>或者访问<a href="http://www.iprivacytools.com/proxy-checker-anonymity-test/" rel="external" target="_blank">Proxy Checker</a>，网页显示详细的代理检测信息。如果网页最上方显示<code>NO PROXY DETECTED</code>&nbsp;则表明高匿代理搭建成功。</p>
+<p>&nbsp;</p>
+<p>&nbsp;(5) <a href="http://zyan.cc/book/squid/index.html" target="_blank">Squid中文权威指南</a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('d54e56cf-87e1-4fb7-b0c2-fbb02a340ad1')"><img id="code_img_closed_d54e56cf-87e1-4fb7-b0c2-fbb02a340ad1" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_d54e56cf-87e1-4fb7-b0c2-fbb02a340ad1" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('d54e56cf-87e1-4fb7-b0c2-fbb02a340ad1',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_d54e56cf-87e1-4fb7-b0c2-fbb02a340ad1" class="cnblogs_code_hide">
+<pre>10.11<span style="color: #000000;"> 该怎么做？
+
+Squid新手经常问同样的或相似的问题，关于如何让squid正确的转发请求。这里我将告诉你，在普通这种情况下，如何配置Squid。
+
+</span>10.11.1<span style="color: #000000;"> 通过另外的代理发送所有请求？
+
+简单的只需定义父cache，并告诉squid它不允许直接连接到原始服务器。例如：
+cache_peer parent.host.name parent </span>3128<span style="color: #000000;"> 0 
+            
+acl All src 0</span>/<span style="color: #000000;">0 
+
+never_direct allow All
+该配置的弊端是，假如父cache down掉，squid不能转发cache丢失。假如这种情况发生，用户会接受到&ldquo;不能转发&rdquo;的错误消息。
+
+</span>10.11.2<span style="color: #000000;"> 通过另外的代理发送所有请求，除非它down了？
+
+试试这个配置：
+nonhierarchical_direct off 
+
+prefer_direct off
+
+cache_peer parent.host.name parent </span>3128 0 default no-<span style="color: #000000;">query
+或者，假如你喜欢对其他代理使用ICP：
+nonhierarchical_direct off 
+
+prefer_direct off 
+
+cache_peer parent.host.name parent </span>3128 3130<span style="color: #000000;"> default
+在该配置下，只要父cache存活，squid就会将所有cache丢失转发给它。使用ICP可以让squid快速检测到死亡的父cache，但同时在某些情形下，可能不正确的宣称父cache死亡。
+
+</span>10.11.3<span style="color: #000000;"> 确认squid对某些请求，不使用邻居cache吗？
+
+定义1条ACL来匹配特殊的请求：
+cache_peer parent.host.name parent </span>3128<span style="color: #000000;"> 0 
+
+acl Special dstdomain special.server.name always_direct
+
+allow Special
+在该情形下，对special.server.name域的请求的cache丢失，总是发送到原始服务器。其他请求也许，或也许不，通过父cache。
+
+</span>10.11.4<span style="color: #000000;"> 通过父cache发送某些请求来绕过本地过滤器？
+
+某些ISP（或其他组织）有上级服务提供者，他们强迫HTTP传输通过包过滤代理（也许使用HTTP拦截）。假如你能在他们的网络之外使用不同的代理，那就能绕过其过滤器。这里显示你怎样仅发送特殊的请求到远端的代理：
+cache_peer far</span>-away-parent.host.name parent 3128<span style="color: #000000;"> 0 
+
+acl BlockedSites dstdomain www.censored.com 
+
+cache_peer_access far</span>-away-<span style="color: #000000;">parent.host.name allow BlockedSites
+            
+never_direct allow BlockedSites</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>(6) <a href="http://blog.csdn.net/hjwang1/article/details/6961426" target="_blank">squid配置-cache_peer和cache_peer_domain详解</a></p>
+<p>&nbsp;</p>
+<p>(7) <a href="http://m.jb51.net/article/24209.htm" target="_blank">在Windows下利用Squid开设代理服务器</a></p>
+<p>重启机器或者命令行执行&ldquo; net start squid&rdquo;启动服务</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-08-28 13:30</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7441501" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7441501);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7441501, cb_entryCreatedDate = '2017-08-28 13:30', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

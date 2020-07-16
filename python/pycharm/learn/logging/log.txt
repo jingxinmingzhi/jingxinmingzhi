@@ -1,0 +1,9 @@
+2020-06-17 13:24:17,760 - __main__ - INFO - Start print log
+2020-06-17 13:24:17,760 - __main__ - WARNING - Something maybe fail.
+2020-06-17 13:24:17,760 - __main__ - INFO - Finish
+2020-06-17 13:24:56,305 - __main__ - INFO - Start print log
+2020-06-17 13:24:56,305 - __main__ - WARNING - Something maybe fail.
+2020-06-17 13:24:56,305 - __main__ - INFO - Finish
+2020-06-17 13:29:40,175 - __main__ - INFO - Start print log
+2020-06-17 13:29:40,175 - __main__ - WARNING - Something maybe fail.
+2020-06-17 13:29:40,175 - __main__ - INFO - Finish

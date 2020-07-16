@@ -1,0 +1,77 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_login.html">
+    <span>scrapy 通过FormRequest模拟登录再继续</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>1.参考</h2>
+<p><a href="https://doc.scrapy.org/en/latest/topics/spiders.html#scrapy.spiders.Spider.start_requests" target="_blank">https://doc.scrapy.org/en/latest/topics/spiders.html#scrapy.spiders.Spider.start_requests</a></p>
+<p>自动提交 login.php 返回表单</p>
+<p><a href="https://doc.scrapy.org/en/latest/topics/request-response.html#using-formrequest-from-response-to-simulate-a-user-login" target="_blank">https://doc.scrapy.org/en/latest/topics/request-response.html#using-formrequest-from-response-to-simulate-a-user-login</a></p>
+<p> </p>
+<h2>2.模拟登录雪球</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: utf-8 -*-</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> os
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> scrapy
+</span><span style="color: #0000ff;">from</span> scrapy.shell <span style="color: #0000ff;">import</span><span style="color: #000000;"> inspect_response
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> https://doc.scrapy.org/en/latest/topics/spiders.html start_requests() 章节</span>
+
+<span style="color: #0000ff;">class</span><span style="color: #000000;"> LoginSpider(scrapy.Spider):
+    name </span>= <span style="color: #800000;">'</span><span style="color: #800000;">login</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    allowed_domains </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">xueqiu.com</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> start_urls = ['http://xueqiu.com/']  #The default implementation generates Request(url, dont_filter=True) for each url in start_urls.</span>
+<span style="color: #000000;">    
+    url_login </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://xueqiu.com/snowman/login</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    url_somebody </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://xueqiu.com/u/6146070786</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    data_dict </span>=<span style="color: #000000;"> {
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">remember_me</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">true</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> 'username': 'fake',  #返回200 {"error_description":"用户名或密码错误","error_uri":"/provider/oauth/token","error_code":"20082"}</span>
+    <span style="color: #800000;">'</span><span style="color: #800000;">username</span><span style="color: #800000;">'</span>: os.getenv(<span style="color: #800000;">'</span><span style="color: #800000;">xueqiu_username</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span>: os.getenv(<span style="color: #800000;">'</span><span style="color: #800000;">xueqiu_password</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+    }
+    
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> start_requests(self):
+        </span><span style="color: #0000ff;">return</span> [scrapy.FormRequest(url =<span style="color: #000000;"> self.url_login,
+                                   <span style="color: #ff0000;"> headers</span></span><span style="color: #ff0000;">={'X-Requested-With': 'XMLHttpRequest'},  #</span><span style="color: #008000;"><span style="color: #ff0000;">否则404将导致退出</span>,抓包页面显示登录成功</span>
+                                    meta={<span style="color: #800000;">'</span><span style="color: #800000;">proxy</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:8888</span><span style="color: #800000;">'</span>},  <span style="color: #008000;">#</span><span style="color: #008000;">否则fiddler导致返回缓慢</span>
+                                    formdata =<span style="color: #000000;"> self.data_dict,
+                                    callback</span>=<span style="color: #000000;">self.logged_in)]
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> logged_in(self, response):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> inspect_response(response, self)</span>
+        <span style="color: #0000ff;">assert</span> os.getenv(<span style="color: #800000;">'</span><span style="color: #800000;">xueqiu_nickname</span><span style="color: #800000;">'</span>) <span style="color: #0000ff;">in</span> response.text  <span style="color: #ff0000;">#AssertionError 将导致退出</span>
+        <span style="color: #0000ff;">return</span> scrapy.Request(self.url_somebody, dont_filter=True, meta={<span style="color: #800000;">'</span><span style="color: #800000;">proxy</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:8888</span><span style="color: #800000;">'</span><span style="color: #000000;">})
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> parse(self, response):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> inspect_response(response, self)</span>
+        self.log(os.getenv(<span style="color: #800000;">'</span><span style="color: #800000;">xueqiu_nickname</span><span style="color: #800000;">'</span>) <span style="color: #0000ff;">in</span> response.text)</pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-12-27 16:14</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8126347" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(8126347);return false;">收藏</a></div>
+        </div>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="在线体验 scrapydweb.herokuapp.com 网络拓扑图 注册帐号 访问&amp;#160;heroku.com&amp;#160;注册免费账号（注册页面需要调用 google recaptcha 人机" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>如何免费创建云端爬虫集群 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapyd-cluster-on-heroku.html">
+    <span>如何免费创建云端爬虫集群</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+    <div id="cnblogs_post_description" style="display: none">
+        <img src="https://raw.githubusercontent.com/my8100/files/master/scrapyd-cluster-on-heroku/screenshots/network_topology.png" class="desc_img">
+    </div>
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>在线体验</h2>
+<p><a href="https://scrapydweb.herokuapp.com/" rel="nofollow">scrapydweb.herokuapp.com</a></p>
+<h2><a id="user-content-网络拓扑图" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91%E5%9B%BE"></a>网络拓扑图</h2>
+<p><img src="https://img2018.cnblogs.com/blog/892328/201904/892328-20190405144148631-757290246.png" alt="" /></p>
+<h2><a id="user-content-注册帐号" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E6%B3%A8%E5%86%8C%E5%B8%90%E5%8F%B7"></a>注册帐号</h2>
+<ol>
+<li>Heroku</li>
+</ol>
+<p>访问&nbsp;<a href="https://signup.heroku.com/" rel="nofollow">heroku.com</a>&nbsp;注册免费账号（注册页面需要调用 google recaptcha 人机验证，登录页面也需要<strong>科学地进行上网</strong>，访问 app 运行页面则没有该问题），免费账号最多可以<strong>创建和运行5个 app</strong>。</p>
+<p><img src="https://img2018.cnblogs.com/blog/892328/201904/892328-20190405145316985-1552219166.png" alt="" /></p>
+<ol start="2">
+<li>Redis Labs（可选）</li>
+</ol>
+<p>访问&nbsp;<a href="https://redislabs.com/" rel="nofollow">redislabs.com</a>&nbsp;注册免费账号，提供30MB 存储空间，用于下文通过&nbsp;<a href="https://github.com/rmax/scrapy-redis">scrapy-redis</a>&nbsp;实现分布式爬虫。</p>
+<p><img src="https://img2018.cnblogs.com/blog/892328/201904/892328-20190405145340183-1787943396.png" alt="" /></p>
+<h2><a id="user-content-通过浏览器部署-heroku-app" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E9%80%9A%E8%BF%87%E6%B5%8F%E8%A7%88%E5%99%A8%E9%83%A8%E7%BD%B2-heroku-app"></a>通过浏览器部署 Heroku app</h2>
+<ol>
+<li>访问&nbsp;<a href="https://github.com/my8100/scrapyd-cluster-on-heroku-scrapyd-app">my8100/scrapyd-cluster-on-heroku-scrapyd-app</a>&nbsp;一键部署 Scrapyd app。（注意更新页面表单中 Redis 服务器的主机，端口和密码）</li>
+<li>重复第1步完成4个 Scrapyd app 的部署，假设应用名称为&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">1</span></span>&nbsp;,&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">2</span></span>&nbsp;,&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">3</span></span>&nbsp;&nbsp;和&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">4</span></span>&nbsp;</li>
+<li>访问&nbsp;<a href="https://github.com/my8100/scrapyd-cluster-on-heroku-scrapydweb-app">my8100/scrapyd-cluster-on-heroku-scrapydweb-app</a>&nbsp;一键部署 ScrapydWeb app，取名&nbsp;&nbsp;<span class="cnblogs_code">myscrapydweb</span>&nbsp;</li>
+<li>（可选）点击&nbsp;<a href="https://dashboard.heroku.com/apps/myscrapydweb/settings" rel="nofollow">dashboard.heroku.com/apps/myscrapydweb/settings</a>&nbsp;页面中的&nbsp;Reveal Config Vars&nbsp;按钮相应添加更多 Scrapyd server，例如 KEY 为&nbsp;&nbsp;<span class="cnblogs_code">SCRAPYD_SERVER_2</span>&nbsp;, VALUE 为&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">2</span>.herokuapp.com:<span style="color: #800080;">80</span>#group2</span>&nbsp;</li>
+<li>访问&nbsp;<a href="https://myscrapydweb.herokuapp.com/" rel="nofollow">myscrapydweb.herokuapp.com</a></li>
+<li>跳转&nbsp;<strong>部署和运行分布式爬虫</strong>&nbsp;章节继续阅读。</li>
+</ol>
+<h2><a id="user-content-自定义部署" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%83%A8%E7%BD%B2"></a>自定义部署</h2>
+<h3><a id="user-content-安装工具" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E5%AE%89%E8%A3%85%E5%B7%A5%E5%85%B7"></a>安装工具</h3>
+<ol>
+<li><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git" rel="nofollow">Git</a></li>
+<li><a href="https://devcenter.heroku.com/articles/heroku-cli" rel="nofollow">Heroku CLI</a></li>
+<li><a href="https://pypi.org/project/redis/" rel="nofollow">Python client for Redis</a>：运行&nbsp;&nbsp;<span class="cnblogs_code">pip <span style="color: #0000ff;">install</span> redis</span>&nbsp;&nbsp;命令即可。</li>
+</ol>
+<h3><a id="user-content-下载配置文件" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E4%B8%8B%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"></a>下载配置文件</h3>
+<p>新开一个命令行提示符：</p>
+<div class="cnblogs_code">
+<pre>git clone https:<span style="color: #008000;">//</span><span style="color: #008000;">github.com/my8100/scrapyd-cluster-on-heroku</span>
+cd scrapyd-cluster-on-heroku</pre>
+</div>
+<p>&nbsp;</p>
+<h3><a id="user-content-登录-heroku" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E7%99%BB%E5%BD%95-heroku"></a>登录 Heroku</h3>
+<div class="cnblogs_code">
+<pre>heroku <span style="color: #0000ff;">login</span><span style="color: #000000;">
+# outputs:
+# heroku: Press any key to open up the browser to </span><span style="color: #0000ff;">login</span><span style="color: #000000;"> or q to exit:
+# Opening browser to https:</span><span style="color: #008000;">//</span><span style="color: #008000;">cli-auth.heroku.com/auth/browser/12345-abcde</span>
+# Logging <span style="color: #0000ff;">in</span>... <span style="color: #0000ff;">done</span><span style="color: #000000;">
+# Logged </span><span style="color: #0000ff;">in</span> as username@gmail.com</pre>
+</div>
+<p>&nbsp;</p>
+<h3><a id="user-content-创建-scrapyd-集群" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E5%88%9B%E5%BB%BA-scrapyd-%E9%9B%86%E7%BE%A4"></a>创建 Scrapyd 集群</h3>
+<ol>
+<li>新建 Git 仓库</li>
+</ol>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">cd scrapyd
+git init
+# explore and update the files </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> needed
+git status
+git add .
+git commit </span>-a -m <span style="color: #800000;">"</span><span style="color: #800000;">first commit</span><span style="color: #800000;">"</span><span style="color: #000000;">
+git status</span></pre>
+</div>
+<p>&nbsp;</p>
+<ol start="2">
+<li>部署 Scrapyd app</li>
+</ol>
+<div class="cnblogs_code">
+<pre>heroku apps:create svr-<span style="color: #800080;">1</span><span style="color: #000000;">
+heroku git:remote </span>-a svr-<span style="color: #800080;">1</span><span style="color: #000000;">
+git remote </span>-<span style="color: #000000;">v
+git push heroku master
+heroku logs </span>--<span style="color: #0000ff;">tail</span><span style="color: #000000;">
+# Press ctrl</span>+<span style="color: #000000;">c to stop logs outputting
+# Visit https:</span><span style="color: #008000;">//</span><span style="color: #008000;">svr-1.herokuapp.com</span></pre>
+</div>
+<p>&nbsp;</p>
+<ol start="3">
+<li>
+<p>添加环境变量</p>
+<ul>
+<li>设置时区</li>
+</ul>
+<div class="cnblogs_code">
+<pre># python -c <span style="color: #800000;">"</span><span style="color: #800000;">import tzlocal; print(tzlocal.get_localzone())</span><span style="color: #800000;">"</span><span style="color: #000000;">
+heroku config:set TZ</span>=Asia/<span style="color: #000000;">Shanghai
+# heroku config:get TZ</span></pre>
+</div>
+<p>&nbsp;</p>
+<ul>
+<li>添加 Redis 账号（可选，详见&nbsp;<em>scrapy_redis_demo_project.zip</em>&nbsp;中的&nbsp;<em>settings.py</em>）</li>
+</ul>
+<div class="cnblogs_code">
+<pre>heroku config:set REDIS_HOST=your-redis-<span style="color: #000000;">host
+heroku config:set REDIS_PORT</span>=your-redis-<span style="color: #000000;">port
+heroku config:set REDIS_PASSWORD</span>=your-redis-password</pre>
+</div>
+<p>&nbsp;</p>
+</li>
+<li>
+<p>重复上述第2步和第3步完成余下三个 Scrapyd app 的部署和配置：&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">2</span></span>&nbsp;，&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">3</span></span>&nbsp;&nbsp;和&nbsp;&nbsp;<span class="cnblogs_code">svr-<span style="color: #800080;">4</span></span>&nbsp;</p>
+</li>
+</ol>
+<h3><a id="user-content-创建-scrapydweb-app" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E5%88%9B%E5%BB%BA-scrapydweb-app"></a>创建 ScrapydWeb app</h3>
+<ol>
+<li>新建 Git 仓库</li>
+</ol>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">cd ..
+cd scrapydweb
+git init
+# explore and update the files </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> needed
+git status
+git add .
+git commit </span>-a -m <span style="color: #800000;">"</span><span style="color: #800000;">first commit</span><span style="color: #800000;">"</span><span style="color: #000000;">
+git status</span></pre>
+</div>
+<p>&nbsp;</p>
+<ol start="2">
+<li>部署 ScrapydWeb app</li>
+</ol>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">heroku apps:create myscrapydweb
+heroku git:remote </span>-<span style="color: #000000;">a myscrapydweb
+git remote </span>-<span style="color: #000000;">v
+git push heroku master</span></pre>
+</div>
+<p>&nbsp;</p>
+<ol start="3">
+<li>
+<p>添加环境变量</p>
+<ul>
+<li>设置时区</li>
+</ul>
+<div class="cnblogs_code">
+<pre>heroku config:set TZ=Asia/Shanghai</pre>
+</div>
+<p>&nbsp;</p>
+<ul>
+<li>添加 Scrapyd server（详见&nbsp;<em>scrapydweb</em>&nbsp;目录下的&nbsp;<em>scrapydweb_settings_v8.py</em>）</li>
+</ul>
+<div class="cnblogs_code">
+<pre>heroku config:set SCRAPYD_SERVER_1=svr-<span style="color: #800080;">1</span>.herokuapp.com:<span style="color: #800080;">80</span><span style="color: #000000;">
+heroku config:set SCRAPYD_SERVER_2</span>=svr-<span style="color: #800080;">2</span>.herokuapp.com:<span style="color: #800080;">80</span><span style="color: #000000;">#group1
+heroku config:set SCRAPYD_SERVER_3</span>=svr-<span style="color: #800080;">3</span>.herokuapp.com:<span style="color: #800080;">80</span><span style="color: #000000;">#group1
+heroku config:set SCRAPYD_SERVER_4</span>=svr-<span style="color: #800080;">4</span>.herokuapp.com:<span style="color: #800080;">80</span>#group2</pre>
+</div>
+<p>&nbsp;</p>
+</li>
+<li>
+<p>访问&nbsp;<a href="https://myscrapydweb.herokuapp.com/" rel="nofollow">myscrapydweb.herokuapp.com</a>&nbsp;</p>
+</li>
+</ol>
+<p>　　<img src="https://img2018.cnblogs.com/blog/892328/201904/892328-20190405144919207-313578767.png" alt="" /></p>
+<h2><a id="user-content-部署和运行分布式爬虫" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E9%83%A8%E7%BD%B2%E5%92%8C%E8%BF%90%E8%A1%8C%E5%88%86%E5%B8%83%E5%BC%8F%E7%88%AC%E8%99%AB"></a>部署和运行分布式爬虫</h2>
+<ol>
+<li>上传 demo 项目，即&nbsp;<em>scrapyd-cluster-on-heroku</em>&nbsp;目录下的压缩文档&nbsp;<em>scrapy_redis_demo_project.zip</em></li>
+<li>将种子请求推入&nbsp;&nbsp;<span class="cnblogs_code">mycrawler:start_urls</span>&nbsp;&nbsp;触发爬虫并查看结果</li>
+</ol>
+<div class="cnblogs_code">
+<pre>In [1]: <span style="color: #0000ff;">import</span> redis  <span style="color: #008000;">#</span><span style="color: #008000;"> pip install redis</span>
+<span style="color: #000000;">
+In [</span>2]: r = redis.Redis(host=<span style="color: #800000;">'</span><span style="color: #800000;">your-redis-host</span><span style="color: #800000;">'</span>, port=your-redis-port, password=<span style="color: #800000;">'</span><span style="color: #800000;">your-redis-password</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>3]: r.delete(<span style="color: #800000;">'</span><span style="color: #800000;">mycrawler_redis:requests</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">mycrawler_redis:dupefilter</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">mycrawler_redis:items</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>3<span style="color: #000000;">]: 0
+
+In [</span>4]: r.lpush(<span style="color: #800000;">'</span><span style="color: #800000;">mycrawler:start_urls</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">http://books.toscrape.com</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">http://quotes.toscrape.com</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>4]: 2
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> wait for a minute</span>
+In [5]: r.lrange(<span style="color: #800000;">'</span><span style="color: #800000;">mycrawler_redis:items</span><span style="color: #800000;">'</span>, 0, 1<span style="color: #000000;">)
+Out[</span>5<span style="color: #000000;">]:
+[b</span><span style="color: #800000;">'</span><span style="color: #800000;">{"url": "http://quotes.toscrape.com/", "title": "Quotes to Scrape", "hostname": "d6cf94d5-324e-4def-a1ab-e7ee2aaca45a", "crawled": "2019-04-02 03:42:37", "spider": "mycrawler_redis"}</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ b</span><span style="color: #800000;">'</span><span style="color: #800000;">{"url": "http://books.toscrape.com/index.html", "title": "All products | Books to Scrape - Sandbox", "hostname": "d6cf94d5-324e-4def-a1ab-e7ee2aaca45a", "crawled": "2019-04-02 03:42:37", "spider": "mycrawler_redis"}</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><img src="https://img2018.cnblogs.com/blog/892328/201904/892328-20190405145134824-1004981760.gif" alt="" /></p>
+<h2><a id="user-content-总结" class="anchor" href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md#%E6%80%BB%E7%BB%93"></a>总结</h2>
+<ul>
+<li>优点
+<ul>
+<li>免费</li>
+<li>可以爬 Google 等外网</li>
+<li>可扩展（借助于&nbsp;<a href="https://github.com/my8100/scrapydweb">ScrapydWeb</a>）</li>
+</ul>
+</li>
+<li>缺点
+<ul>
+<li>注册和登录需要科学地进行上网</li>
+<li>Heroku app 每天至少自动重启一次并且重置所有文件，因此需要外接数据库保存数据，详见&nbsp;<a href="https://devcenter.heroku.com/articles/dynos#restarting" rel="nofollow">devcenter.heroku.com</a></li>
+</ul>
+</li>
+</ul>
+<h2>GitHub 开源</h2>
+<p><a href="https://github.com/my8100/scrapyd-cluster-on-heroku/blob/master/README_CN.md" target="_blank">my8100/scrapyd-cluster-on-</a>heroku</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2019-04-05 15:10</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=10658782" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(10658782);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 10658782, cb_entryCreatedDate = '2019-04-05 15:10', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

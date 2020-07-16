@@ -1,0 +1,173 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7448283.html">
+    <span>流程图 Graphviz - Graph Visualization Software</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<h1>1.参考</h1>
+<p><a href="https://www.processon.com/" target="_blank">https://www.processon.com/</a>  应该值得一试</p>
+<p>知乎 <a href="https://www.zhihu.com/question/20177573" target="_blank">用什么软件画流程图？</a></p>
+<p><a href="http://www.jianshu.com/p/30201cef8cca" target="_blank">9款国内外垂直领域的在线作图工具[可代替visio]</a></p>
+<p><a href="https://github.com/phodal/articles/issues/18" target="_blank">程序员必知的七个图形工具</a></p>
+<p>说到流程图还是再次提及一下，我们之前说到的<strong>Graphviz</strong> 。</p>
+<blockquote>
+<p>Graphviz （英文：Graph Visualization Software的缩写）是一个由AT&amp;T实验室启动的开源工具包，用于绘制DOT语言脚本描述的图形。它也提供了供其它软件使用的库。</p>
+</blockquote>
+<p>它的主要特点是代码生成图像，并且足够的简单。</p>
+<p> </p>
+<h1>2.Graphviz</h1>
+<p>(1)下载安装</p>
+<p><a href="http://graphviz.org/Download.php" target="_blank">http://graphviz.org/Download.php </a>最下方 agree</p>
+<p><strong>Windows</strong><br><a href="http://graphviz.org/Download_windows.php">Stable and development Windows Install packages</a></p>
+<p> (2)添加环境变量</p>
+<p>path添加： D:\Program Files (x86)\Graphviz2.38\bin</p>
+<p>新开cmd：dot -?</p>
+<p> (3)中文支持</p>
+<p><a href="http://electronic-blue.wikidot.com/blog:9" target="_blank">在 Windows 上設定 Graphviz 中文字型</a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('e45e8e4a-20c3-462b-b247-9140608659fe')"><img id="code_img_closed_e45e8e4a-20c3-462b-b247-9140608659fe" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_e45e8e4a-20c3-462b-b247-9140608659fe" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('e45e8e4a-20c3-462b-b247-9140608659fe',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_e45e8e4a-20c3-462b-b247-9140608659fe" class="cnblogs_code_hide">
+<pre>只要你用 UTF-8 的編碼來儲存描述關係圖的 dot 檔，Graphviz 也可以產生包含中文的關係圖。但 Windows 版的 Graphviz 似乎沒有設定好 fontconfig，因此會找不到中文字型，只要設定好 fontconfig 即可解決。依照預設安裝路徑，設定檔在 C:\Program Files\Graphviz 2.21<span style="color: #000000;">\etc\fonts\fonts.conf，找到以下這行：
+
+    </span>&lt;dir&gt;<span style="color: #008000;">#</span><span style="color: #008000;">FONTDIR#&lt;/dir&gt;</span>
+<span style="color: #000000;">改成 Windows 字型檔的路徑：
+
+    </span>&lt;dir&gt;C:\WINDOWS\Fonts&lt;/dir&gt;<span style="color: #000000;">
+Graphviz 就可以使用中文了！但注意目前似乎只能輸入英文的字型名稱，範例如下：
+
+digraph g {
+    node[fontname </span>= <span style="color: #800000;">"</span><span style="color: #800000;">PMingLiu</span><span style="color: #800000;">"</span><span style="color: #000000;">];
+    </span><span style="color: #800000;">"</span><span style="color: #800000;">中文</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">英文</span><span style="color: #800000;">"</span><span style="color: #000000;">;
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>(4) 可以运行gvedit.exe写入代码，f5直接预览效果</p>
+<p>(5) python库，其实用处不大</p>
+<p><a href="https://pypi.python.org/pypi/graphviz" target="_blank">https://pypi.python.org/pypi/graphviz</a></p>
+<p> </p>
+<h1>3.参考文档</h1>
+<p>官网： <a href="http://graphviz.org/Documentation.php" target="_blank">http://graphviz.org/Documentation.php</a></p>
+<ul>
+<li><a href="http://graphviz.org/pdf/dotguide.pdf" target="_blank">dot</a></li>
+</ul>
+<p> </p>
+<p><a href="https://casatwy.com/shi-yong-dotyu-yan-he-graphvizhui-tu-fan-yi.html" target="_blank">使用DOT语言和Graphviz绘图(翻译)</a></p>
+<p>一次性批量定义属性</p>
+<pre>    node [color=Red,fontname=Courier,shape=box] //All nodes will this shape and colour
+    edge [color=Blue, style=dashed] //All the lines look like this</pre>
+<p><a href="https://bbs.sjtu.edu.cn/bbscon,board,GNULinux,file,M.1396687125.A.html" target="_blank">标 题: 【合集】dot language Graphviz流程图的问题</a></p>
+<p>　　<span class="c37">（连线连在角上）</span></p>
+<p>　　<span class="c37">portPos headport tailport 这几个属性</span></p>
+<p><a href="http://www.infocool.net/kb/Other/201705/350905.html" target="_blank">画图神器--graphviz</a></p>
+<pre>digraph login3times{
+
+    edge[fontname="Microsoft YaHei"]
+    node[shape=box, fontname="Microsoft YaHei" size="20,20"]
+    fontname="Microsoft YaHei"
+    label="三次登录流程图"</pre>
+<h1>4.语法注意事项</h1>
+<p>(1)框图为node，默认形状 ellipse 椭圆形， shape = box 长方形，diamond 菱形，circle 圆形</p>
+<p>(2)连线为edge，箭头方向 [dir=forward, back, both, or none]</p>
+<p>(3)在有必要的时候加双引号，如：“do sth”, "func()" </p>
+<p>(4)注释为 //， 或 /*   */</p>
+<p>(5)不方便之处：</p>
+<p>A -&gt; B -&gt; C -&gt;D[label=to] ，则会在三条连线上都添加 to 字样</p>
+<p>对比：</p>
+<p>A -&gt; B</p>
+<p>B -&gt; C[label=to]</p>
+<p>C -&gt;D</p>
+<p> </p>
+<h1>5.综合应用</h1>
+<div class="cnblogs_code" onclick="cnblogs_code_show('438f29f9-4671-41f0-93d9-afe7ec31d360')"><img id="code_img_closed_438f29f9-4671-41f0-93d9-afe7ec31d360" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_438f29f9-4671-41f0-93d9-afe7ec31d360" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('438f29f9-4671-41f0-93d9-afe7ec31d360',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_438f29f9-4671-41f0-93d9-afe7ec31d360" class="cnblogs_code_hide">
+<pre>//G:\pydata\pycode&gt;dot eg.dot -Tpng -<span style="color: #000000;">o eg.png
+digraph graphname
+{
+</span>//rankdir=<span style="color: #000000;">LR
+node[fontname </span>= <span style="color: #800000;">"</span><span style="color: #800000;">simsun</span><span style="color: #800000;">"</span><span style="color: #000000;">]
+fontname</span>=<span style="color: #800000;">"</span><span style="color: #800000;">Microsoft YaHei</span><span style="color: #800000;">"</span><span style="color: #000000;">
+label</span>=<span style="color: #800000;">"</span><span style="color: #800000;">代理IP获取流程图</span><span style="color: #800000;">"</span><span style="color: #000000;">
+
+START[label</span>=<span style="color: #800000;">"</span><span style="color: #800000;">入口get_mimvp()</span><span style="color: #800000;">"</span> shape=<span style="color: #000000;">box]
+END[label</span>=出口ip_port_type_tuple_list, shape=<span style="color: #000000;">box]
+JUDGE[label</span>=<span style="color: #800000;">"</span><span style="color: #800000;">feature_vectors == []</span><span style="color: #800000;">"</span> color=Blue, fontsize=24, shape=<span style="color: #000000;">diamond]
+
+START </span>-&gt;<span style="color: #000000;"> JUDGE
+                {rank</span>=same; <span style="color: #800000;">"</span><span style="color: #800000;">extract_features()</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">load_mimvp()</span><span style="color: #800000;">"</span><span style="color: #000000;">}
+                JUDGE </span>-&gt; <span style="color: #800000;">"</span><span style="color: #800000;">extract_features()</span><span style="color: #800000;">"</span>[label=True tailport=w]// headport=<span style="color: #000000;">n]
+                        </span><span style="color: #800000;">"</span><span style="color: #800000;">extract_features()</span><span style="color: #800000;">"</span>[style=filled, fillcolor=<span style="color: #000000;">orange]
+                JUDGE </span>-&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_mimvp()</span><span style="color: #800000;">"</span>[label=False tailport=s headport=<span style="color: #000000;">n]
+                    
+</span><span style="color: #800000;">"</span><span style="color: #800000;">extract_features()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_mimvp()</span><span style="color: #800000;">"</span>[label=<span style="color: #0000ff;">return</span>, fontcolor=red, dir=forward]   //dir=forward, back, both, <span style="color: #0000ff;">or</span><span style="color: #000000;"> none        
+
+
+port_src_list[style</span>=filled, fillcolor=<span style="color: #000000;">yellow]
+port_list[style</span>=filled, fillcolor=<span style="color: #000000;">green]
+
+</span><span style="color: #800000;">"</span><span style="color: #800000;">load_mimvp()</span><span style="color: #800000;">"</span> -&gt;<span style="color: #000000;"> {ip_list, type_list, port_src_list}
+                                        port_src_list </span>-&gt;<span style="color: #000000;"> port_list
+{rank</span>=same; ip_list, type_list, port_list} -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">merge_result</span><span style="color: #800000;">"</span> -&gt;<span style="color: #000000;"> END
+
+
+    subgraph cluster1
+    {
+    label</span>=<span style="color: #000000;">子图1_特征提取
+    
+    </span><span style="color: #800000;">"</span><span style="color: #800000;">invoke extract_features()</span><span style="color: #800000;">"</span>[style=filled, fillcolor=<span style="color: #000000;">orange]
+    judge[label</span>=<span style="color: #800000;">"</span><span style="color: #800000;">filepath is not None</span><span style="color: #800000;">"</span> color=Blue, shape=<span style="color: #000000;">diamond]
+    feature_vectors[style</span>=filled, fillcolor=<span style="color: #000000;">red]
+    
+    </span><span style="color: #800000;">"</span><span style="color: #800000;">invoke extract_features()</span><span style="color: #800000;">"</span> -&gt;<span style="color: #000000;"> judge
+        judge </span>-&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_filepath()</span><span style="color: #800000;">"</span>[label=True tailport=<span style="color: #000000;">w]
+        judge </span>-&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_src_list()</span><span style="color: #800000;">"</span>[label=False tailport=<span style="color: #000000;">s]
+        {rank</span>=same; <span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_filepath()</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_src_list()</span><span style="color: #800000;">"</span><span style="color: #000000;">}
+            </span><span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_filepath()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">split_image()</span><span style="color: #800000;">"</span>[label=<span style="color: #000000;">img_list]
+            </span><span style="color: #800000;">"</span><span style="color: #800000;">load_images_from_src_list()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">split_image()</span><span style="color: #800000;">"</span>[label=<span style="color: #000000;">img_list]
+                </span><span style="color: #800000;">"</span><span style="color: #800000;">split_image()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">build_vector()</span><span style="color: #800000;">"</span>[label=<span style="color: #800000;">"</span><span style="color: #800000;">split_imgs</span><span style="color: #800000;">"</span><span style="color: #000000;">]
+                    </span><span style="color: #800000;">"</span><span style="color: #800000;">build_vector()</span><span style="color: #800000;">"</span> -&gt; feature_vectors[label=<span style="color: #800000;">"</span><span style="color: #800000;">item = {input: vector}</span><span style="color: #800000;">"</span>]   // -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_mimvp()</span><span style="color: #800000;">"</span><span style="color: #000000;">
+    } 
+
+ 
+    subgraph cluster2
+    {
+    label</span>=<span style="color: #000000;">子图2_余弦相似度比较
+    port_src[style</span>=filled, fillcolor=<span style="color: #000000;">yellow]
+    port[style</span>=filled, fillcolor=<span style="color: #000000;">green]
+
+    port_src </span>-&gt; <span style="color: #800000;">"</span><span style="color: #800000;">get_port()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">load_image_from_src()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">invoke split_image()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">invoke build_vector()</span><span style="color: #800000;">"</span>
+        <span style="color: #800000;">"</span><span style="color: #800000;">invoke build_vector()</span><span style="color: #800000;">"</span> -&gt; <span style="color: #800000;">"</span><span style="color: #800000;">cos_similarity()</span><span style="color: #800000;">"</span>[label=<span style="color: #800000;">"</span><span style="color: #800000;">vector\nfeature_vectors</span><span style="color: #800000;">"</span>, fontcolor=<span style="color: #000000;">red]
+            </span><span style="color: #800000;">"</span><span style="color: #800000;">cos_similarity()</span><span style="color: #800000;">"</span> -&gt;<span style="color: #000000;"> port
+    }  
+}</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="color: #ff00ff;">代码另存为eg.dot, 编码utf-8</span></p>
+<p><span style="color: #ff00ff;">在命令行中运行：G:\pydata\pycode&gt;dot eg.dot -Tpng -o eg.png</span></p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201708/892328-20170829183040390-345695102.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-08-29 18:37</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7448283" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7448283);return false;">收藏</a></div>
+        </div>

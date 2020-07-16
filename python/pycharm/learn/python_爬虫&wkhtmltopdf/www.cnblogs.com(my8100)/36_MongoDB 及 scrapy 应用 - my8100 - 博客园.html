@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0 1.Scrapy 使用 MongoDB https://doc.scrapy.org/en/latest/topics/item-pipeline.html#write-items-to-mong" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>MongoDB 及 scrapy 应用 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/mongodb.html">
+    <span>MongoDB 及 scrapy 应用</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0</p>
+<p>&nbsp;</p>
+<h2>1.Scrapy 使用 MongoDB</h2>
+<p><a href="https://doc.scrapy.org/en/latest/topics/item-pipeline.html#write-items-to-mongodb" target="_blank">https://doc.scrapy.org/en/latest/topics/item-pipeline.html#write-items-to-mongodb</a></p>
+<h3>Write items to MongoDB</h3>
+<p>In this example we&rsquo;ll write items to&nbsp;<a class="reference external" href="https://www.mongodb.org/">MongoDB</a>&nbsp;using&nbsp;<a class="reference external" href="https://api.mongodb.org/python/current/">pymongo</a>. MongoDB address and database name are specified in Scrapy settings; MongoDB collection is named after item class.</p>
+<p>The main point of this example is to show how to use&nbsp;<a class="reference internal" title="from_crawler" href="https://doc.scrapy.org/en/latest/topics/item-pipeline.html#from_crawler"><code class="xref py py-meth docutils literal"><span class="pre">from_crawler()</span></code></a>&nbsp;method and how to clean up the resources properly.:</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> pymongo
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MongoPipeline(object):
+
+    collection_name </span>= <span style="color: #800000;">'</span><span style="color: #800000;">scrapy_items</span><span style="color: #800000;">'</span>
+
+    <span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, mongo_uri, mongo_db):
+        self.mongo_uri </span>=<span style="color: #000000;"> mongo_uri
+        self.mongo_db </span>=<span style="color: #000000;"> mongo_db
+
+    @classmethod
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> from_crawler(cls, crawler):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> cls(
+            mongo_uri</span>=crawler.settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MONGO_URI</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+            mongo_db</span>=crawler.settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MONGO_DATABASE</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">items</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        )
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> open_spider(self, spider):
+        self.client </span>=<span style="color: #000000;"> pymongo.MongoClient(self.mongo_uri)
+        self.db </span>=<span style="color: #000000;"> self.client[self.mongo_db]
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> close_spider(self, spider):
+        self.client.close()
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> process_item(self, item, spider):
+        self.db[self.collection_name].insert_one(dict(item))
+        </span><span style="color: #0000ff;">return</span> item</pre>
+</div>
+<p>&nbsp;</p>
+<h2>2.MongoDB Tutorial</h2>
+<p><a href="https://api.mongodb.com/python/current/tutorial.html" target="_blank">https://api.mongodb.com/python/current/tutorial.html</a></p>
+<p>建立文件夹并运行&nbsp;MongoDB instance&nbsp;</p>
+<div class="cnblogs_code">
+<pre>C:\Users\win7&gt;mongod --dbpath e:\mongodb\db</pre>
+</div>
+<p>连接数据库</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> MongoClient
+client </span>=<span style="color: #000000;"> MongoClient()
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> client = MongoClient('localhost', 27017)</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> client = MongoClient('mongodb://localhost:27017/')</span>
+<span style="color: #000000;">
+db </span>=<span style="color: #000000;"> client.test_database
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> db = client['test-database']</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>collection(等同于table) 插入一个个 document</p>
+<div class="cnblogs_code">
+<pre>posts =<span style="color: #000000;"> db.posts
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> posts = db['posts']</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> datetime
+post </span>= {<span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">text</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">My first blog post!</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">mongodb</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">python</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">pymongo</span><span style="color: #800000;">"</span><span style="color: #000000;">],
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">date</span><span style="color: #800000;">"</span><span style="color: #000000;">: datetime.datetime.utcnow()}
+        
+post2 </span>= {<span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Martin</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">text</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">My second blog post!</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">mongodb</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">python</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">pymongo</span><span style="color: #800000;">"</span><span style="color: #000000;">],
+        </span><span style="color: #800000;">"</span><span style="color: #800000;">date</span><span style="color: #800000;">"</span><span style="color: #000000;">: datetime.datetime.utcnow()}        
+
+post_id </span>=<span style="color: #000000;"> posts.insert_one(post).inserted_id  #其实等于 result =</span>posts.insert_one(post) 再 post_id = result.inserted_id, 而 insert_many 则是 inserted_ids 返回一个list</pre>
+<pre><span style="color: #000000;">posts.insert_one(post2)</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>允许插入重复&nbsp;document</p>
+<p><span style="color: #ff00ff;">插入之后自动更新了 post3</span>，再次执行 posts.insert_one(post3) 提示 ObjectId 重复</p>
+<p>如果插入 post3 之前执行了 post4 = post3.copy() 其实可以插入相同内容</p>
+<div class="cnblogs_code">
+<pre>In [689]: post3 = {<span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+     ...:         </span><span style="color: #800000;">"</span><span style="color: #800000;">text</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">My first blog post!</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+     ...:         </span><span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">mongodb</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">python</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">pymongo</span><span style="color: #800000;">"</span><span style="color: #000000;">],
+     ...:         </span><span style="color: #800000;">"</span><span style="color: #800000;">date</span><span style="color: #800000;">"</span><span style="color: #000000;">: datetime.datetime.utcnow()}</span><span style="color: #000000;">
+
+In [</span>690<span style="color: #000000;">]: posts.<span style="color: #ff00ff;">insert_one</span>(post3)
+Out[</span>690]: &lt;pymongo.results.InsertOneResult at 0xb803788&gt;<span style="color: #000000;">
+
+In [</span>691<span style="color: #000000;">]: post3
+Out[</span>691<span style="color: #000000;">]:
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: ObjectId(<span style="color: #800000;">'</span><span style="color: #800000;">59e57919fca565500c8e3692</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">author</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">Mike</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">date</span><span style="color: #800000;">'</span>: datetime.datetime(2017, 10, 17, 3, 29, 14, 966000<span style="color: #000000;">),
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">tags</span><span style="color: #800000;">'</span>: [<span style="color: #800000;">'</span><span style="color: #800000;">mongodb</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">python</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">pymongo</span><span style="color: #800000;">'</span><span style="color: #000000;">],
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">text</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">My first blog post!</span><span style="color: #800000;">'</span>}</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;检查确认：</p>
+<div class="cnblogs_code">
+<pre>db.collection_names(include_system_collections=<span style="color: #000000;">False)
+
+posts.count()
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> pprint
+pprint.pprint(posts.find_one())  #满足限制条件，而且仅限一条。不设条件也即get the first document from the posts collection
+
+posts.find_one({</span><span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span><span style="color: #000000;">})
+
+</span><span style="color: #ff00ff;">for i in</span><span style="color: #000000;"><span style="color: #ff00ff;"> posts.find():</span>    #&nbsp;<a class="reference internal" title="pymongo.collection.Collection.find" href="https://api.mongodb.com/python/current/api/pymongo/collection.html#pymongo.collection.Collection.find"><code class="xref py py-meth docutils literal"><span class="pre">find()</span></code></a>&nbsp;returns a&nbsp;<a class="reference internal" title="pymongo.cursor.Cursor" href="https://api.mongodb.com/python/current/api/pymongo/cursor.html#pymongo.cursor.Cursor"><code class="xref py py-class docutils literal"><span class="pre">Cursor</span></code></a>&nbsp;instance, which allows us to iterate over all matching documents.&nbsp; 返回 Cursor 迭代器，同样支持 posts.find({"author": "Mike"})
+    </span><span style="color: #ff00ff;">print i</span></pre>
+</div>
+<p>c:\program files\anaconda2\lib\site-packages\pymongo\cursor.py</p>
+<p>A cursor / iterator over Mongo query results.</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('9936119b-9187-47df-9d8f-400f9be67b03')"><img id="code_img_closed_9936119b-9187-47df-9d8f-400f9be67b03" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_9936119b-9187-47df-9d8f-400f9be67b03" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('9936119b-9187-47df-9d8f-400f9be67b03',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_9936119b-9187-47df-9d8f-400f9be67b03" class="cnblogs_code_hide">
+<pre>In [707<span style="color: #000000;">]: posts.find()
+Out[</span>707]: &lt;pymongo.cursor.Cursor at 0x118a62b0&gt;<span style="color: #000000;">
+
+In [</span>708]: a=<span style="color: #000000;">posts.find()
+
+In [</span>709<span style="color: #000000;">]: a?
+Type:           Cursor
+String form:    </span>&lt;pymongo.cursor.Cursor object at 0x00000000116C6208&gt;<span style="color: #000000;">
+File:           c:\program files\anaconda2\lib\site</span>-<span style="color: #000000;">packages\pymongo\cursor.py
+Docstring:
+A cursor </span>/<span style="color: #000000;"> iterator over Mongo query results.
+
+Init docstring:
+Create a new cursor.
+
+Should </span><span style="color: #0000ff;">not</span> be called directly by application developers -<span style="color: #000000;"> see
+:meth:`</span>~<span style="color: #000000;">pymongo.collection.Collection.find` instead.
+
+.. mongodoc:: cursors</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<h3>关于编码：</h3>
+<p>MongoDB stores data in BSON format. BSON strings are UTF-8 encoded<br />PyMongo decodes each BSON string to a Python unicode string, not a regular str.<br />存储时 str 不变，unicode 自动编码为 utf-8<br />输出统一解码为 unicode</p>
+<div class="cnblogs_code">
+<pre>post = {<span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+
+{u</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: ObjectId(<span style="color: #800000;">'</span><span style="color: #800000;">...</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">author</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">Mike</span><span style="color: #800000;">'</span>,</pre>
+</div>
+<p>&nbsp;</p>
+<h3>Bulk Inserts 批量插入多条文档，每条文档可以不同 field，因此又称&nbsp;<em>schema-free</em></h3>
+<div class="cnblogs_code">
+<pre>&gt;&gt;&gt; new_posts = [{<span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">text</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Another post!</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">bulk</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">insert</span><span style="color: #800000;">"</span><span style="color: #000000;">],
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">date</span><span style="color: #800000;">"</span>: datetime.datetime(2009, 11, 12, 11, 14<span style="color: #000000;">)},
+...              {</span><span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Eliot</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">title</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">MongoDB is fun</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">text</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">and pretty easy too!</span><span style="color: #800000;">"</span><span style="color: #000000;">,
+...               </span><span style="color: #800000;">"</span><span style="color: #800000;">date</span><span style="color: #800000;">"</span>: datetime.datetime(2009, 11, 10, 10, 45<span style="color: #000000;">)}]
+</span>&gt;&gt;&gt; result =<span style="color: #000000;"> posts.<span style="color: #ff00ff;">insert_many</span>(new_posts)
+</span>&gt;&gt;&gt;<span style="color: #000000;"> result.inserted_ids
+[ObjectId(</span><span style="color: #800000;">'</span><span style="color: #800000;">...</span><span style="color: #800000;">'</span>), ObjectId(<span style="color: #800000;">'</span><span style="color: #800000;">...</span><span style="color: #800000;">'</span>)]</pre>
+</div>
+<p>&nbsp;</p>
+<h3>&nbsp;查询数量：</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">posts.count()
+posts.find({</span><span style="color: #800000;">"</span><span style="color: #800000;">author</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">Mike</span><span style="color: #800000;">"</span>}).count()</pre>
+</div>
+<p>&nbsp;</p>
+<h3>##Range Queries 高级查询</h3>
+<h3>##Indexing 索引</h3>
+<h2>#Aggregation Examples 聚合</h2>
+<p><a href="https://api.mongodb.com/python/current/examples/aggregation.html" target="_blank">https://api.mongodb.com/python/current/examples/aggregation.html</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> MongoClient
+db </span>=<span style="color: #000000;"> MongoClient().aggregation_example
+result </span>= db.things.insert_many([{<span style="color: #800000;">"</span><span style="color: #800000;">x</span><span style="color: #800000;">"</span>: 1, <span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">dog</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cat</span><span style="color: #800000;">"</span><span style="color: #000000;">]},
+                                {</span><span style="color: #800000;">"</span><span style="color: #800000;">x</span><span style="color: #800000;">"</span>: 2, <span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">cat</span><span style="color: #800000;">"</span><span style="color: #000000;">]},
+                                {</span><span style="color: #800000;">"</span><span style="color: #800000;">x</span><span style="color: #800000;">"</span>: 2, <span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: [<span style="color: #800000;">"</span><span style="color: #800000;">mouse</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">cat</span><span style="color: #800000;">"</span><span style="color: #000000;">]},
+                                {</span><span style="color: #800000;">"</span><span style="color: #800000;">x</span><span style="color: #800000;">"</span>: 3, <span style="color: #800000;">"</span><span style="color: #800000;">tags</span><span style="color: #800000;">"</span>: []}])<span style="color: #000000;">
+result.inserted_ids</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>OperationFailure: $sort key ordering must be 1 (for ascending) or -1 (for descending)</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> bson.son <span style="color: #0000ff;">import</span><span style="color: #000000;"> SON
+pipeline </span>=<span style="color: #000000;"> [
+    {</span><span style="color: #800000;">"</span><span style="color: #800000;">$unwind</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">$tags</span><span style="color: #800000;">"</span><span style="color: #000000;">},  # tags 字段是一个 array，松绑
+    {</span><span style="color: #800000;">"</span><span style="color: #800000;">$group</span><span style="color: #800000;">"</span>: {<span style="color: #800000;">"</span><span style="color: #800000;">_id</span><span style="color: #800000;">"</span>: <span style="color: #800000;">"</span><span style="color: #800000;">$tags</span><span style="color: #800000;">"</span>, <span style="color: #800000;">"</span><span style="color: #800000;">count</span><span style="color: #800000;">"</span>: {<span style="color: #800000;">"</span><span style="color: #800000;">$sum</span><span style="color: #800000;">"</span>: 1<span style="color: #000000;">}}},  #按照 tag 分组，即为唯一值
+    {</span><span style="color: #800000;">"</span><span style="color: #800000;">$sort</span><span style="color: #800000;">"</span>: SON([(<span style="color: #800000;">"</span><span style="color: #800000;">count</span><span style="color: #800000;">"</span>, -1), (<span style="color: #800000;">"</span><span style="color: #800000;">_id</span><span style="color: #800000;">"</span>, 1<span style="color: #000000;">)])}  #先按 count 降序，再按 _id 升序
+]</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>SON 有序字典</p>
+<div class="cnblogs_code">
+<pre>In [773<span style="color: #000000;">]: SON?
+Init signature: SON(cls, </span>*args, **<span style="color: #000000;">kwargs)
+Docstring:
+SON data.
+
+A subclass of dict that maintains ordering of keys </span><span style="color: #0000ff;">and</span><span style="color: #000000;"> provides a
+few extra niceties </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> dealing with SON. SON objects can be
+converted to </span><span style="color: #0000ff;">and</span> <span style="color: #0000ff;">from</span> BSON.</pre>
+</div>
+<p>&nbsp;</p>
+<div class="cnblogs_code">
+<pre>In [779<span style="color: #000000;">]: db.things.aggregate(pipeline)
+Out[</span>779]: &lt;pymongo.command_cursor.CommandCursor at 0x118a6cc0&gt;<span style="color: #000000;">
+
+In [</span>780<span style="color: #000000;">]: list(db.things.aggregate(pipeline))  #list(迭代器)
+Out[</span>780<span style="color: #000000;">]:
+[{u</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">cat</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">count</span><span style="color: #800000;">'</span>: 3<span style="color: #000000;">},
+ {u</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">dog</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">count</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">},
+ {u</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">mouse</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">count</span><span style="color: #800000;">'</span>: 1}]</pre>
+</div>
+<p>&nbsp;</p>
+<h2>Map/Reduce</h2>
+<h2>Copying a Database 复制备份数据库</h2>
+<p><a href="https://api.mongodb.com/python/current/examples/copydb.html#copying-a-database" target="_blank">https://api.mongodb.com/python/current/examples/copydb.html#copying-a-database</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> MongoClient
+client </span>=<span style="color: #000000;"> MongoClient()
+
+client.admin.command(</span><span style="color: #800000;">'</span><span style="color: #800000;">copydb</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                    fromdb</span>=<span style="color: #800000;">'</span><span style="color: #800000;">test_database</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                    todb</span>=<span style="color: #800000;">'</span><span style="color: #800000;">test_database_bak</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+</span><span style="color: #008000;">#</span><span style="color: #008000;">{u'ok': 1.0}</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;跨服务器以及密码认证，见原文。</p>
+<h2>#Bulk Write Operations 批处理&nbsp;InsertOne, DeleteMany, ReplaceOne, UpdateOne</h2>
+<h3>Bulk Insert</h3>
+<p><a href="https://api.mongodb.com/python/current/examples/bulk.html" target="_blank">&nbsp;https://api.mongodb.com/python/current/examples/bulk.html</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> pymongo
+db </span>=<span style="color: #000000;"> pymongo.MongoClient().bulk_example
+db.test.<span style="color: #ff00ff;">insert_many</span>([{</span><span style="color: #800000;">'</span><span style="color: #800000;">i</span><span style="color: #800000;">'</span>: i} <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10000<span style="color: #000000;">)]).inserted_ids
+
+db.test.count()</span></pre>
+</div>
+<h3>Mixed Bulk Write Operations</h3>
+<ul>
+<li>
+<h4>1/2 Ordered Bulk Write Operations</h4>
+</li>
+</ul>
+<p>Ordered bulk write operations are batched and sent to the serve<span style="color: #000000;">r in the order provided fo</span>r serial execution. <span style="color: #ff0000;">按照顺序执行操作</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> pprint <span style="color: #0000ff;">import</span><span style="color: #000000;"> pprint
+</span><span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> InsertOne, DeleteMany, ReplaceOne, UpdateOne  #类
+result </span>=<span style="color: #000000;"> db.test.bulk_write([  #根据帮助：也可写成 requests = [InsertOne({'y': 1}),]
+    DeleteMany({}),   #类实例
+    InsertOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">}),
+    InsertOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 2<span style="color: #000000;">}),
+    InsertOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 3<span style="color: #000000;">}),
+    UpdateOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 1}, {<span style="color: #800000;">'</span><span style="color: #800000;">$set</span><span style="color: #800000;">'</span>: {<span style="color: #800000;">'</span><span style="color: #800000;">foo</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">bar</span><span style="color: #800000;">'</span><span style="color: #000000;">}}),
+    UpdateOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 4}, {<span style="color: #800000;">'</span><span style="color: #800000;">$inc</span><span style="color: #800000;">'</span>: {<span style="color: #800000;">'</span><span style="color: #800000;">j</span><span style="color: #800000;">'</span>: 1}}, upsert=<span style="color: #000000;">True),  #没有则插入
+    ReplaceOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">j</span><span style="color: #800000;">'</span>: 1}, {<span style="color: #800000;">'</span><span style="color: #800000;">j</span><span style="color: #800000;">'</span>: 2<span style="color: #000000;">})])  #也可满足 {'j': 2}, 替换为{'i': 5}
+pprint(result.bulk_api_result)</span></pre>
+<p>#{'nInserted': 3,<br />#'nMatched': 2,<br />#'nModified': 2,<br />#'nRemoved': 4,<br />#'nUpserted': 1,<br />#'upserted': [{u'_id': 4, u'index': 5}],<br />#'writeConcernErrors': [],<br />#'writeErrors': []}</p>
+<pre><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> db.test.find():
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> i
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;">{u'_id': 1, u'foo': u'bar'}</span><span style="color: #008000;">
+#</span><span style="color: #008000;">{u'_id': 2}</span><span style="color: #008000;">
+#</span><span style="color: #008000;">{u'_id': 3}</span><span style="color: #008000;">
+#</span><span style="color: #008000;">{u'_id': 4, u'j': 2}</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>清空col</p>
+<div class="cnblogs_code">
+<pre>In [844]: r=<span style="color: #000000;">db.test.<span style="color: #ff0000;">delete_many</span>({})
+In [</span>845<span style="color: #000000;">]: r.deleted_count
+Out[</span>845]: 4</pre>
+</div>
+<p>&nbsp;</p>
+<p>删除col</p>
+<div class="cnblogs_code">
+<pre>In [853<span style="color: #000000;">]: db.name
+Out[</span>853]: u<span style="color: #800000;">'</span><span style="color: #800000;">bulk_example</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>855<span style="color: #000000;">]: db.collection_names()
+Out[</span>855]: [u<span style="color: #800000;">'</span><span style="color: #800000;">test</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>860]: db.test.drop() <span style="color: #008000;">#</span><span style="color: #008000;">无返回，不报错，建议用下面的</span>
+<span style="color: #000000;">
+In [</span>861]: db.<span style="color: #ff0000;">drop_collection</span>(<span style="color: #800000;">'</span><span style="color: #800000;">test</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>861<span style="color: #000000;">]:
+{u</span><span style="color: #800000;">'</span><span style="color: #800000;">code</span><span style="color: #800000;">'</span>: 26<span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">codeName</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">NamespaceNotFound</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">errmsg</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">ns not found</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">ok</span><span style="color: #800000;">'</span>: 0.0}</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;The first write failure that occurs (e.g. duplicate key error) aborts the remaining operations, and PyMongo raises&nbsp;<a class="reference internal" title="pymongo.errors.BulkWriteError" href="https://api.mongodb.com/python/current/api/pymongo/errors.html#pymongo.errors.BulkWriteError"><code class="xref py py-class docutils literal"><span class="pre">BulkWriteError</span></code></a>.&nbsp; &nbsp;<span style="color: #ff0000;">出错则中止后续操作。</span></p>
+<div class="cnblogs_code">
+<pre>&gt;&gt;&gt; <span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> InsertOne, DeleteOne, ReplaceOne
+</span>&gt;&gt;&gt; <span style="color: #0000ff;">from</span> pymongo.errors <span style="color: #0000ff;">import</span><span style="color: #000000;"> BulkWriteError
+</span>&gt;&gt;&gt; requests =<span style="color: #000000;"> [
+...     ReplaceOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">j</span><span style="color: #800000;">'</span>: 2}, {<span style="color: #800000;">'</span><span style="color: #800000;">i</span><span style="color: #800000;">'</span>: 5<span style="color: #000000;">}),
+...     InsertOne({</span><span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 4}),  <span style="color: #008000;">#</span><span style="color: #008000;"> Violates the unique key constraint on _id.</span>
+...     DeleteOne({<span style="color: #800000;">'</span><span style="color: #800000;">i</span><span style="color: #800000;">'</span>: 5<span style="color: #000000;">})]
+</span>&gt;&gt;&gt; <span style="color: #0000ff;">try</span><span style="color: #000000;">:
+...     db.test.bulk_write(requests)
+... </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> BulkWriteError as bwe:
+...     pprint(bwe.details)
+...
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">nInserted</span><span style="color: #800000;">'</span><span style="color: #000000;">: 0,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">nMatched</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">nModified</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">nRemoved</span><span style="color: #800000;">'</span><span style="color: #000000;">: 0,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">nUpserted</span><span style="color: #800000;">'</span><span style="color: #000000;">: 0,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">upserted</span><span style="color: #800000;">'</span><span style="color: #000000;">: [],
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">writeConcernErrors</span><span style="color: #800000;">'</span><span style="color: #000000;">: [],
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">writeErrors</span><span style="color: #800000;">'</span>: [{u<span style="color: #800000;">'</span><span style="color: #800000;">code</span><span style="color: #800000;">'</span>: 11000<span style="color: #000000;">,
+                  u</span><span style="color: #800000;">'</span><span style="color: #800000;">errmsg</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">...E11000...duplicate key error...</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                  u</span><span style="color: #800000;">'</span><span style="color: #800000;">index</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">,
+                  u</span><span style="color: #800000;">'</span><span style="color: #800000;">op</span><span style="color: #800000;">'</span>: {<span style="color: #800000;">'</span><span style="color: #800000;">_id</span><span style="color: #800000;">'</span>: 4}}]}</pre>
+</div>
+<p>&nbsp;</p>
+<ul>
+<li>
+<h4>2/2 Unordered Bulk Write Operations 并行无序操作，最后报告出错的部分操作</h4>
+</li>
+</ul>
+<div class="cnblogs_code">
+<pre>db.test.bulk_write(requests, <span style="color: #ff00ff;">ordered=False</span>)</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>#Datetimes and Timezones</h2>
+<p><a href="https://api.mongodb.com/python/current/examples/datetimes.html" target="_blank">https://api.mongodb.com/python/current/examples/datetimes.html</a></p>
+<p>避免使用本地时间&nbsp;<span class="n">datetime<span class="o">.<span class="n">datetime<span class="o">.<span class="n">now<span class="p">()</span></span></span></span></span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> datetime
+
+result </span>= db.objects.insert_one({<span style="color: #800000;">"</span><span style="color: #800000;">last_modified</span><span style="color: #800000;">"</span>: <span style="color: #ff00ff;">datetime.datetime.utcnow()</span>})</pre>
+</div>
+<p>&nbsp;</p>
+<p>关于时区读写，详见原文</p>
+<p>&nbsp;</p>
+<h2>#GridFS Example 存储二进制对象，比如文件</h2>
+<p>This example shows how to use&nbsp;<a class="reference internal" title="gridfs: Tools for working with GridFS" href="https://api.mongodb.com/python/current/api/gridfs/index.html#module-gridfs"><code class="xref py py-mod docutils literal"><span class="pre">gridfs</span></code></a>&nbsp;to store large binary objects (e.g. files) in MongoDB.</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> pymongo <span style="color: #0000ff;">import</span><span style="color: #000000;"> MongoClient
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> gridfs
+
+db </span>=<span style="color: #000000;"> MongoClient().gridfs_example
+fs </span>= gridfs.GridFS(db)  # collection 表</pre>
+</div>
+<p>&nbsp;</p>
+<p>读写doc： str，unicode，file-like</p>
+<div class="cnblogs_code">
+<pre>In [883]: fs.get(fs.put(<span style="color: #800000;">'</span><span style="color: #800000;">hello world</span><span style="color: #800000;">'</span><span style="color: #000000;">)).read()
+Out[</span>883]: <span style="color: #800000;">'</span><span style="color: #800000;">hello world</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>885]: fs.get(fs.put(u<span style="color: #800000;">'</span><span style="color: #800000;">hello world</span><span style="color: #800000;">'</span><span style="color: #000000;">)).read()
+TypeError: must specify an encoding </span><span style="color: #0000ff;">for</span> file <span style="color: #0000ff;">in</span><span style="color: #000000;"> order to write unicode
+
+In [</span>886]: fs.get(fs.put(u<span style="color: #800000;">'</span><span style="color: #800000;">hello world</span><span style="color: #800000;">'</span>,<span style="color: #ff00ff;">encoding='utf-8'</span><span style="color: #000000;">)).read()  # 写入 unicode 必须传入 encoding，没有默认
+Out[</span>886]: <span style="color: #800000;">'</span><span style="color: #800000;">hello world</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>888]: fs.get(fs.put(<span style="color: #ff00ff;">open('abc.txt')</span>,filename=<span style="color: #800000;">'</span><span style="color: #800000;">abc</span><span style="color: #800000;">'</span>,filetype=<span style="color: #800000;">'</span><span style="color: #800000;">txt</span><span style="color: #800000;">'</span><span style="color: #000000;">)).read()  #&nbsp;file-like object (an object with a&nbsp;<code class="xref py py-meth docutils literal"><span class="pre">read()</span></code>&nbsp;method)，自定义属性为可选 </span>filename ，filetype</pre>
+<pre><span style="color: #000000;">Out[</span>888]: <span style="color: #800000;">'</span><span style="color: #800000;">def</span><span style="color: #800000;">'</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>相比第一个doc，第二个多出 encoding 字段，第三个多出 filenname 和 filetype</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171018114426412-802936385.jpg" alt="" /></p>
+<p>&nbsp;这里将 doc 看成 file 更容易理解</p>
+<div class="cnblogs_code">
+<pre>In [896]: <span style="color: #0000ff;">for</span> doc <span style="color: #0000ff;">in</span><span style="color: #000000;"> fs.find():
+     ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> doc.upload_date
+     ...:
+</span>2017-10-18 03:28:04
+2017-10-18 03:28:42.036000
+2017-10-18 03:29:01.740000</pre>
+</div>
+<p>&nbsp;</p>
+<p>print dir(doc)</p>
+<p>'aliases', 'chunk_size', 'close', '<span style="color: #ff00ff;">content_type</span>', '<span style="color: #ff00ff;">filename</span>', 'length', 'md5', 'metadata', 'name', 'read', 'readchunk', 'readline', 'seek', 'tell', '<span style="color: #ff00ff;">upload_date</span>'</p>
+<div class="cnblogs_code">
+<pre>In [899<span style="color: #000000;">]: doc?
+Type:           GridOut
+String form:    </span>&lt;gridfs.grid_file.GridOut object at 0x000000000AB2B8D0&gt;<span style="color: #000000;">
+File:           c:\program files\anaconda2\lib\site</span>-<span style="color: #000000;">packages\gridfs\grid_file.py
+Docstring:
+Class to read data out of GridFS.
+
+Init docstring:
+Read a file </span><span style="color: #0000ff;">from</span> GridFS</pre>
+</div>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-18 12:11</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7681025" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7681025);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7681025, cb_entryCreatedDate = '2017-10-18 12:11', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

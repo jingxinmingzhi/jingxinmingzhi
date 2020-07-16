@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0. 1.参考 Python 爬虫：把廖雪峰教程转换成 PDF 电子书 https://github.com/lzjun567/crawler_html2pdf wkhtmltopdf 就是一个非常好" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>python之使用 wkhtmltopdf 和 pdfkit 批量加载html生成pdf，适用于博客备份和官网文档打包 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/html_to_pdf.html">
+    <span>python之使用 wkhtmltopdf 和 pdfkit 批量加载html生成pdf，适用于博客备份和官网文档打包</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>&nbsp;</p>
+<h2>1.参考</h2>
+<p><a href="https://foofish.net/python-crawler-html2pdf.html" target="_blank">Python 爬虫：把廖雪峰教程转换成 PDF 电子书&nbsp;</a></p>
+<p>https://github.com/lzjun567/crawler_html2pdf</p>
+<p>wkhtmltopdf 就是一个非常好的工具，它可以用适用于多平台的 html 到 pdf 的转换，pdfkit 是 wkhtmltopdf 的Python封装包。</p>
+<p>&nbsp;</p>
+<p><a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#" target="_blank">https://www.crummy.com/software/BeautifulSoup/bs4/doc/#</a></p>
+<p>也可以通过 BeautifulSoup&nbsp;插入删除tag</p>
+<p>soup.insert<br />soup.decompose</p>
+<p>&nbsp;</p>
+<h2>2.安装&nbsp;wkhtmltopdf</h2>
+<h3>### windows 安装：</h3>
+<p><a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a></p>
+<p>下载版本 Windows (MinGW) 0.12.4 32-bit / 64-bit for Windows XP/2003 or later; standalone</p>
+<p>添加路径&nbsp;D:\Program Files\wkhtmltopdf\bin</p>
+<p>需要重新打开cmd以及notepad++。。。</p>
+<h3>###centos 7 安装：</h3>
+<p><a href="https://gist.github.com/AndreasFurster/ebe3f163d6d47be43b72b35b18d8b5b6" target="_blank">https://gist.github.com/AndreasFurster/ebe3f163d6d47be43b72b35b18d8b5b6</a></p>
+<p><a href="https://gist.github.com/calebbrewer/aca424fb14618df8aadd" target="_blank">https://gist.github.com/calebbrewer/aca424fb14618df8aadd</a>&nbsp;&nbsp;rpm 安装，依赖包</p>
+<p><a href="https://yq.aliyun.com/articles/86256" target="_blank">https://yq.aliyun.com/articles/86256</a>&nbsp;&nbsp;<span style="color: #ff00ff;">为了能从任意路径执行程序，将 wkhtmltopdf 安装到 /usr/bin 目录下。</span></p>
+<p><span style="color: #000000;"><span style="color: #ff00ff;"><span style="color: #000000;">确认最新下载地址</span>&nbsp;<a href="https://wkhtmltopdf.org/downloads.html" target="_blank">https://wkhtmltopdf.org/downloads.html</a>&nbsp;&nbsp;<span style="color: #000000;">Linux 0.12.4 32-bit / 64-bit depends on: zlib, fontconfig, freetype, X11 libs (libX11, libXext, libXrender)</span></span></span></p>
+<div class="cnblogs_code">
+<pre>wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-<span style="color: #000000;">amd64.tar.xz
+unxz wkhtmltox</span>-0.12.4_linux-generic-<span style="color: #000000;">amd64.tar.xz
+tar </span>-xvf wkhtmltox-0.12.4_linux-generic-<span style="color: #000000;">amd64.tar
+mv wkhtmltox</span>/bin/* /usr/local/bin/<span style="color: #000000;">
+rm </span>-<span style="color: #000000;">rf wkhtmltox
+rm </span>-f wkhtmltox-0.12.4_linux-generic-amd64.tar</pre>
+</div>
+<p>&nbsp;</p>
+<p>上述方法安装后&nbsp;&nbsp;wkhtmltopdf 提示 未找到命令</p>
+<p>检查</p>
+<p>[root@iz2zeb4wal7uttzolpwmbez bin]# which wkhtmltopdf<br />/usr/bin/which: <span style="color: #ff0000;">no</span> wkhtmltopdf in <span style="color: #ff0000;">(/sbin:/bin:/usr/sbin:/usr/bin)</span><br />[root@iz2zeb4wal7uttzolpwmbez bin]# which mysqld<br />/sbin/mysqld</p>
+<p>解决办法</p>
+<p>mv /usr/local/bin/wkhtmltopdf /usr/bin/wkhtmltopdf</p>
+<p>mv /usr/local/bin/wkhtmltoimage /usr/bin/wkhtmltoimage</p>
+<p>确认</p>
+<p>[root@iz2zeb4wal7uttzolpwmbez /]# which wkhtmltopdf<br />/bin/wkhtmltopdf<br />[root@iz2zeb4wal7uttzolpwmbez /]# which wkhtmltoimage<br />/bin/wkhtmltoimage</p>
+<p>验证&nbsp;wkhtmltopdf http://httpbin.org temp.pdf</p>
+<h3>###centos 7 需要安装字体输出中文：</h3>
+<p><a href="http://www.liumapp.com/articles/2017/04/10/1491811668985.html" target="_blank">http://www.liumapp.com/articles/2017/04/10/1491811668985.html</a>&nbsp;CentOS安装wkhtmltopdf并解决中文字体的问题</p>
+<p>其中字体到这里找&nbsp;C:\Windows\Fonts&nbsp; &nbsp; simsun.ttc&nbsp; &nbsp;msyh.ttf</p>
+<p>&nbsp;</p>
+<h3>###安装 python 库</h3>
+<div class="cnblogs_code">
+<pre>pip install pdfkit</pre>
+</div>
+<p>API&nbsp;<a href="https://pypi.python.org/pypi/pdfkit" target="_blank">https://pypi.python.org/pypi/pdfkit</a></p>
+<p>定制options，搜索关键字&nbsp;<a href="https://wkhtmltopdf.org/usage/wkhtmltopdf.txt" target="_blank">https://wkhtmltopdf.org/usage/wkhtmltopdf.txt</a></p>
+<div class="cnblogs_code">
+<pre>options =<span style="color: #000000;"> {
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">page-size</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">Letter</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-top</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.75in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-right</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.75in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-bottom</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.75in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-left</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.75in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">encoding</span><span style="color: #800000;">'</span>: <span style="color: #800000;">"</span><span style="color: #800000;">UTF-8</span><span style="color: #800000;">"</span><span style="color: #000000;">,  #支持中文
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">custom-header</span><span style="color: #800000;">'</span><span style="color: #000000;"> : [
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">Accept-Encoding</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">gzip</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    ]
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">cookie</span><span style="color: #800000;">'</span><span style="color: #000000;">: [
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">cookie-name1</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">cookie-value1</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">cookie-name2</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">cookie-value2</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+    ],
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">no-outline</span><span style="color: #800000;">'</span><span style="color: #000000;">: None
+}
+
+pdfkit.from_url(</span><span style="color: #800000;">'</span><span style="color: #800000;">http://google.com</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">out.pdf</span><span style="color: #800000;">'</span>, options=options)</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>3.背景知识</h2>
+<h3>3.1url 相对路径 绝对路径</h3>
+<div class="cnblogs_code">
+<pre>In [323]: urlparse.urljoin(<span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/<span style="color: #ff00ff;">latest</span>/index.html</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">intro/overview.html</span><span style="color: #800000;">'</span><span style="color: #000000;">)  #相当于 ./intro/overview.html，其中 . 指代当前文件夹 latest
+Out[</span>323]: <span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/<span style="color: #ff00ff;">latest</span>/intro/overview.html</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>324]: urlparse.urljoin(<span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/latest/intro/overview.html</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">#walk-through-of-an-example-spider</span><span style="color: #800000;">'</span><span style="color: #000000;">)  #当前网页某个tag id=walk-through-of-an-example-spider
+Out[</span>324]: <span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/latest/intro/overview.html#walk-through-of-an-example-spider</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>326]: urlparse.urljoin(<span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/latest/<span style="color: #ff00ff;">intro</span>/overview.html</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">install.html</span><span style="color: #800000;">'</span><span style="color: #000000;">)  #相当于 ./install.html
+Out[</span>326]: <span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/latest/<span style="color: #ff00ff;">intro</span>/install.html</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>327]: urlparse.urljoin(<span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/<span style="color: #ff0000;">latest</span>/<span style="color: #ff00ff;">intro</span>/overview.html</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">../topics/commands.html</span><span style="color: #800000;">'</span><span style="color: #000000;">)  # .. 指代当前文件夹intro的上一层文件夹latest
+Out[</span>327]: <span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/<span style="color: #ff0000;">latest</span>/topics/commands.html</span><span style="color: #800000;">'</span></pre>
+</div>
+<p>&nbsp;</p>
+<p><a href="https://doc.scrapy.org/en/latest/index.html" target="_blank">https://doc.scrapy.org/en/latest/index.html</a></p>
+<p>这一类官方文档一般页脚都为：</p>
+<div>
+<p>&copy; Copyright 2008-2016, Scrapy developers.&nbsp;<span class="commit">Revision&nbsp;<code>65ac0b06</code>.</span></p>
+</div>
+<p>Built with&nbsp;<a href="http://sphinx-doc.org/">Sphinx</a>&nbsp;using a&nbsp;<a href="https://github.com/snide/sphinx_rtd_theme">theme</a>&nbsp;provided by&nbsp;<a href="https://readthedocs.org/">Read the Docs</a>.</p>
+<h3>3.2页面布局规律</h3>
+<ul>
+<li>点击左上角 home 图标转到首页</li>
+<li>左边栏页面导航
+<ul>
+<li>&lt;div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation"&gt;
+<ul>
+<li>&lt;a class="reference internal" href="intro/overview.html"&gt;Scrapy at a glance&lt;/a&gt;&lt;/li&gt;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>正文主体
+<ul>
+<li>&lt;div class="rst-content"&gt;</li>
+</ul>
+</li>
+</ul>
+<h3>3.3转换pdf时注意事项</h3>
+<ul>
+<li>提取正文主体后，可以直接将&nbsp; &lt;div xxxx &lt;/div&gt; 保存html，不需要补全 &lt;html&gt;</li>
+<li>图片链接相对路径需要转换为绝对路径，才会自动加载图片
+<ul>
+<li>&lt;img alt="Inspecting elements with Firebug" src="<span style="color: #ff00ff;">../_images/firebug1.png</span>" style="width: 913px; height: 600px;"&gt;</li>
+</ul>
+</li>
+<li>pdfkit.from_file 第一个参数 input 为 html文件路径列表，文件名不能是中文。。。
+<ul>
+<li>pdfkit.from_file(self.htmls_saved, self.netloc+'.pdf', options=options)</li>
+</ul>
+</li>
+<li>pdf会根据&lt;h1&gt; &lt;h2&gt;等标题 tag 自动生成目录</li>
+</ul>
+<h2>4.完整代码</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">!usr/bin/env python</span><span style="color: #008000;">
+#</span><span style="color: #008000;">coding:utf-8</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> os
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> sys
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> time
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> traceback
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> urlparse
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> threading
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> Queue
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">from</span> scrapy <span style="color: #0000ff;">import</span><span style="color: #000000;"> Selector
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> pdfkit
+
+s </span>=<span style="color: #000000;"> requests.Session()
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> s.headers.update({'user-agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_5 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G36 MicroMessenger/6.5.12 NetType/4G'})</span>
+s.headers.update({<span style="color: #800000;">'</span><span style="color: #800000;">user-agent</span><span style="color: #800000;">'</span>:<span style="color: #800000;">'</span><span style="color: #800000;">Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36</span><span style="color: #800000;">'</span><span style="color: #000000;">})
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> s.headers.update({'Referer':'https://servicewechat.com/wx55b926152a8c3bef/14/page-frame.html'})</span>
+s.verify =<span style="color: #000000;"> False
+s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">http://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">))
+s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">https://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">)) 
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> copy
+sp </span>=<span style="color: #000000;"> copy.deepcopy(s)
+proxies </span>= {<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:1080</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">https</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">https://127.0.0.1:1080</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+sp.proxies </span>=<span style="color: #000000;"> proxies 
+
+</span><span style="color: #0000ff;">from</span> urllib3.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> InsecureRequestWarning
+</span><span style="color: #0000ff;">from</span> warnings <span style="color: #0000ff;">import</span><span style="color: #000000;"> filterwarnings
+filterwarnings(</span><span style="color: #800000;">'</span><span style="color: #800000;">ignore</span><span style="color: #800000;">'</span>, category =<span style="color: #000000;"> InsecureRequestWarning)
+
+
+html_template </span>= u<span style="color: #800000;">"""</span><span style="color: #800000;">
+&lt;!DOCTYPE html&gt;
+
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8" /&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;!-- &lt;center&gt;&lt;h1&gt;{title}&lt;/h1&gt;&lt;/center&gt; --&gt;
+        {content}
+    &lt;/body&gt;
+&lt;/html&gt;
+</span><span style="color: #800000;">"""</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> https://wkhtmltopdf.org/usage/wkhtmltopdf.txt</span>
+<span style="color: #000000;">
+options </span>=<span style="color: #000000;"> {
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">page-size</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">A4</span><span style="color: #800000;">'</span>,  <span style="color: #008000;">#</span><span style="color: #008000;"> Letter</span>
+    <span style="color: #800000;">'</span><span style="color: #800000;">minimum-font-size</span><span style="color: #800000;">'</span>: 25,  <span style="color: #008000;">#</span><span style="color: #008000;">##</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> 'image-dpi':1500, ###</span>
+    
+    <span style="color: #800000;">'</span><span style="color: #800000;">margin-top</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.1in</span><span style="color: #800000;">'</span>,  <span style="color: #008000;">#</span><span style="color: #008000;">0.75in</span>
+    <span style="color: #800000;">'</span><span style="color: #800000;">margin-right</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.1in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-bottom</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.1in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">margin-left</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">0.1in</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">encoding</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">UTF-8</span><span style="color: #800000;">'</span>,  <span style="color: #008000;">#</span><span style="color: #008000;">支持中文</span>
+    <span style="color: #800000;">'</span><span style="color: #800000;">custom-header</span><span style="color: #800000;">'</span><span style="color: #000000;">: [
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">Accept-Encoding</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">gzip</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    ],
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">cookie</span><span style="color: #800000;">'</span><span style="color: #000000;">: [
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">cookie-name1</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">cookie-value1</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+        (</span><span style="color: #800000;">'</span><span style="color: #800000;">cookie-name2</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">cookie-value2</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+    ],
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">outline-depth</span><span style="color: #800000;">'</span>: 10<span style="color: #000000;">,
+}
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 验证 re.findall(pattern, s)</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> &lt;img alt="_images/chapt3_img05_IDE_open.png" class="align-center" src="_images/chapt3_img05_IDE_open.png"&gt;</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> http://linux.vbird.org/linux_basic/0105computers.php</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 只能通过网页源代码 或 resp.text 确认tag img内部是否存在换行 \n, F12看不出来</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 通过findall 修改 (".*?&gt;) 为 (") 或(".*?alt)或(".*?style)确认问题，所以要加 re.S</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> &lt;div style="text-align:center;"&gt;&lt;img src="/linux_basic/0105computers/chipset_z87.jpg" alt="Intel晶片架構" title="Intel晶片架構" style="border: 1px solid black;" /&gt;&lt;br /&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 圖 0.2.1、Intel晶片架構&lt;/div&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> &lt;div style="text-align:center; margin: 0 auto 0 auto; "&gt;&lt;img src="/linux_basic/0105computers/computer01.gif" alt="計算器的功能" title="計算器的功能" </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> style="border: 0px solid black; padding: 0px " /&gt;&lt;/div&gt;</span>
+<span style="color: #000000;">
+pattern_img_scr </span>= re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">(&lt;img\s+[^&gt;]*?src\s*=\s*")(?P&lt;src&gt;.*?)(".*?&gt;)</span><span style="color: #800000;">'</span>, re.S)  <span style="color: #008000;">#</span><span style="color: #008000;">最后不能简写成 " ，否则结果缺 "</span>
+
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> &lt;a class="reference external" href="http://code.google.com/p/selenium/issues/detail?id=1008"&gt;issue 1008&lt;/a&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> text为空，也能匹配到 m.group(4)=''</span>
+pattern_a_href = re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">(&lt;a\s+[^&gt;]*?href\s*=\s*")(?P&lt;href&gt;.*?)(".*?&gt;)(?P&lt;text&gt;.*?)(&lt;/a&gt;)</span><span style="color: #800000;">'</span><span style="color: #000000;">, re.S)
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> http://www.seleniumhq.org/docs/ 合体。。。text为 &lt;img alt="openqa.org logo" id="footerLogo" src="/images/openqa-logo.png"/&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> &lt;a href="http://openqa.org/"&gt;&lt;img alt="openqa.org logo" id="footerLogo" src="/images/openqa-logo.png"/&gt;&lt;/a&gt;</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> http://linux.vbird.org/linux_desktop/0110linuxbasic.php</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 07年的网页，tag head 不符合规范</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 错误：&lt;span class="text_head0"&gt;第一章、架設伺服器前的準備工作&lt;/span&gt; #要变h1</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 错误：&lt;span class="text_h1"&gt;1.1 前言： Linux 有啥功能&lt;/span&gt;    #要变h2</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 更正：&lt;h1&gt;第七章、Linux 磁碟與檔案系統管理&lt;/h1&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 复杂嵌套:&lt;span class="text_head0"&gt;&lt;span class="text_head_en"&gt;Linux &lt;/span&gt;基礎&lt;/span&gt;</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 这里只处理最普通情况</span>
+pattern_span_head = re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">&lt;span\s+class\s*=\s*"text_h(?:ead)?(\d)"&gt;([^&lt;]*?)&lt;/span&gt;</span><span style="color: #800000;">'</span>) <span style="color: #008000;">#</span><span style="color: #008000;">(?:xxx)数量词 不分组版本</span>
+
+
+<span style="color: #0000ff;">class</span><span style="color: #000000;"> HTMLtoPDF(object):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span>(self, seed_url, proxy=False, pdf=<span style="color: #800000;">''</span>, page=1, font_size=25, css_links=<span style="color: #800000;">'</span><span style="color: #800000;">div[class="wy-menu wy-menu-vertical"] a::attr(href)</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+                css_content</span>=<span style="color: #800000;">'</span><span style="color: #800000;">div.rst-content</span><span style="color: #800000;">'</span>, threads_count=30<span style="color: #000000;">):
+        self.seed_url </span>=<span style="color: #000000;"> seed_url
+        self.session </span>= sp <span style="color: #0000ff;">if</span> proxy <span style="color: #0000ff;">else</span><span style="color: #000000;"> s
+        
+        options[</span><span style="color: #800000;">'</span><span style="color: #800000;">minimum-font-size</span><span style="color: #800000;">'</span>] =<span style="color: #000000;"> font_size
+        
+        self.pdf </span>=<span style="color: #000000;"> pdf
+        self.netloc </span>=<span style="color: #000000;"> urlparse.urlparse(seed_url).netloc 
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> self.netloc
+        self.folder </span>= os.path.join(sys.path[0], <span style="color: #800000;">'</span><span style="color: #800000;">{}({})</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(self.netloc, self.pdf))
+        self.folder_temp </span>= os.path.join(sys.path[0], <span style="color: #800000;">'</span><span style="color: #800000;">temp</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        </span><span style="color: #0000ff;">for</span> f <span style="color: #0000ff;">in</span><span style="color: #000000;"> [self.folder, self.folder_temp]:
+            </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> os.path.isdir(f):
+                os.mkdir(f)
+        
+        self.css_content </span>=<span style="color: #000000;"> css_content
+        self.css_links </span>=<span style="color: #000000;"> css_links
+        
+        self.threads_count </span>=<span style="color: #000000;"> threads_count
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> self.lock = threading.Lock()</span>
+        self.links_queue =<span style="color: #000000;"> Queue.Queue()     
+        self.links_seen </span>=<span style="color: #000000;"> []
+        
+        </span><span style="color: #0000ff;">for</span> p <span style="color: #0000ff;">in</span> range(1, page+1<span style="color: #000000;">):
+            url </span>= re.sub(r<span style="color: #800000;">'</span><span style="color: #800000;">page=\d+</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">page=%s</span><span style="color: #800000;">'</span>%p, self.seed_url)  <span style="color: #008000;">#</span><span style="color: #008000;">本来无page，原样返回</span>
+<span style="color: #000000;">            self.links_queue.put((str(len(self.links_seen)), url))
+            self.links_seen.append(url)
+            self.get_links(url)
+        self.links_queue_size </span>=<span style="color: #000000;"> self.links_queue.qsize()
+        self.htmls_saved </span>=<span style="color: #000000;"> [] 
+        
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_links(self, url):
+        encoding, text </span>=<span style="color: #000000;"> self.load_page(url)
+        sel </span>= Selector(text=<span style="color: #000000;">text)
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> [u'#selenium-documentation',</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> u'00_Note_to-the-reader.jsp',</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> u'01_introducing_selenium.jsp',</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> u'01_introducing_selenium.jsp#test-automation-for-web-applications',    </span>
+<span style="color: #000000;">      
+        links </span>= [re.sub(r<span style="color: #800000;">'</span><span style="color: #800000;">#.*$</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span>, i) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> sel.css(self.css_links).extract()]
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> links
+        </span><span style="color: #0000ff;">for</span> link <span style="color: #0000ff;">in</span> links:  <span style="color: #008000;">#</span><span style="color: #008000;">set(links) 会导致乱序,使用urls_seen 去重</span>
+            link_abs =<span style="color: #000000;"> urlparse.urljoin(url, link)
+            </span><span style="color: #0000ff;">if</span> link_abs <span style="color: #0000ff;">not</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.links_seen:
+                self.links_queue.put((str(len(self.links_seen)), link_abs))
+                self.links_seen.append(link_abs)
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> run(self):
+        threads </span>=<span style="color: #000000;"> []
+        </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> range(self.threads_count):
+            t </span>= threading.Thread(target=<span style="color: #000000;">self.save_html)
+            threads.append(t)
+
+        </span><span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> threads:
+            t.setDaemon(True) 
+            t.start() 
+            
+        self.links_queue.join()
+        </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">load done</span><span style="color: #800000;">'</span>
+        
+        <span style="color: #0000ff;">def</span><span style="color: #000000;"> func(filename):
+            _, filename </span>=<span style="color: #000000;">os.path.split(filename)
+            </span><span style="color: #0000ff;">return</span> int(filename[:filename.index(<span style="color: #800000;">'</span><span style="color: #800000;">_</span><span style="color: #800000;">'</span><span style="color: #000000;">)])
+        
+        self.htmls_saved.sort(key</span>=<span style="color: #0000ff;">lambda</span><span style="color: #000000;"> x:func(x))
+        output </span>= u<span style="color: #800000;">'</span><span style="color: #800000;">{}({}) {}.pdf</span><span style="color: #800000;">'</span>.format(self.netloc, self.pdf, time.strftime(<span style="color: #800000;">'</span><span style="color: #800000;">%Y%m%d_%H%M%S</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        pdfkit.from_file(self.htmls_saved, output, options</span>=<span style="color: #000000;">options)
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> output
+
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> save_html(self):
+        </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                (num, url) </span>=<span style="color: #000000;"> self.links_queue.get()
+                meta_encoding, text </span>=<span style="color: #000000;"> self.load_page(url)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> http://linux.vbird.org/linux_desktop/index.php</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> meta charset 是 big5</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> pdfkit 已经设置 utf-8，所以temp文件需要编码为 utf-8</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> 用于浏览的保存页面，如果编码为 utf-8，不符合meta charset 冲突，</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> 需要通过firefox手动指定编码</span>
+<span style="color: #000000;">                
+                encoding_to </span>= meta_encoding <span style="color: #0000ff;">if</span> meta_encoding <span style="color: #0000ff;">else</span> <span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">
+                
+                text </span>= self.modify_text(url, text)   <span style="color: #008000;">#</span><span style="color: #008000;">####################### 含有原始 &lt;html meta charset</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> text = self.modify_content2(url, text)</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> text1 = text</span>
+<span style="color: #000000;">                
+                title, content </span>=<span style="color: #000000;"> self.parse_page(url, text)
+                
+                filename_cn </span>= u<span style="color: #800000;">'</span><span style="color: #800000;">{}_{}.html</span><span style="color: #800000;">'</span>.format(num, re.sub(ur<span style="color: #800000;">'</span><span style="color: #800000;">[^\u4e00-\u9fa5\w\s()_-]</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span>, title))  <span style="color: #008000;">#</span><span style="color: #008000;">ur    </span>
+                filename = u<span style="color: #800000;">'</span><span style="color: #800000;">{}_{}_{}.html</span><span style="color: #800000;">'</span>.format(num, re.sub(r<span style="color: #800000;">'</span><span style="color: #800000;">[^\w\s()_-]</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span>, title),    int(time.time()))  <span style="color: #008000;">#</span><span style="color: #008000;">os.path.abspath('en/abc.html')合成路径 不能是 /en。。</span>
+<span style="color: #000000;">                
+                with open(os.path.join(self.folder, filename_cn),</span><span style="color: #800000;">'</span><span style="color: #800000;">wb</span><span style="color: #800000;">'</span><span style="color: #000000;">) as fp:
+                    fp.write(text.encode(encoding_to,</span><span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+                f </span>=<span style="color: #000000;"> os.path.join(self.folder_temp, filename)
+                with open(f,</span><span style="color: #800000;">'</span><span style="color: #800000;">wb</span><span style="color: #800000;">'</span><span style="color: #000000;">) as fp:
+                    fp.write(content.encode(</span><span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span><span style="color: #000000;">)) 
+                    </span><span style="color: #008000;">#</span><span style="color: #008000;"> fp.write(html_template.format(content=content, title=title).encode('utf-8','replace'))  #没必要补充 &lt;html&gt;</span>
+<span style="color: #000000;">                    self.htmls_saved.append(f)
+                    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">{}/{} {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(len(self.htmls_saved), self.links_queue_size, url)
+                    
+                self.links_queue.task_done()
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+                </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">####################{} {} {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(url, err, traceback.format_exc())
+                
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> load_page(self, url):
+        resp </span>=<span style="color: #000000;"> self.session.get(url)
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> http://linux.vbird.org/linux_desktop/index.php</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> meta charset 是 big5</span>
+        meta_encoding =<span style="color: #000000;"> None
+        </span><span style="color: #0000ff;">if</span> resp.encoding == <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+            encodings </span>= requests.utils.get_encodings_from_content(resp.content)  <span style="color: #008000;">#</span><span style="color: #008000;">re.compile(r'&lt;meta.*?charset</span>
+            <span style="color: #0000ff;">if</span><span style="color: #000000;"> encodings:
+                resp.encoding </span>=<span style="color: #000000;"> encodings[0]
+                meta_encoding </span>=<span style="color: #000000;"> resp.encoding
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                resp.encoding </span>= resp.apparent_encoding  <span style="color: #008000;">#</span><span style="color: #008000;">models.py  chardet.detect(self.content)['encoding']</span>
+            <span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1 changed to %s</span><span style="color: #800000;">'</span>%<span style="color: #000000;">resp.encoding
+            
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> (meta_encoding, resp.text)
+        
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> modify_text(self, url, text):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> m.group(1)='abc' SyntaxError: can't assign to function call 不能直接赋值</span>
+        
+        <span style="color: #008000;">#</span><span style="color: #008000;"> https://doc.scrapy.org/en/latest/topics/firebug.html</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> ../_images/firebug1.png</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> 异常 urlparse.urljoin(self.seed_url, src)</span>
+        
+        <span style="color: #008000;">#</span><span style="color: #008000;"> r'(&lt;img\s+[^&gt;]*?src\s*=\s*")(?P&lt;src&gt;.*?)(".*?&gt;)'</span>
+        <span style="color: #0000ff;">def</span><span style="color: #000000;"> func_src(m):
+            src </span>= m.group(<span style="color: #800000;">'</span><span style="color: #800000;">src</span><span style="color: #800000;">'</span>)  <span style="color: #008000;">#</span><span style="color: #008000;">别名</span>
+            <span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> src.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                src </span>=<span style="color: #000000;"> urlparse.urljoin(url, src)
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> print u'{}{}{}'.format(m.group(1), src, m.group(3))</span>
+            <span style="color: #0000ff;">return</span> u<span style="color: #800000;">'</span><span style="color: #800000;">{}{}{}</span><span style="color: #800000;">'</span>.format(m.group(1), src, m.group(3<span style="color: #000000;">))
+        text </span>=<span style="color: #000000;"> re.sub(pattern_img_scr, func_src, text)
+
+        </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> func_head(m):
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> re.compile(r'&lt;span class="text_h.*?(\d)"&gt;(.*?)&lt;/span&gt;', re.S)</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> 错误：&lt;span class="text_head0"&gt;第一章、架設伺服器前的準備工作&lt;/span&gt;</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> 更正：&lt;h1&gt;第七章、Linux 磁碟與檔案系統管理&lt;/h1&gt;</span>
+            <span style="color: #0000ff;">return</span> u<span style="color: #800000;">'</span><span style="color: #800000;">&lt;h{num}&gt;{word}&lt;/h{num}&gt;</span><span style="color: #800000;">'</span>.format(num=int(m.group(1))+1, word=m.group(2<span style="color: #000000;">))
+        text </span>=<span style="color: #000000;"> re.sub(pattern_span_head, func_head, text)
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> re.compile(r'(&lt;a\s+[^&gt;]*?href\s*=\s*")(?P&lt;href&gt;.*?)(".*?&gt;)(?P&lt;text&gt;.*?)(&lt;/a&gt;)')</span>
+        <span style="color: #0000ff;">def</span><span style="color: #000000;"> func_href(m):
+            href </span>= m.group(<span style="color: #800000;">'</span><span style="color: #800000;">href</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+            text </span>= m.group(<span style="color: #800000;">'</span><span style="color: #800000;">text</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+            </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> href.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">#</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> href.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                    href </span>=<span style="color: #000000;"> urlparse.urljoin(url, href)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> text = u'{text} ({href})'.format(text=text, href=href)</span>
+            <span style="color: #0000ff;">return</span> u<span style="color: #800000;">'</span><span style="color: #800000;">{g1}{href}{g3}{text}{g5}</span><span style="color: #800000;">'</span>.format(g1=m.group(1), g3=m.group(3), g5=m.group(5), href=href, text=<span style="color: #000000;">text)
+            
+            </span><span style="color: #008000;">#</span><span style="color: #008000;">m.string是content全文。。。也不能 return m</span>
+        text =<span style="color: #000000;"> re.sub(pattern_a_href, func_href, text)  
+        
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> text
+        
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> parse_page(self, url, text):
+        sel </span>= Selector(text=<span style="color: #000000;">text)
+        title </span>= sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">head title::text</span><span style="color: #800000;">'</span>).extract_first() <span style="color: #0000ff;">or</span> <span style="color: #800000;">''</span>  <span style="color: #008000;">#</span><span style="color: #008000;">固定css, 匹配不到 extract()返回[],extract_first()返回None</span>
+        content = sel.css(self.css_content).extract_first() <span style="color: #0000ff;">or</span> <span style="color: #800000;">''</span>  <span style="color: #008000;">#</span><span style="color: #008000;">'div.rst-content'</span>
+<span style="color: #000000;">        
+        content </span>=<span style="color: #000000;"> self.clean_content(content)
+        
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> title, content
+        
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> clean_content(self, content):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> &lt;a class="headerlink" href="#check" title="Permalink to this headline"&gt;&para;&lt;/a&gt;  headline 自带图形</span>
+        content = content.replace(u<span style="color: #800000;">'</span><span style="color: #800000;">&gt;\xb6&lt;</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">&gt;&lt;</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+            
+            
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> selenium LanguagePreference</span>
+        sel = Selector(text=<span style="color: #000000;">content)
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> content = content.replace(sel.css('div#codeLanguagePreference').extract_first(), '') #可能是None</span>
+        <span style="color: #0000ff;">for</span> div <span style="color: #0000ff;">in</span> sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">div#codeLanguagePreference</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract():
+            content </span>= content.replace(div, <span style="color: #800000;">''</span><span style="color: #000000;">)
+        
+        </span><span style="color: #0000ff;">for</span> lang <span style="color: #0000ff;">in</span> [<span style="color: #800000;">'</span><span style="color: #800000;">java</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">csharp</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">ruby</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">php</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">perl</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">javascript</span><span style="color: #800000;">'</span><span style="color: #000000;">]:
+            </span><span style="color: #0000ff;">for</span> div <span style="color: #0000ff;">in</span> sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">div.highlight-%s</span><span style="color: #800000;">'</span>%<span style="color: #000000;">lang).extract():
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> print len(content)</span>
+                content = content.replace(div, <span style="color: #800000;">''</span><span style="color: #000000;">)
+                
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> liaoxuefeng comment</span>
+        content = content.replace(<span style="color: #800000;">'</span><span style="color: #800000;">&lt;h3&gt;Comments&lt;/h3&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span><span style="color: #000000;">) 
+        content </span>= content.replace(<span style="color: #800000;">'</span><span style="color: #800000;">&lt;h3&gt;Make a comment&lt;/h3&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span><span style="color: #000000;">)
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> http://lxml.de/</span>
+        <span style="color: #0000ff;">for</span> div <span style="color: #0000ff;">in</span> sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">div.sidemenu</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract():
+            content </span>= content.replace(div, <span style="color: #800000;">''</span><span style="color: #000000;">)        
+        
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> content
+        
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> 未使用，下面解释了，extract() 执行 Serialize 导致 tag 内部 \n 丢失，replace(tag, tag_new) 失效</span>
+    <span style="color: #0000ff;">def</span><span style="color: #000000;"> modify_content2(self, url, content):
+        sel </span>= Selector(text=<span style="color: #000000;">content)
+
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> 修改图片链接为绝对链接，否则pdf无法图片        </span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;img alt="_images/chapt3_img05_IDE_open.png" class="align-center" src="_images/chapt3_img05_IDE_open.png"&gt;</span>
+        
+        <span style="color: #008000;">#</span><span style="color: #008000;"> http://linux.vbird.org/linux_desktop/0110linuxbasic.php</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;img src="0110linuxbasic/computer_fllow.png" border=1</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> title="電腦組成示意圖" alt="電腦組成示意圖"&gt;        </span>
+        
+        <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">img[src]</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+            tag </span>=<span style="color: #000000;"> i.extract()
+            src </span>= i.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./@src</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract_first()
+            </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> src.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                src_abs </span>=<span style="color: #000000;"> urlparse.urljoin(url, src)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> print src, src_abs</span>
+                tag_new =<span style="color: #000000;"> tag.replace(src, src_abs)
+                
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> In [392]: sel.extract?</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Signature: sel.extract()</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Docstring:</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Serialize and return the matched nodes in a single unicode string.</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Percent encoded content is unquoted.</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> File:      c:\program files\anaconda2\lib\site-packages\parsel\selector.py</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Type:      instancemethod                </span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> Serialize。。。。。。。。。。</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> print tag  #换行被自动省略，后面的replace 失效。。。</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> print tag_new</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;img src="0110linuxbasic/computer_fllow.png" border="1" title="電腦組成示意圖" alt="電腦組成示意圖"&gt;</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;img src="http://linux.vbird.org/linux_desktop/0110linuxbasic/computer_fllow.png" border="1" title="電腦組成示意圖" alt="電腦組成示意圖"&gt;                </span>
+<span style="color: #000000;">                
+                content </span>= content.replace(tag, tag_new)  <span style="color: #008000;">#</span><span style="color: #008000;">可能alt(同src...)</span>
+                
+        <span style="color: #008000;">#</span><span style="color: #008000;"> a href 的text添加href信息</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;a class="reference external" href="http://code.google.com/p/selenium/issues/detail?id=1008"&gt;issue 1008&lt;/a&gt;</span>
+        <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">a[href]</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+            tag </span>=<span style="color: #000000;"> i.extract()
+            href </span>= i.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./@href</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract_first()
+            text </span>= i.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./text()</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract_first()
+            
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> 补全内部链接，忽略本页面的#定位</span>
+            <span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> href.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span>) <span style="color: #0000ff;">and</span> <span style="color: #0000ff;">not</span> href.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">#</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                href_abs </span>=<span style="color: #000000;"> urlparse.urljoin(url, href)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> print href, href_abs</span>
+                tag_new =<span style="color: #000000;"> tag.replace(href, href_abs)
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                href_abs </span>=<span style="color: #000000;"> href
+                tag_new </span>=<span style="color: #000000;"> tag
+                
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> 图标链接，如果text为None，replace表现异常</span>
+            <span style="color: #0000ff;">if</span> text <span style="color: #0000ff;">and</span> <span style="color: #0000ff;">not</span> href.startswith(<span style="color: #800000;">'</span><span style="color: #800000;">#</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+                text_new </span>= u<span style="color: #800000;">'</span><span style="color: #800000;">{} ({})</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(text, href_abs)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> print text.encode('gbk','replace'), text_new.encode('gbk','replace')</span>
+                tag_new =<span style="color: #000000;"> tag_new.replace(text, text_new)          
+            
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> 保证整体替换   </span>
+            content =<span style="color: #000000;"> content.replace(tag, tag_new)  
+        
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> content
+
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://www.cnblogs.com/my8100/default.html?page=1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    obj </span>= HTMLtoPDF(url, page=7, pdf=<span style="color: #800000;">'</span><span style="color: #800000;">my8100</span><span style="color: #800000;">'</span>, css_links=<span style="color: #800000;">'</span><span style="color: #800000;">div#mainContent div.postTitle a::attr(href)</span><span style="color: #800000;">'</span>, css_content=<span style="color: #800000;">'</span><span style="color: #800000;">div.post</span><span style="color: #800000;">'</span><span style="color: #000000;">)  
+    
+    obj.run()</span></pre>
+</div>
+<p>&nbsp;</p>
+<h2>5.更多应用</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://doc.scrapy.org/en/latest/index.html</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, proxy=True)  </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://python3-cookbook.readthedocs.io/zh_CN/latest/index.html</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, font_size=20, css_links='div[class="toctree-wrapper compound"] a::attr(href)') </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://www.seleniumhq.org/docs/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, proxy=True, css_links='div#selenium-documentation a::attr(href)', css_content='div#mainContent')  </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://www.crummy.com/software/BeautifulSoup/bs4/doc/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='BeautifulSoup', css_links='div.sphinxsidebarwrapper a::attr(href)', css_content='div.body')</span>
+<span style="color: #000000;">
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, proxy=True, pdf='python2', css_links='ul#x-wiki-index a::attr(href)', css_content='div.x-content', threads_count=10)  </span>
+<span style="color: #000000;">
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, proxy=True, pdf='python3', css_links='ul#x-wiki-index a::attr(href)', css_content='div.x-content', threads_count=10)  </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://docs.python.org/2/howto/index.html</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='python2howto', css_links='div[class="toctree-wrapper compound"] a::attr(href)', css_content='div.body')  </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://lxml.de/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='lxml', css_links='div.menu a::attr(href)', css_content='div.document')     </span>
+<span style="color: #000000;">
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://docs.python-requests.org/zh_CN/latest/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='requests', css_links='div[class="toctree-wrapper compound"] a::attr(href)', css_content='div.body')      </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://twistedmatrix.com/documents/current/core/howto/index.html</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='twisted_core_guide', css_links='div[class="body"] a::attr(href)', css_content='div.body')   </span>
+<span style="color: #000000;">
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://linux.vbird.org/linux_basic/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='linux_basic', css_links='div[class="mainarea"] a::attr(href)', css_content='div.mainarea')   </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://linux.vbird.org/linux_server/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='linux_server', css_links='td[width="718"] a::attr(href)', css_content='td[width="718"]')       </span>
+<span style="color: #000000;">    
+    url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://linux.vbird.org/linux_desktop/</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = HTMLtoPDF(url, pdf='linux_desktop', css_links='td[width="718"] a::attr(href)', css_content='td[width="718"]')     </span>
+    
+    
+    </pre>
+</div>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-28 18:53</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7738366" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7738366);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7738366, cb_entryCreatedDate = '2017-10-28 18:53', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

@@ -1,0 +1,162 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_redis_update_score.html">
+    <span>scrapy_redis 相关: 多线程更新 score/request.priority</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.背景</h2>
+<p>使用 scrapy_redis 爬虫， 忘记或错误设置 request.priority(Rule 也可以通过参数 process_request 设置 request.priority)，导致提取 item 的 request 排在有序集 xxx:requests 的队尾，持续占用内存。</p>
+<p> </p>
+<h2>1.代码实现</h2>
+<p>遍历 SortedSet 的所有 item 并根据预定义字典对 data 中的 url 进行正则匹配，更新 score 并复制到临时 newkey，最后执行 rename </p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> sys
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">from</span> multiprocessing.dummy <span style="color: #0000ff;">import</span><span style="color: #000000;"> Pool as ThreadPool
+</span><span style="color: #0000ff;">from</span> functools <span style="color: #0000ff;">import</span><span style="color: #000000;"> partial
+
+</span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+   input </span>= raw_input <span style="color: #008000;">#</span><span style="color: #008000;">For py2</span>
+<span style="color: #0000ff;">except</span><span style="color: #000000;"> NameError:
+   </span><span style="color: #0000ff;">pass</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> redis
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> print_line(string):
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">\n{symbol}{space}{string}</span><span style="color: #800000;">'</span>.format(symbol=<span style="color: #800000;">'</span><span style="color: #800000;">#</span><span style="color: #800000;">'</span>*10, space=<span style="color: #800000;">'</span> <span style="color: #800000;">'</span>*5, string=<span style="color: #000000;">string))
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> check_key_scores(key):
+    </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+        total </span>=<span style="color: #000000;"> redis_server.zcard(key)
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> redis.exceptions.ResponseError:
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">The value of '{key}' is not a SortedSet</span><span style="color: #800000;">"</span>.format(key=<span style="color: #000000;">key))
+        sys.exit()
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(err)
+        sys.exit()
+
+    </span><span style="color: #0000ff;">if</span> total ==<span style="color: #000000;"> 0:
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">key '{key}' does not exist or has no items</span><span style="color: #800000;">"</span>.format(key=<span style="color: #000000;">key))
+        sys.exit()
+
+    __, min_score </span>= redis_server.zrange(key, 0, 0, withscores=<span style="color: #000000;">True)[0]
+    __, max_score </span>= redis_server.zrange(key, -1, -1, withscores=<span style="color: #000000;">True)[0]
+
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">score  amount</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    total_ </span>=<span style="color: #000000;"> 0
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> Asuming that score/request.priority is an integer, rather than float number like 1.1</span>
+    <span style="color: #0000ff;">for</span> score <span style="color: #0000ff;">in</span> range(int(min_score), int(max_score)+1<span style="color: #000000;">):
+        count </span>=<span style="color: #000000;"> redis_server.zcount(key, score, score)
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(score, count)
+        total_ </span>+=<span style="color: #000000;"> count
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">{total_}/{total} items of key '{key}' have an integer priority</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            total_</span>=total_, total=total_, key=<span style="color: #000000;">key))
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> zadd_with_new_score(startstop, total_items):
+    data, ori_score </span>= redis_server.zrange(key, startstop, startstop, withscores=<span style="color: #000000;">True)[0]
+    </span><span style="color: #0000ff;">for</span> pattern, score <span style="color: #0000ff;">in</span><span style="color: #000000;"> pattern_score:
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> data eg: b'\\x80\\x02}q\\x00(X\\x03\\x00\\x00\\x00urlq\\x01X\\x13\\x00\\x00\\x00http://httpbin.org/q\\x02X\\x08\\x00\\x00\\x00callbackq\\x03X\\x</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> See /site-packages/scrapy_redis/queue.py</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> We don't use zadd method as the order of arguments change depending on</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> whether the class is Redis or StrictRedis, and the option of using</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> kwargs only accepts strings, not bytes.</span>
+        m = pattern.search(data.decode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> m:
+            redis_server.execute_command(</span><span style="color: #800000;">'</span><span style="color: #800000;">ZADD</span><span style="color: #800000;">'</span><span style="color: #000000;">, newkey, score, data)
+            </span><span style="color: #0000ff;">break</span>
+    <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+        redis_server.execute_command(</span><span style="color: #800000;">'</span><span style="color: #800000;">ZADD</span><span style="color: #800000;">'</span><span style="color: #000000;">, newkey, ori_score, data)
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">{startstop} / {total_items}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+            startstop</span>=startstop+1, total_items=<span style="color: #000000;">total_items))
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+
+    password </span>= <span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    host </span>= <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    port </span>= <span style="color: #800000;">'</span><span style="color: #800000;">6379</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    database_num </span>=<span style="color: #000000;"> 0
+
+    <span style="color: #ff0000;">key </span></span><span style="color: #ff0000;">= 'test:requests'</span><span style="color: #000000;">
+    newkey </span>= <span style="color: #800000;">'</span><span style="color: #800000;">temp</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Request whose url matching any key of keyword_score would be updated with the corresponding value as its score</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Smaller value/score means higher request.priority</span>
+    <span style="color: #ff0000;">keyword_score = {'httpbin': -12, 'apps/details': 1</span><span style="color: #000000;"><span style="color: #ff0000;">}</span>
+    pattern_score </span>= [(re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">url.*?%s.*?callback</span><span style="color: #800000;">'</span>%k), v)<span style="color: #0000ff;">for</span> (k, v) <span style="color: #0000ff;">in</span><span style="color: #000000;"> keyword_score.items()]
+    
+    <span style="color: #ff0000;">threads_amount </span></span><span style="color: #ff0000;">= 10</span><span style="color: #000000;">
+
+    redis_server </span>= redis.StrictRedis.from_url(<span style="color: #800000;">'</span><span style="color: #800000;">redis://:{password}@{host}:{port}/{database_num}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                                password</span>=password, host=<span style="color: #000000;">host,
+                                                port</span>=port, database_num=<span style="color: #000000;">database_num))
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 0: pre check</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    check_key_scores(key)
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 1: copy items and update score</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> total_items = redis_server.zlexcount(key, '-', '+')</span>
+    total_items =<span style="color: #000000;"> redis_server.zcard(key)
+    input(</span><span style="color: #800000;">"</span><span style="color: #800000;">Press Enter to copy {total_items} items of '{key}' into '{newkey}' with new score</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            total_items</span>=total_items, key=key, newkey=<span style="color: #000000;">newkey))
+    p </span>=<span style="color: #000000;"> ThreadPool(threads_amount)
+    p.map(partial(zadd_with_new_score, total_items</span>=<span style="color: #000000;">total_items), range(total_items))
+    p.close()   </span><span style="color: #008000;">#</span><span style="color: #008000;">Prevents any more tasks from being submitted to the pool. Once all the tasks have been completed the worker processes will exit.</span>
+    p.join()    <span style="color: #008000;">#</span><span style="color: #008000;">Wait for the worker processes to exit. One must call close() or terminate() before using join().</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> For py3</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> https://stackoverflow.com/questions/5442910/python-multiprocessing-pool-map-for-multiple-arguments</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> with ThreadPool(threads_amount) as pool:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> pool.map(partial(zadd_with_new_score, total_items=total_items), range(total_items))</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> print('zadd_with_new_score done')</span>
+<span style="color: #000000;">
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 2: check copy result</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    check_key_scores(key)
+    check_key_scores(newkey)
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 3: delete, rename and check key</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    input(</span><span style="color: #800000;">"</span><span style="color: #800000;">Press Enter to DELETE '{key}' and RENAME '{newkey}' to '{key}'</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            key</span>=key, newkey=<span style="color: #000000;">newkey))
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(redis_server.delete(key))
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(redis_server.rename(newkey, key))
+    check_key_scores(key)
+    check_key_scores(newkey)</span></pre>
+</div>
+<p> </p>
+<p> </p>
+<h2>2.运行结果</h2>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180726184006505-1503160063.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-26 18:52</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9373669" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9373669);return false;">收藏</a></div>
+        </div>

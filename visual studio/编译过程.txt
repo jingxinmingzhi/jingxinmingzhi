@@ -1,0 +1,5 @@
+g++ -o test.ii -E test.cpp   预处理
+g++ -o test.s -E test.ii       编译--转成汇编
+g++ -o test.o  -E test.s      汇编器将 .s转成.o（目标文件）
+g++ -o test.exe  -E test.o  链接器 将.o和库文件链接起来生成可执行文件
+

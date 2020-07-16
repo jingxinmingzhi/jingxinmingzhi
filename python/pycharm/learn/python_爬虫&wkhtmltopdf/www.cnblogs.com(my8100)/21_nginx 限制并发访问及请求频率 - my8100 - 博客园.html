@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0. 1.参考 【工作】Nginx限制IP并发连接数和请求数的研究 Module ngx_http_limit_conn_module Module ngx_http_limit_req_module" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>nginx 限制并发访问及请求频率 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/8057804.html">
+    <span>nginx 限制并发访问及请求频率</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>&nbsp;</p>
+<h2>1.参考</h2>
+<p><a href="http://www.jiagoumi.com/work/718.html" target="_blank">【工作】Nginx限制IP并发连接数和请求数的研究</a></p>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html" target="_blank">Module ngx_http_limit_conn_module</a></p>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_limit_req_module.html" target="_blank">Module ngx_http_limit_req_module</a></p>
+<p><a href="https://www.chrisyue.com/leaky-bucket-and-nginx-limit_req-module.html" target="_blank">漏桶算法和 NGINX 的 limit_req 模块</a></p>
+<p>漏桶这个名字，其实就非常形象的描述了算法本身的原理。大家都知道，一个身上打了 n 个眼儿的桶，无论你倒进桶里的水多还是少，漏出来的水的流速也会保持稳定，这就是此算法的本质。再以 NGINX + PHP-FPM 为例，我们在 NGINX 配置里定义一个最大处理请求的速度，如果 PHP-FPM 的稳定处理速度峰值是 1000 RPS，那就在 NGINX 里定义处理请求速度最大为 1000 RPS。当 RPS 已经大于这个值的时候，多出来的请求就被 NGINX 这个桶暂时储存起来，排着队等待处理。在 NGINX 的精心照料下，PHP-FPM 会相对稳定的处理来自 NGINX 的请求，而不会出现突然暴增的请求让 PHP-FPM 处理不过来，甚至挂掉。</p>
+<p>然而桶也有大小，NGINX 也一样，假如请求太多太多，桶都装不下了，那么桶将会把多出来的请求直接漏掉，返回 503 错误。</p>
+<p>&nbsp;</p>
+<p><a href="https://www.kancloud.cn/digest/php-src/136260" target="_blank">php-fpm 与 Nginx优化总结</a></p>
+<p>最大请求数max_requests</p>
+<p>最长执行时间request_terminate_timeout</p>
+<h2>2.vi /etc/nginx/nginx.conf</h2>
+<p>在 http{} 添加：</p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #008000;">#</span><span style="color: #008000;"># 2017-12-18 【工作】Nginx限制IP并发连接数和请求数的研究 http://www.jiagoumi.com/work/718.html</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">调整为1，nginx -t 检查，再reload，查看 error.log</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">默认为503 Service Unavailable，由于临时的服务器维护或者过载，</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">可以429 Too Many Requests 用户在给定的时间内发送了太多的请求</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> [error] limiting connections by zone "conn_ip"</span>
+    limit_conn_zone <span style="color: #800080;">$binary_remote_addr</span> zone=conn_ip:<span style="color: #000000;">10m;
+    limit_conn conn_ip </span>10;  <span style="color: #008000;">#</span><span style="color: #008000;">如果这里设置为限制1个ip只能1个连接，log 显示 req_freq_ip 相关控制信息</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> [error] limiting connections by zone "conn_server"</span>
+    limit_conn_zone <span style="color: #800080;">$server_name</span> zone=conn_server:<span style="color: #000000;">10m;
+    limit_conn conn_server </span>1000<span style="color: #000000;">;
+    
+    
+    limit_req_zone  </span><span style="color: #800080;">$binary_remote_addr</span> zone=req_freq_ip:10m rate=3r/<span style="color: #000000;">s;
+    </span><span style="color: #008000;">#</span><span style="color: #008000;">这样相当于容量为0，都会被503，没有意义</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">limit_req zone=req_freq_ip；  #By default, the maximum burst size is equal to zero</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;">超过每秒3个请求，放入最多容纳10个的缓冲区，或者理解为10个令牌？</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">超过3.x，则log显示 [warn] delaying; 超过10.x，则log显示 [error] limiting, 会被503</span>
+    limit_req zone=req_freq_ip burst=10<span style="color: #000000;">;
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;">后面加 nodelay 则未超过10.x的拿到令牌的请求不会被延迟</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">limit_req zone=req_freq_ip burst=10 nodelay;  </span>
+<span style="color: #000000;">    
+    limit_req_status </span>429<span style="color: #000000;">;
+    
+    
+    limit_conn_log_level error;  </span><span style="color: #008000;">#</span><span style="color: #008000;">info | notice | warn | error 不支持 debug</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>3.这里打开一个网页，实际上建立了多个连接，其中也包括连接复用。</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201712/892328-20171218153317740-1937556163.png" alt="" /></p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-12-18 15:22</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8057804" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(8057804);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 8057804, cb_entryCreatedDate = '2017-12-18 15:22', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

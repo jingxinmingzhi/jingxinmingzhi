@@ -1,0 +1,396 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_middleware_mysql.html">
+    <span>Scrapy 扩展中间件: 同步/异步提交批量 item 到 MySQL</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<p><a href="https://doc.scrapy.org/en/latest/topics/item-pipeline.html?highlight=mongo#write-items-to-mongodb" target="_blank">https://doc.scrapy.org/en/latest/topics/item-pipeline.html?highlight=mongo#write-items-to-mongodb</a></p>
+<p> 20180721新增：异步版本</p>
+<p><a href="https://twistedmatrix.com/documents/15.3.0/core/howto/rdbms.html" target="_blank">https://twistedmatrix.com/documents/15.3.0/core/howto/rdbms.html</a></p>
+<p><a href="https://twistedmatrix.com/documents/18.7.0/api/twisted.python.failure.Failure.html" target="_blank">https://twistedmatrix.com/documents/18.7.0/api/twisted.python.failure.Failure.html</a></p>
+<p><a href="https://twistedmatrix.com/documents/12.1.0/core/howto/time.html" target="_blank">https://twistedmatrix.com/documents/12.1.0/core/howto/time.html</a></p>
+<p> </p>
+<h2>1.主要实现</h2>
+<p>(1) 连接超时自动重连 MySQL server</p>
+<p>(2) 通过 item_list 收集 item，达到阈值后批量提交至数据库</p>
+<p>(3) 通过解析异常，自动移除存在异常的数据行，重新提交 item_list</p>
+<p>(4) shutdown 之前在 close_spider() 中提交当前 item_list</p>
+<p>(5) 20180721新增：异步版本</p>
+<p> </p>
+<h2>2.同步版本</h2>
+<p><strong>保存至 /site-packages/my_pipelines.py</strong></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> socket <span style="color: #0000ff;">import</span><span style="color: #000000;"> gethostname
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> time
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">from</span> html <span style="color: #0000ff;">import</span><span style="color: #000000;"> escape
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> pymysql
+pymysql.install_as_MySQLdb()
+</span><span style="color: #0000ff;">from</span> pymysql <span style="color: #0000ff;">import</span><span style="color: #000000;"> OperationalError, InterfaceError, DataError, IntegrityError
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MyMySQLPipeline(object):
+
+    hostname </span>=<span style="color: #000000;"> gethostname()
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, settings):
+        self.mysql_host </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_HOST</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        self.mysql_port </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_PORT</span><span style="color: #800000;">'</span>, 3306<span style="color: #000000;">)
+        self.mysql_user </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_USER</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">username</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        self.mysql_passwd </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_PASSWD</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        self.mysql_reconnect_wait </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_RECONNECT_WAIT</span><span style="color: #800000;">'</span>, 60<span style="color: #000000;">)
+
+        self.mysql_db </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_DB</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        self.mysql_charset </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_CHARSET</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span>)  <span style="color: #008000;">#</span><span style="color: #008000;">utf8mb4</span>
+        self.mysql_item_list_limit = settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_ITEM_LIST_LIMIT</span><span style="color: #800000;">'</span>, 30<span style="color: #000000;">)
+
+<span style="color: #ff0000;">        self.item_list </span></span><span style="color: #ff0000;">=</span><span style="color: #000000;"><span style="color: #ff0000;"> []</span>
+
+
+    @classmethod
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> from_crawler(cls, crawler):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> cls(
+            settings </span>=<span style="color: #000000;"> crawler.settings
+        )
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> open_spider(self, spider):
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            self.conn </span>=<span style="color: #000000;"> pymysql.connect(
+                host </span>=<span style="color: #000000;"> self.mysql_host,
+                port </span>=<span style="color: #000000;"> self.mysql_port,
+                user </span>=<span style="color: #000000;"> self.mysql_user,
+                passwd </span>=<span style="color: #000000;"> self.mysql_passwd,
+                db </span>=<span style="color: #000000;"> self.mysql_db,
+                charset </span>=<span style="color: #000000;"> self.mysql_charset,
+            )
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: FAIL to connect {} {}</span><span style="color: #800000;">'</span>.format(err.<span style="color: #800080;">__class__</span><span style="color: #000000;">, err))
+            time.sleep(self.mysql_reconnect_wait)
+            self.open_spider(spider)
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            spider.logger.info(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: connected</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+            self.curs </span>=<span style="color: #000000;"> self.conn.cursor(pymysql.cursors.DictCursor)
+            spider.curs </span>=<span style="color: #000000;"> self.curs
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> close_spider(self, spider):
+        self.insert_item_list(spider)
+        self.conn.close()
+        spider.logger.info(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: closed</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> process_item(self, item, spider):
+<span style="color: #ff0000;">        self.item_list.append(item)
+        </span></span><span style="color: #ff0000;">if len(self.item_list) &gt;= self.mysql_item_list_limit:
+            self.insert_item_list(spider)
+
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> item
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> sql(self):
+        </span><span style="color: #0000ff;">raise</span> NotImplementedError(<span style="color: #800000;">'</span><span style="color: #800000;">Subclass of MyMySQLPipeline must implement the sql() method</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> insert_item_list(self, spider):
+        spider.logger.info(</span><span style="color: #800000;">'</span><span style="color: #800000;">insert_item_list: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(len(self.item_list)))
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            self.sql()
+        </span><span style="color: #ff0000;">except (OperationalError, InterfaceError) as err:
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.OperationalError'&gt; </span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> (2013, 'Lost connection to MySQL server during query ([Errno 110] Connection timed out)')</span>
+            spider.logger.info(<span style="color: #800000;">'</span><span style="color: #800000;">MySQL: exception {} err {}</span><span style="color: #800000;">'</span>.format(err.<span style="color: #800080;">__class__</span><span style="color: #000000;">, err))
+            self.open_spider(spider)
+            self.insert_item_list(spider)
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            </span><span style="color: #0000ff;">if</span> len(err.args) == 2 <span style="color: #0000ff;">and</span> isinstance(err.args[1<span style="color: #000000;">], str):
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.DataError'&gt; </span>
+                    <span style="color: #008000;">#</span><span style="color: #008000;"> (1264, "Out of range value for column 'position_id' at row 2")</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.InternalError'&gt; </span>
+                    <span style="color: #008000;">#</span><span style="color: #008000;"> (1292, "Incorrect date value: '1977-06-31' for column 'release_day' at row 26")</span>
+<span style="color: #ff0000;">                m_row = re.search(r'at\s+row\s+(\d+)$', err.args[1])
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.IntegrityError'&gt; </span>
+                    <span style="color: #008000;">#</span><span style="color: #008000;"> (1048, "Column 'name' cannot be null") films 43894</span>
+<span style="color: #ff0000;">                m_column = re.search(r"Column\s'(.+)'", err.args[1])
+
+                </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> m_row:
+                    row </span>= m_row.group(1<span style="color: #000000;">)
+                    item </span>= self.item_list.pop(int(row) - 1<span style="color: #000000;">)
+                    spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} exception from item {}</span><span style="color: #800000;">'</span>.format(err.<span style="color: #800080;">__class__</span><span style="color: #000000;">, err, item))
+                    self.insert_item_list(spider)
+                </span><span style="color: #0000ff;">elif</span><span style="color: #000000;"> m_column:
+                    column </span>= m_column.group(1<span style="color: #000000;">)
+                    item_list </span>=<span style="color: #000000;"> []
+                    </span><span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.item_list:
+                        </span><span style="color: #0000ff;">if</span> item[column] ==<span style="color: #000000;"> None:
+                            item_list.append(item)
+                    </span><span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span><span style="color: #000000;"> item_list:
+                        self.item_list.remove(item)
+                        spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} exception from item {}</span><span style="color: #800000;">'</span>.format(err.<span style="color: #800080;">__class__</span><span style="color: #000000;">, err, item))
+                    self.insert_item_list(spider)
+                </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                    spider.logger.error(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} unhandled exception from item_list: \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                        err.</span><span style="color: #800080;">__class__</span><span style="color: #000000;">, err, self.item_list))
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                spider.logger.error(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} unhandled exception from item_list: \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                        err.</span><span style="color: #800080;">__class__</span><span style="color: #000000;">, err, self.item_list))
+        </span><span style="color: #0000ff;">finally</span><span style="color: #000000;">:
+<span style="color: #ff0000;">            self.item_list.clear()</span></span></pre>
+</div>
+<p> </p>
+<h2>3.调用方法</h2>
+<p>Scrapy 项目 project_name</p>
+<p>MySQL 数据库 database_name， 表 table_name</p>
+<h3>(1) 项目 pipelines.py 添加代码：</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> my_pipelines <span style="color: #0000ff;">import</span><span style="color: #000000;"> MyMySQLPipeline
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MySQLPipeline(MyMySQLPipeline):
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> sql(self):
+        self.curs.executemany(</span><span style="color: #800000;">"""</span><span style="color: #800000;">
+            INSERT INTO table_name (
+                position_id, crawl_time)
+            VALUES (
+                %(position_id)s, %(crawl_time)s)
+            ON DUPLICATE KEY UPDATE
+                crawl_time=values(crawl_time)
+        </span><span style="color: #800000;">"""</span><span style="color: #000000;">, self.item_list)
+
+        self.conn.commit()</span></pre>
+</div>
+<p> </p>
+<h3>(2) 项目 settings.py 添加代码：</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> Configure item pipelines</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> See https://doc.scrapy.org/en/latest/topics/item-pipeline.html</span>
+ITEM_PIPELINES =<span style="color: #000000;"> {
+   </span><span style="color: #008000;">#</span><span style="color: #008000;"> 'project_name.pipelines.ProxyPipeline': 300,</span>
+   <span style="color: #800000;">'</span><span style="color: #800000;">project_name.pipelines.MySQLPipeline</span><span style="color: #800000;">'</span>: 301<span style="color: #000000;">,   
+}
+
+MYSQL_HOST </span>= <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+MYSQL_PORT </span>= 3306<span style="color: #000000;">
+MYSQL_USER </span>= <span style="color: #800000;">'</span><span style="color: #800000;">username</span><span style="color: #800000;">'</span><span style="color: #000000;">
+MYSQL_PASSWD </span>=<span style="color: #800000;">'password</span><span style="color: #800000;">'</span><span style="color: #000000;">
+MYSQL_RECONNECT_WAIT </span>= 60<span style="color: #000000;">
+
+MYSQL_DB </span>= <span style="color: #800000;">'database_name</span><span style="color: #800000;">'</span><span style="color: #000000;">
+MYSQL_CHARSET </span>= <span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span>  <span style="color: #008000;">#</span><span style="color: #008000;">utf8mb4</span>
+MYSQL_ITEM_LIST_LIMIT = 3  <span style="color: #339966;">#100</span></pre>
+</div>
+<p> </p>
+<h2>4.运行结果</h2>
+<p>自动移除存在异常的数据行，重新提交 item_list：</p>
+<div class="cnblogs_code">
+<pre>2018-07-18 12:35:52 [scrapy.core.scraper] DEBUG: Scraped <span style="color: #0000ff;">from</span> &lt;200 http://httpbin.org/&gt;<span style="color: #ff0000;">
+{'position_id': 103, 'crawl_time': '2018-07-18 12:35:52'}
+</span>2018-07-18 12:35:52 [scrapy.core.scraper] DEBUG: Scraped <span style="color: #0000ff;">from</span> &lt;200 http://httpbin.org/&gt;<span style="color: #000000;">
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">position_id</span><span style="color: #800000;">'</span>: <span style="color: #ff0000;">None</span>, <span style="color: #800000;">'</span><span style="color: #800000;">crawl_time</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">2018-07-18 12:35:52</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+</span>2018-07-18 12:35:52 [scrapy.core.scraper] DEBUG: Scraped <span style="color: #0000ff;">from</span> &lt;200 http://httpbin.org/&gt;<span style="color: #000000;">
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">position_id</span><span style="color: #800000;">'</span>: 104, <span style="color: #800000;">'</span><span style="color: #800000;">crawl_time</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;"><span style="color: #ff0000;">2018-02-31</span> 17:51:47</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+</span>2018-07-18 12:35:55 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET http://httpbin.org/&gt; (referer: http://httpbin.org/<span style="color: #000000;">)
+</span>2018-07-18 12:35:55 [test] INFO: insert_item_list: 3
+2018-07-18 12:35:55 [test] WARNING: MySQL: &lt;<span style="color: #0000ff;">class</span> <span style="color: #800000;">'</span><span style="color: #800000;">pymysql.err.IntegrityError</span><span style="color: #800000;">'</span>&gt; (1048, <span style="color: #800000;">"</span><span style="color: #800000;">Column 'position_id' cannot be null</span><span style="color: #800000;">"</span>) exception <span style="color: #0000ff;">from</span> item {<span style="color: #800000;">'</span><span style="color: #800000;">position_id</span><span style="color: #800000;">'</span>: <span style="color: #ff0000;">None</span>, <span style="color: #800000;">'</span><span style="color: #800000;">crawl_time</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">2018-07-18 12:35:52</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+</span>2018-07-18 12:35:55 [test] INFO: insert_item_list: 2
+2018-07-18 12:35:55 [test] WARNING: MySQL: &lt;<span style="color: #0000ff;">class</span> <span style="color: #800000;">'</span><span style="color: #800000;">pymysql.err.InternalError</span><span style="color: #800000;">'</span>&gt; (1292, <span style="color: #800000;">"</span><span style="color: #800000;">Incorrect datetime value: '<span style="color: #ff0000;">2018-02-31</span> 17:51:47' for column 'crawl_time' at row 1</span><span style="color: #800000;">"</span>) exception <span style="color: #0000ff;">from</span> item {<span style="color: #800000;">'</span><span style="color: #800000;">position_id</span><span style="color: #800000;">'</span>: 104, <span style="color: #800000;">'</span><span style="color: #800000;">crawl_time</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">2018-02-31 17:51:47</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+</span>2018-07-18 12:35:55 [test] INFO: insert_item_list: 1
+2018-07-18 12:35:55 [scrapy.core.scraper] DEBUG: Scraped <span style="color: #0000ff;">from</span> &lt;200 http://httpbin.org/&gt;</pre>
+</div>
+<p> </p>
+<p>提交结果：</p>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180718124156243-185422244.png" alt=""></p>
+<p> </p>
+<p>在 self.item_list.append(item) 之后 添加代码 spider.logger.info('process_item: {}'.format(len(self.item_list))) 打印添加 item 后的当前 item_list 元素个数</p>
+<p>连续 yield 5个 item，累计3个则触发 insert，红框 insert 部分<span style="color: #ff0000;">将会阻塞</span>绿框中后续 yield 部分：</p>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180721134001382-490186273.png" alt=""></p>
+<p> </p>
+<h2>5.异步版本</h2>
+<h3>(1) 保存至 /site-packages/my_pipelines.py</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: utf-8 -*-</span>
+<span style="color: #0000ff;">from</span> socket <span style="color: #0000ff;">import</span><span style="color: #000000;"> gethostname
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> time
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> https://twistedmatrix.com/documents/15.3.0/core/howto/rdbms.html</span><span style="color: #008000;">
+#</span><span style="color: #008000;">   twisted.enterprise.adbapi: Twisted RDBMS support</span>
+<span style="color: #0000ff;">from</span> twisted.enterprise <span style="color: #0000ff;">import</span><span style="color: #000000;"> adbapi
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> pymysql
+</span><span style="color: #0000ff;">from</span> pymysql <span style="color: #0000ff;">import</span><span style="color: #000000;"> OperationalError, InterfaceError, DataError, InternalError, IntegrityError
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MyMySQLPipeline(object):
+
+    hostname </span>=<span style="color: #000000;"> gethostname()
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, spider, settings):
+        self.spider </span>=<span style="color: #000000;"> spider
+        
+        self.dbpool </span>= adbapi.ConnectionPool(<span style="color: #800000;">'</span><span style="color: #800000;">pymysql</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+            host </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_HOST</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+            port </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_PORT</span><span style="color: #800000;">'</span>, 3306<span style="color: #000000;">),
+            user </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_USER</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">username</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+            passwd </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_PASSWD</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+            db </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_DB</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">test</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+            charset </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_CHARSET</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span>), <span style="color: #008000;">#</span><span style="color: #008000;">utf8mb4</span>
+<span style="color: #000000;">            
+            cursorclass </span>=<span style="color: #000000;"> pymysql.cursors.DictCursor
+        )
+        self.mysql_reconnect_wait </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_RECONNECT_WAIT</span><span style="color: #800000;">'</span>, 60<span style="color: #000000;">)
+        self.mysql_item_list_limit </span>= settings.get(<span style="color: #800000;">'</span><span style="color: #800000;">MYSQL_ITEM_LIST_LIMIT</span><span style="color: #800000;">'</span>, 30<span style="color: #000000;">)
+        self.item_list </span>=<span style="color: #000000;"> []
+
+
+    @classmethod
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> from_crawler(cls, crawler):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> cls(
+            spider </span>=<span style="color: #000000;"> crawler.spider,
+            settings </span>=<span style="color: #000000;"> crawler.settings
+        )
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> close_spider(self, spider):
+        self._sql(list(self.item_list))
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> process_item(self, item, spider):
+        self.item_list.append(item)
+        
+        </span><span style="color: #0000ff;">if</span> len(self.item_list) &gt;=<span style="color: #000000;"> self.mysql_item_list_limit:
+            spider.log(</span><span style="color: #800000;">'</span><span style="color: #800000;">item_list: %s</span><span style="color: #800000;">'</span>%<span style="color: #000000;">len(self.item_list))
+            self._sql(list(self.item_list))
+            self.item_list.clear()
+
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> item
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> sql(self, txn, item_list):
+        </span><span style="color: #0000ff;">raise</span> NotImplementedError(<span style="color: #800000;">'</span><span style="color: #800000;">Subclass of MyMySQLPipeline must implement the sql() method</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+
+    </span><span style="color: #0000ff;">def</span> _sql(self, item_list, retrying=<span style="color: #000000;">False):
+        d </span>=<span style="color: #000000;"> self.dbpool.runInteraction(self.sql, item_list)
+        d.addCallback(self.handle_result, item_list)
+        d.addErrback(self.handle_error, item_list, retrying)
+        
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> handle_result(self, result, item_list):
+        self.spider.logger.info(</span><span style="color: #800000;">'</span><span style="color: #800000;">{} items inserted with retcode {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(len(item_list), result))
+
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> handle_error(self, failure, item_list, retrying):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> https://twistedmatrix.com/documents/18.7.0/api/twisted.python.failure.Failure.html</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> r = failure.trap(pymysql.err.InternalError)</span>
+<span style="color: #000000;">
+        args </span>=<span style="color: #000000;"> failure.value.args
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.OperationalError'&gt; (1045, "Access denied for user 'username'@'localhost' (using password: YES)")</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.OperationalError'&gt; (2013, 'Lost connection to MySQL server during query ([Errno 110] Connection timed out)')</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.OperationalError'&gt; (2003, "Can't connect to MySQL server on '127.0.0.1' ([WinError 10061] 由于目标计算机积极拒绝，无法连接。)")</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.InterfaceError'&gt; (0, '')    # after crawl started: sudo service mysqld stop</span>
+        <span style="color: #0000ff;">if</span> failure.type <span style="color: #0000ff;">in</span><span style="color: #000000;"> [OperationalError, InterfaceError]:
+            </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> retrying:
+                self.spider.logger.info(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: exception {} {} \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                        failure.type, args, item_list))            
+                self.spider.logger.debug(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: Trying to recommit in %s sec</span><span style="color: #800000;">'</span>%<span style="color: #000000;">self.mysql_reconnect_wait)
+                
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> self._sql(item_list)</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> https://twistedmatrix.com/documents/12.1.0/core/howto/time.html</span>
+                <span style="color: #0000ff;">from</span> twisted.internet <span style="color: #0000ff;">import</span><span style="color: #000000;"> task
+                </span><span style="color: #0000ff;">from</span> twisted.internet <span style="color: #0000ff;">import</span><span style="color: #000000;"> reactor
+                task.deferLater(reactor, self.mysql_reconnect_wait, self._sql, item_list, True)
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                self.spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: exception {} {} \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                        failure.type, args, item_list))
+
+            </span><span style="color: #0000ff;">return</span>
+
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.DataError'&gt; (1264, "Out of range value for column 'position_id' at row 2")</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.InternalError'&gt; (1292, "Incorrect date value: '1977-06-31' for column 'release_day' at row 26")</span>
+        <span style="color: #0000ff;">elif</span> failure.type <span style="color: #0000ff;">in</span><span style="color: #000000;"> [DataError, InternalError]:
+            m_row </span>= re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">at\s+row\s+(\d+)$</span><span style="color: #800000;">'</span>, args[1<span style="color: #000000;">])
+            row </span>= m_row.group(1<span style="color: #000000;">)
+            item </span>= item_list.pop(int(row) - 1<span style="color: #000000;">)
+            self.spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} exception from item {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(failure.type, args, item))
+
+            self._sql(item_list)
+            </span><span style="color: #0000ff;">return</span>
+            
+        <span style="color: #008000;">#</span><span style="color: #008000;"> &lt;class 'pymysql.err.IntegrityError'&gt; (1048, "Column 'name' cannot be null") films 43894</span>
+        <span style="color: #0000ff;">elif</span> failure.type <span style="color: #0000ff;">in</span><span style="color: #000000;"> [IntegrityError]:    
+            m_column </span>= re.search(r<span style="color: #800000;">"</span><span style="color: #800000;">Column\s'(.+)'</span><span style="color: #800000;">"</span>, args[1<span style="color: #000000;">])
+            column </span>= m_column.group(1<span style="color: #000000;">)
+            some_items </span>= [item <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> item_list <span style="color: #0000ff;">if</span> item[column] <span style="color: #0000ff;">is</span><span style="color: #000000;"> None]
+            self.spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} exception from some items: \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                failure.type, args, some_items))
+
+            self._sql([item </span><span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> item_list <span style="color: #0000ff;">if</span> item[column] <span style="color: #0000ff;">is</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> None])
+            </span><span style="color: #0000ff;">return</span>
+        
+        <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            self.spider.logger.error(</span><span style="color: #800000;">'</span><span style="color: #800000;">MySQL: {} {} unhandled exception from item_list: \n{}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                failure.type, args, item_list))
+
+            </span><span style="color: #0000ff;">return</span></pre>
+</div>
+<p> </p>
+<h3>(2) 项目 pipelines.py 添加代码：<span style="color: #ff0000;">注意 dbpool.runInteraction 是自动提交的 transaction</span></h3>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> my_pipelines <span style="color: #0000ff;">import</span><span style="color: #000000;"> MyMySQLPipeline
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MySQLPipeline(MyMySQLPipeline):
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> sql(self, txn, item_list):
+        </span><span style="color: #0000ff;">return</span> txn.executemany(<span style="color: #800000;">"""</span><span style="color: #800000;">
+            INSERT INTO table_name (
+                position_id, crawl_time)
+            VALUES (
+                %(position_id)s, %(crawl_time)s)
+            ON DUPLICATE KEY UPDATE
+                crawl_time=values(crawl_time)
+        </span><span style="color: #800000;">"""</span>, item_list)</pre>
+</div>
+<p> </p>
+<h3>(3) 项目 settings.py</h3>
+<p>见上文同步版本 3(1) </p>
+<p> </p>
+<h3>(4) 运行结果</h3>
+<p>在 self.item_list.append(item) 之后 添加代码 spider.logger.info('process_item: {}'.format(len(self.item_list))) 打印添加 item 后的当前 item_list 元素个数</p>
+<p>连续 yield 5个 item，累计3个则触发 insert，红框 insert 部分<span style="color: #ff0000;">并不会阻塞</span>绿框中后续 yield 部分：</p>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180721134400204-1372104975.png" alt=""></p>
+<p> </p>
+<p><strong>另外可见使用了连接池</strong></p>
+<p><strong><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180721124442477-1293998957.png" alt=""></strong></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-18 12:55</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9328538" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9328538);return false;">收藏</a></div>
+        </div>

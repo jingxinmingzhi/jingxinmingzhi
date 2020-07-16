@@ -1,0 +1,128 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_middleware_autoproxy.html">
+    <span>Scrapy 扩展中间件: 针对特定响应状态码，使用代理重新请求</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<p><a href="https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#module-scrapy.downloadermiddlewares.redirect" target="_blank">https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#module-scrapy.downloadermiddlewares.redirect</a></p>
+<p><a href="https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#module-scrapy.downloadermiddlewares.httpproxy" target="_blank">https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#module-scrapy.downloadermiddlewares.httpproxy</a></p>
+<h2>1.主要实现</h2>
+<p>实际爬虫过程中如果请求过于频繁，通常会被临时重定向到登录页面即302，甚至是提示禁止访问即403，因此可以对这些响应执行一次代理请求：</p>
+<p>(1) 参考原生 redirect.py 模块，满足 dont_redirect 或 handle_httpstatus_list 等条件时，直接传递 response</p>
+<p>(2) 不满足条件(1)，如果响应状态码为 302 或 403，使用代理重新发起请求</p>
+<p>(3) 使用代理后，如果响应状态码仍为 302 或 403，直接丢弃</p>
+<p> </p>
+<h2>2.代码实现</h2>
+<p><strong>保存至 /site-packages/my_middlewares.py</strong></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> w3lib.url <span style="color: #0000ff;">import</span><span style="color: #000000;"> safe_url_string
+</span><span style="color: #0000ff;">from</span> six.moves.urllib.parse <span style="color: #0000ff;">import</span><span style="color: #000000;"> urljoin
+
+</span><span style="color: #0000ff;">from</span> scrapy.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> IgnoreRequest
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MyAutoProxyDownloaderMiddleware(object):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, settings):
+<span style="color: #ff0000;">        self.proxy_status </span></span><span style="color: #ff0000;">= settings.get('PROXY_STATUS', [302, 403])
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html?highlight=proxy#module-scrapy.downloadermiddlewares.httpproxy</span>
+<span style="color: #ff0000;">        self.proxy_config = settings.get('PROXY_CONFIG', 'http://username:password@some_proxy_server:port'</span><span style="color: #000000;"><span style="color: #ff0000;">)</span>
+
+
+    @classmethod
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> from_crawler(cls, crawler):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> cls(
+            settings </span>=<span style="color: #000000;"> crawler.settings
+        )        
+
+
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> See /site-packages/scrapy/downloadermiddlewares/redirect.py</span>
+    <span style="color: #0000ff;">def</span><span style="color: #000000;"> process_response(self, request, response, spider):
+        </span><span style="color: #0000ff;">if</span> (request.meta.get(<span style="color: #800000;">'</span><span style="color: #800000;">dont_redirect</span><span style="color: #800000;">'</span>, False) <span style="color: #0000ff;">or</span><span style="color: #000000;">
+                response.status </span><span style="color: #0000ff;">in</span> getattr(spider, <span style="color: #800000;">'</span><span style="color: #800000;">handle_httpstatus_list</span><span style="color: #800000;">'</span>, []) <span style="color: #0000ff;">or</span><span style="color: #000000;">
+                response.status </span><span style="color: #0000ff;">in</span> request.meta.get(<span style="color: #800000;">'</span><span style="color: #800000;">handle_httpstatus_list</span><span style="color: #800000;">'</span>, []) <span style="color: #0000ff;">or</span><span style="color: #000000;">
+                request.meta.get(</span><span style="color: #800000;">'</span><span style="color: #800000;">handle_httpstatus_all</span><span style="color: #800000;">'</span><span style="color: #000000;">, False)):
+            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> response
+
+        </span><span style="color: #0000ff;">if</span> response.status <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.proxy_status:
+            </span><span style="color: #0000ff;">if</span> <span style="color: #800000;">'</span><span style="color: #800000;">Location</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> response.headers:
+                location </span>= safe_url_string(response.headers[<span style="color: #800000;">'</span><span style="color: #800000;">location</span><span style="color: #800000;">'</span><span style="color: #000000;">])
+                redirected_url </span>=<span style="color: #000000;"> urljoin(request.url, location)
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                redirected_url </span>= <span style="color: #800000;">''</span>
+                
+            <span style="color: #008000;">#</span><span style="color: #008000;"> AutoProxy for first time</span>
+            <span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span> request.meta.get(<span style="color: #800000;">'</span><span style="color: #800000;">auto_proxy</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+<span style="color: #ff0000;">                request.meta.update({</span></span><span style="color: #ff0000;">'auto_proxy': True, 'proxy': self.proxy_config})
+                new_request = request.replace(meta=request.meta, dont_filter=</span><span style="color: #000000;"><span style="color: #ff0000;">True)</span>
+                new_request.priority </span>= request.priority + 2<span style="color: #000000;">
+                
+                spider.log(</span><span style="color: #800000;">'</span><span style="color: #800000;">Will AutoProxy for &lt;{} {}&gt; {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                            response.status, request.url, redirected_url))
+                </span><span style="color: #ff0000;">return new_request
+            
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> IgnoreRequest for second time</span>
+            <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                spider.logger.warn(</span><span style="color: #800000;">'</span><span style="color: #800000;">Ignoring response &lt;{} {}&gt;: HTTP status code still in {} after AutoProxy</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                    response.status, request.url, self.proxy_status))
+                </span><span style="color: #ff0000;">raise IgnoreRequest
+
+        </span><span style="color: #0000ff;">return</span> response</pre>
+</div>
+<p> </p>
+<h2>3.调用方法</h2>
+<h3>(1) 项目 settings.py 添加代码，<span style="color: #ff0000;">注意必须在默认的 RedirectMiddleware 和 HttpProxyMiddleware 之间。</span></h3>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> Enable or disable downloader middlewares</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html</span>
+DOWNLOADER_MIDDLEWARES =<span style="color: #000000;"> {
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 600,</span>
+    <span style="color: #800000;">'</span><span style="color: #800000;">my_middlewares.MyAutoProxyDownloaderMiddleware</span><span style="color: #800000;">'</span>: 601<span style="color: #000000;">,
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 750,    </span>
+<span style="color: #000000;">}
+PROXY_STATUS </span>= [302, 403<span style="color: #000000;">]
+PROXY_CONFIG </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://username:password@some_proxy_server:port</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+<h2>4.运行结果</h2>
+<div class="cnblogs_code">
+<pre>2018-07-18 18:42:35 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET http://httpbin.org/&gt;<span style="color: #000000;"> (referer: None)
+</span>2018-07-18 18:42:38 [test] DEBUG: Will AutoProxy <span style="color: #0000ff;">for</span> &lt;<span style="color: #ff0000;">302</span> http://httpbin.org/status/302&gt; http://httpbin.org/redirect/1
+2018-07-18 18:42:43 [test] DEBUG: Will AutoProxy <span style="color: #0000ff;">for</span> &lt;<span style="color: #ff0000;">403</span> https://httpbin.org/status/403&gt;
+2018-07-18 18:42:51 [test] WARNING: Ignoring response &lt;302 http://httpbin.org/status/302&gt;: HTTP status code still <span style="color: #0000ff;">in</span> <span style="color: #ff0000;">[302, 403</span><span style="color: #000000;"><span style="color: #ff0000;">]</span> after AutoProxy
+</span>2018-07-18 18:42:52 [test] WARNING: Ignoring response &lt;403 https://httpbin.org/status/403&gt;: HTTP status code still <span style="color: #0000ff;">in</span> <span style="color: #ff0000;">[302, 403]</span> after AutoProxy</pre>
+</div>
+<p> </p>
+<p>代理服务器 log：</p>
+<div class="cnblogs_code">
+<pre>squid [18/Jul/2018:18:42:53 +0800] <span style="color: #800000;">"</span><span style="color: #800000;">GET http://httpbin.org/status/302 HTTP/1.1</span><span style="color: #800000;">"</span> 302 310 <span style="color: #800000;">"</span><span style="color: #800000;">-</span><span style="color: #800000;">"</span> <span style="color: #800000;">"</span><span style="color: #800000;">Mozilla/5.0</span><span style="color: #800000;">"</span><span style="color: #000000;"> TCP_MISS:HIER_DIRECT
+squid [</span>18/Jul/2018:18:42:54 +0800] <span style="color: #800000;">"</span><span style="color: #800000;">CONNECT httpbin.org:443 HTTP/1.1</span><span style="color: #800000;">"</span> 200 3560 <span style="color: #800000;">"</span><span style="color: #800000;">-</span><span style="color: #800000;">"</span> <span style="color: #800000;">"</span><span style="color: #800000;">-</span><span style="color: #800000;">"</span> TCP_TUNNEL:HIER_DIRECT</pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-18 18:47</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9331036" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9331036);return false;">收藏</a></div>
+        </div>

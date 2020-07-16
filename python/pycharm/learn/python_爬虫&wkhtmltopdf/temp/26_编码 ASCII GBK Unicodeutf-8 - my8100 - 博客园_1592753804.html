@@ -1,0 +1,164 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/encoding.html">
+    <span>编码 ASCII, GBK, Unicode+utf-8</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p> </p>
+<h2>1.参考</h2>
+<p><a href="http://www.qianxingzhem.com/post-1499.html" target="_blank">网页编码就是那点事</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank">阮一峰 字符编码笔记：ASCII，Unicode 和 UTF-8 </a></p>
+<h2>2.总结</h2>
+<p>美国 ASCII 码 <span class="nowrap"><small>发音：</small> <span class="IPA nopopups"><a title="Help:英语国际音标" href="https://zh.wikipedia.org/wiki/Help:%E8%8B%B1%E8%AA%9E%E5%9C%8B%E9%9A%9B%E9%9F%B3%E6%A8%99">/<span title="/ˈ/ 后面为主重音">ˈ<span title="/æ/ “bad”的短“a”音">æ<span title="“sigh”的“s”音">s<span title="“kind”的“k”音">k<span title="/i/ “happy”的“y”音">i/</span></span></span></span></span></a> </span></span>：128个字符，只占用了一个字节的后面7位，最前面的一位统一规定为<code>0</code>。</p>
+<p>非 ASCII 编码：</p>
+<ul>
+<li>欧洲：ISO 8859-1，又称Latin-1或“西欧语言”，以ASCII为基础，利用一个字节的最前面1位，加入了96个字母和符号。</li>
+<li>中国：gb2312 &gt;&gt;&gt; gbk（2万多，支持繁体，1字节或<span style="color: #ff00ff;">双字节</span>）&gt;&gt;&gt; gb18030</li>
+</ul>
+<p>全球大一统 Unicode编码系统：<span style="color: #ff0000;">可分为编码方式和实现方式两个层次。</span></p>
+<ul>
+<li>编码空间有100多万个码位 code point 可用来映射字符，已收录十万个字符</li>
+<li>存储和传输的具体实现方式称为<strong>Unicode转换格式</strong>（Unicode Transformation Format，简称为UTF）
+<ul>
+<li>从字节串判断若干个字节表示对应一个字符，如何节省空间） utf-8 变长编码（1字节或大部分<span style="color: #ff00ff;">3字节</span>） 或 utf-16（2或4字节，不兼容ASCII编码）　　</li>
+</ul>
+</li>
+</ul>
+<h2>3.资料</h2>
+<p><a href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86" target="_blank">https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E5%AD%97%E7%AC%A6%E9%9B%86</a></p>
+<p>通用字符集（英语：Universal Character Set, UCS）</p>
+<p>表示一个UCS或Unicode值的十六进制数通常在前面加上“U+”，例如“U+0041”代表字符“A”。</p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/Unicode" target="_blank">https://zh.wikipedia.org/wiki/Unicode</a></p>
+<p> </p>
+<p>Unicode编码系统可分为<span style="color: #ff00ff;">编码方式</span>和<span style="color: #ff00ff;">实现方式</span>两个层次。</p>
+<p><span style="color: #ff00ff;">统一码以一种抽象的方式（即数字）来处理字符</span>，并将视觉上的演绎工作（例如字体大小、外观形状、字体形态、文体等）留给其他软件来处理，例如网页浏览器或是文字处理器。</p>
+<p>在<span style="color: #ff00ff;">基本多文种平面</span>（英文：Basic Multilingual Plane，简写BMP。又称为“零号平面”、plane 0）里的所有字符，要用四个数字（即<span style="color: #ff00ff;">两个char,16bit ,例如U+4AE0，共支持六万多个字符</span>）；在零号平面以外的字符则需要使用五个或六个数字。</p>
+<p> </p>
+<p>一个字符的Unicode编码是确定的。但是在实际传输过程中，出于节省空间的目的，对Unicode编码的实现方式有所不同。Unicode的实现方式称为Unicode转换格式（Unicode Transformation Format，简称为UTF）</p>
+<p>UTF-8编码，这是一种变长编码</p>
+<p> </p>
+<p>此外Unicode的实现方式还包括<a title="UTF-7" href="https://zh.wikipedia.org/wiki/UTF-7">UTF-7</a>、<a title="Punycode" href="https://zh.wikipedia.org/wiki/Punycode">Punycode</a>、<a class="new" title="CESU-8（页面不存在）" href="https://zh.wikipedia.org/w/index.php?title=CESU-8&amp;action=edit&amp;redlink=1">CESU-8</a>、<a class="new" title="SCSU（页面不存在）" href="https://zh.wikipedia.org/w/index.php?title=SCSU&amp;action=edit&amp;redlink=1">SCSU</a>、<a title="UTF-32" href="https://zh.wikipedia.org/wiki/UTF-32">UTF-32</a>、<a class="mw-redirect" title="GB18030" href="https://zh.wikipedia.org/wiki/GB18030">GB18030</a>等，这些实现方式有些仅在一定的国家和地区使用，有些则属于未来的规划方式。目前通用的实现方式是UTF-16小端序（LE）、UTF-16大端序（BE）和UTF-8。在微软公司<a title="Windows XP" href="https://zh.wikipedia.org/wiki/Windows_XP">Windows XP</a>附带的<a title="记事本" href="https://zh.wikipedia.org/wiki/%E8%AE%B0%E4%BA%8B%E6%9C%AC">记事本</a>（Notepad）中，“另存为”对话框可以选择的四种编码方式除去非Unicode编码的<a class="mw-redirect" title="ANSI" href="https://zh.wikipedia.org/wiki/ANSI">ANSI</a>（对于英文系统即<a title="ASCII" href="https://zh.wikipedia.org/wiki/ASCII">ASCII</a>编码，中文系统则为<a class="mw-redirect" title="GB2312" href="https://zh.wikipedia.org/wiki/GB2312">GB2312</a>或<a class="mw-redirect" title="Big5" href="https://zh.wikipedia.org/wiki/Big5">Big5</a>编码）外，其余三种为“Unicode”（对应UTF-16 LE）、“Unicode big endian”（对应UTF-16 BE）和“UTF-8”。</p>
+<p>目前辅助平面的工作主要集中在第二和第三平面的<a class="mw-redirect" title="中日韩统一表意文字" href="https://zh.wikipedia.org/wiki/%E4%B8%AD%E6%97%A5%E9%9F%A9%E7%BB%9F%E4%B8%80%E8%A1%A8%E6%84%8F%E6%96%87%E5%AD%97">中日韩统一表意文字</a>中，因此包括<a class="mw-redirect" title="GBK" href="https://zh.wikipedia.org/wiki/GBK">GBK</a>、<a class="mw-redirect" title="GB18030" href="https://zh.wikipedia.org/wiki/GB18030">GB18030</a>、<a class="mw-redirect" title="Big5" href="https://zh.wikipedia.org/wiki/Big5">Big5</a>等<a title="简体中文" href="https://zh.wikipedia.org/wiki/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87">简体中文</a>、<a title="繁体中文" href="https://zh.wikipedia.org/wiki/%E7%B9%81%E4%BD%93%E4%B8%AD%E6%96%87">繁体中文</a>、<a class="mw-redirect" title="日文" href="https://zh.wikipedia.org/wiki/%E6%97%A5%E6%96%87">日文</a>、<a class="mw-redirect" title="韩文" href="https://zh.wikipedia.org/wiki/%E9%9F%A9%E6%96%87">韩文</a>以及越南<a title="喃字" href="https://zh.wikipedia.org/wiki/%E5%96%83%E5%AD%97">喃字</a>的各种编码与Unicode的协调性被重点关注。考虑到Unicode最终要涵盖所有的字符。从某种意义而言，这些编码方式也可视作Unicode的出现于其之前的<em>既成事实</em>的实现方式，如同<a title="ASCII" href="https://zh.wikipedia.org/wiki/ASCII">ASCII</a>及其扩展<a class="mw-redirect" title="Latin-1" href="https://zh.wikipedia.org/wiki/Latin-1">Latin-1</a>一样，后两者的字符在16位Unicode编码空间中的编码第一字节各位全为0，第二字节编码与原编码完全一致。但上述东亚语言编码与Unicode编码的对应关系要复杂得多。</p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank">https://zh.wikipedia.org/wiki/UTF-8</a></p>
+<p>UTF-8就是以8位为单元对UCS进行编码</p>
+<p>提到“Unicode定义的区域，U+0000到U+10FFFF”，（注：自行折算为1114111，100多万。）</p>
+<ul>
+<li><span style="color: #ff00ff;">128个US-ASCII字符只需一个字节编码</span>（Unicode范围由U+0000至U+007F）。</li>
+<li>其他基本多文种平面（BMP）中的字符（这包含了大部分常用字，如大部分的汉字）<span style="color: #ff00ff;">使用三个字节编码</span>（Unicode范围由U+0800至U+FFFF）。</li>
+</ul>
+<table class="wikitable"><caption><strong>Unicode 和 UTF-8 之间的转换关系表 ( <code>x</code> 字符表示码点占据的位 )</strong></caption>
+<tbody>
+<tr><th>码点的位数</th><th>码点起值</th><th>码点终值</th><th>字节序列</th><th>Byte 1</th><th>Byte 2</th><th>Byte 3</th><th>Byte 4</th><th>Byte 5</th><th>Byte 6</th></tr>
+<tr><th>  7</th>
+<td>U+0000</td>
+<td>U+007F</td>
+<td>1</td>
+<td><code>0xxxxxxx</code></td>
+</tr>
+<tr><th>11</th>
+<td>U+0080</td>
+<td>U+07FF</td>
+<td>2</td>
+<td><code><span style="color: #ff00ff;">11</span>0xxxxx</code></td>
+<td><code>10xxxxxx</code></td>
+</tr>
+<tr><th>16</th>
+<td>U+0800</td>
+<td>U+FFFF</td>
+<td>3</td>
+<td><code><span style="color: #ff00ff;">111</span>0xxxx</code></td>
+<td><code>10xxxxxx</code></td>
+<td><code>10xxxxxx</code></td>
+</tr>
+<tr><th>21</th>
+<td>U+10000</td>
+<td>U+1FFFFF</td>
+<td>4</td>
+<td><code>11110xxx</code></td>
+<td><code>10xxxxxx</code></td>
+<td><code>10xxxxxx</code></td>
+<td><code>10xxxxxx</code></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://zh.wikipedia.org/wiki/UTF-16" target="_blank">https://zh.wikipedia.org/wiki/UTF-16</a></p>
+<p>Unicode的编码空间从U+0000到U+10FFFF，共有1,112,064个码位（code point）可用来映射字符. </p>
+<p>因为这个字超过U+FFFF所以无法用UCS-2的格式编码</p>
+<table class="wikitable">
+<tbody>
+<tr><th>16进制编码范围</th><th>UTF-16表示方法（二进制）</th><th>10进制码范围</th><th>字节数量</th></tr>
+<tr>
+<td>U+0000---U+FFFF</td>
+<td>xxxxxxxx xxxxxxxx yyyyyyyy yyyyyyyy</td>
+<td>0-65535</td>
+<td>2</td>
+</tr>
+<tr>
+<td>U+10000---U+10FFFF</td>
+<td>110110yyyyyyyyyy 110111xxxxxxxxxx</td>
+<td>65536-1114111</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>UTF-16比起<a title="UTF-8" href="https://zh.wikipedia.org/wiki/UTF-8">UTF-8</a>，<span style="color: #ff00ff;">好处在于大部分字符都以固定长度的字节（2字节）存储，但UTF-16却无法兼容于<a title="ASCII" href="https://zh.wikipedia.org/wiki/ASCII"><span style="color: #ff00ff;">ASCII</span></a>编码。</span></p>
+<p>UTF-16可看成是<span style="color: #ff00ff;">UCS-2</span>的父集。在没有辅助平面字符（surrogate code points）前，UTF-16与UCS-2所指的是同一的意思。但当引入辅助平面字符后，就称为UTF-16了。</p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/GB_2312" target="_blank">https://zh.wikipedia.org/wiki/GB_2312</a></p>
+<p>GB 2312标准共收录6763个汉字，不支持繁体。</p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/%E6%B1%89%E5%AD%97%E5%86%85%E7%A0%81%E6%89%A9%E5%B1%95%E8%A7%84%E8%8C%83" target="_blank">https://zh.wikipedia.org/wiki/%E6%B1%89%E5%AD%97%E5%86%85%E7%A0%81%E6%89%A9%E5%B1%95%E8%A7%84%E8%8C%83</a></p>
+<p>（重定向自<a class="mw-redirect" title="Gbk" href="https://zh.wikipedia.org/w/index.php?title=Gbk&amp;redirect=no">Gbk</a>）</p>
+<p>GBK的<strong>K</strong>为汉语拼音Kuo Zhan（扩展）中“扩”字的声母。</p>
+<p>GBK共收录21886个汉字和图形符号。支持GB2312-80编码不支持的中文繁体。</p>
+<p> </p>
+<p>GBK是一种编码方式并向下兼容GB2312。</p>
+<p> </p>
+<p><span style="color: #ff00ff;">字符有一字节和双字节编码</span>，<code>00</code>–<code>7F</code>范围内是第一个字节，和<a title="ASCII" href="https://zh.wikipedia.org/wiki/ASCII">ASCII</a>保持一致，此范围内严格上说有96个文字和32个控制符号。</p>
+<p><a href="https://zh.wikipedia.org/wiki/GB_18030" target="_blank">https://zh.wikipedia.org/wiki/GB_18030</a></p>
+<p>对GB 2312-1980完全向后兼容，与GBK基本向后兼容；支持GB 13000（Unicode）的所有码位；共收录汉字70,244个。</p>
+<p>采用变长多字节编码，每个字可以由1个、2个或4个字节组成。</p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/ISO/IEC_8859-1" target="_blank">https://zh.wikipedia.org/wiki/ISO/IEC_8859-1</a></p>
+<p>ISO 8859-1</p>
+<p>正式编号为ISO/IEC 8859-1:1998，又称Latin-1或“西欧语言”，是国际标准化组织内ISO/IEC 8859的第一个8位字符集。它以ASCII为基础，在空置的0xA0-0xFF的范围内，加入96个字母及符号，藉以供使用附加符号的拉丁字母语言使用。</p>
+<p> </p>
+<p><a href="https://zh.wikipedia.org/wiki/%E5%85%A8%E5%BD%A2%E5%92%8C%E5%8D%8A%E5%BD%A2" target="_blank">https://zh.wikipedia.org/wiki/%E5%85%A8%E5%BD%A2%E5%92%8C%E5%8D%8A%E5%BD%A2</a></p>
+<p>全角和半角，是计算机中，中、日、韩文的CJKV字符的显示格式。</p>
+<p>传统上，英语或拉丁字母语言使用的电脑系统，每一个字母或符号，都是使用一字节的空间（一字节由8比特组成，共256个编码空间）来储存；</p>
+<p>而汉语、日语及韩语文字，由于数量大大超过256个，故惯常使用两字节来储存一个字符。</p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-11-01 14:33</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7765629" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7765629);return false;">收藏</a></div>
+        </div>

@@ -1,0 +1,673 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7538004.html">
+    <span>【转载】Python and Mysql    Andy Dustman</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p><a href="http://mysql-python.sourceforge.net/" target="_blank">http://mysql-python.sourceforge.net/</a></p>
+<ul>
+<li><a href="http://dustman.net/andy/python/python-and-mysql">Python and MySQL</a>: This is a presentation I did a couple years ago for the 2005 MySQL User Conference. It was a 45-minute talk, so don't expect a lot of detail.</li>
+</ul>
+<p>1.<a href="https://web.archive.org/web/20070104043701/http://dustman.net/andy/python/python-and-mysql" target="_blank">https://web.archive.org/web/20070104043701/http://dustman.net/andy/python/python-and-mysql</a></p>
+<p> </p>
+<div class="handout"><dl><dt>Andy Dustman</dt><dd><a href="https://web.archive.org/web/20070104043701/mailto:adustman%40terry.uga.edu">&lt;adustman@terry.uga.edu&gt;</a></dd><dt>Terry College of Business</dt><dd><a href="https://web.archive.org/web/20070104043701/http://www.terry.uga.edu/">http://www.terry.uga.edu/</a></dd><dt>University of Georgia</dt><dd><a href="https://web.archive.org/web/20070104043701/http://www.uga.edu/">http://www.uga.edu/</a></dd></dl></div>
+<div id="slide1" class="slide">
+<h1>Python for the PyCurious</h1>
+<ul>
+<li>interpreted (byte-code compiler)</li>
+<li>interactive (easy to test ideas)</li>
+<li>object-oriented (everything's an object)</li>
+<li>rapid development (5-10x C++, Java)</li>
+<li>fits your brain <em>[Bruce Eckel]</em></li>
+<li>fits your wallet: free (OSI and GPL)</li>
+<li>fun!</li>
+</ul>
+<div class="handout"><dl><dt>Introductory Material on Python:</dt><dd><a href="https://web.archive.org/web/20070104043701/http://www.python.org/doc/Intros.html">http://www.python.org/doc/Intros.html</a></dd></dl></div>
+</div>
+<div id="slide2" class="slide">
+<h1>Types</h1>
+<div id="typecomparo">
+<table>
+<thead>
+<tr><th> </th><th scope="col">Mutable</th><th scope="col">Immutable</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row">Sequence</th>
+<td>list</td>
+<td>tuple<br>str, unicode</td>
+
+</tr>
+<tr><th scope="row">Number</th>
+<td> </td>
+<td>int, long, float</td>
+
+</tr>
+<tr><th scope="row">Mapping</th>
+<td>dict</td>
+<td> </td>
+
+</tr>
+<tr><th scope="row">Other</th>
+<td>object</td>
+<td> </td>
+
+</tr>
+
+</tbody>
+<caption>The basic Python types and their mutability</caption></table>
+
+</div>
+
+</div>
+<div id="slide3" class="slide">
+<h1>Basic type examples</h1>
+<pre class="interactive">&gt;&gt;&gt; i=1 # an int
+&gt;&gt;&gt; j=2**64-1 # a long integer
+&gt;&gt;&gt; print j
+18446744073709551615
+&gt;&gt;&gt; f=3.14 # float (C double)
+&gt;&gt;&gt; c=1-1j # complex (1j is imaginary)
+&gt;&gt;&gt; print c
+(1-1j)
+&gt;&gt;&gt; s="welcome to python!"
+&gt;&gt;&gt; s.capitalize().split() # returns a list
+['Welcome', 'to', 'python!']
+&gt;&gt;&gt; [ word.capitalize() for word in s.split() ]
+['Welcome', 'To', 'Python!']
+&gt;&gt;&gt; a, b = 1, 2
+&gt;&gt;&gt; print (a,b) # a tuple
+(1, 2)
+&gt;&gt;&gt; a, b = b, a
+&gt;&gt;&gt; print (a,b)
+(2, 1)
+</pre>
+</div>
+<div id="slide4" class="slide">
+<h1>Strings</h1>
+<pre class="interactive">&gt;&gt;&gt; "Normal string literal isn't very interesting."
+"Normal string literal isn't very interesting."
+&gt;&gt;&gt; 'Single quotes work "same as double".'
+'Single quotes work "same as double".'
+&gt;&gt;&gt; """Triple-quoted strings are good for long strings
+... which span multiple lines."""
+'Triple-quoted strings are good for long strings\nwhich span multiple lines.'
+&gt;&gt;&gt; r"Raw strings are useful for regexs, i.e. \w+ or \1"
+'Raw strings are useful for regexs, i.e. \\w+ or \\1'
+&gt;&gt;&gt; u"Unicode strings work just like regular strings."
+u'Unicode strings work just like regular strings.'
+&gt;&gt;&gt; u"\u72c2\n\u7009".encode('utf-8')
+'\xe7\x8b\x82\n\xe7\x80\x89'
+&gt;&gt;&gt; print u"\u72c2\n\u7009".encode('utf-8')
+狂
+瀉
+</pre>
+</div>
+<div id="slide5" class="slide">
+<h1>Strings</h1>
+<p>Lots of string methods and operators:</p>
+<pre class="interactive">&gt;&gt;&gt; "Split words into a list.".split()
+['Split', 'words', 'into', 'a', 'list.']
+&gt;&gt;&gt; ' '.join(['Join', 'a', 'list', 'of', 'strings'])
+'Join a list of strings'
+&gt;&gt;&gt; "Concatenate" + " " + "strings"
+'Concatenate strings'
+&gt;&gt;&gt; "Multiplicity! " * 3
+'Multiplicity! Multiplicity! Multiplicity! '
+&gt;&gt;&gt; "Parameter %s" % "substitution"
+'Parameter substitution'
+&gt;&gt;&gt; d = dict(first_name="Vee", last_name="McMillen",
+... company="O'Reilly")
+&gt;&gt;&gt; "Hello, %(first_name)s. How are things at %(company)s?" % d
+"Hello, Vee. How are things at O'Reilly?"
+</pre>
+</div>
+<div id="slide6" class="slide">
+<h1>Dictionaries</h1>
+<p>Python dictionaries are like perl hashes:</p>
+<pre class="interactive">&gt;&gt;&gt; d1={}
+&gt;&gt;&gt; d1['a']=1
+&gt;&gt;&gt; d1['b']=2
+&gt;&gt;&gt; d1['c']=3
+&gt;&gt;&gt; d1
+{'a': 1, 'c': 3, 'b': 2}
+&gt;&gt;&gt; d2={'a': 1, 'c': 3, 'b': 2}
+&gt;&gt;&gt; d3=dict([('a',1),('b',2),('c',3)])
+&gt;&gt;&gt; d4=dict(a=1, b=2, c=3)
+&gt;&gt;&gt; d1 == d2 == d3 == d4
+True
+&gt;&gt;&gt; len(d1)
+3
+</pre>
+<p>Values can be any type, but keys must be immutable.</p>
+</div>
+<div id="slide7" class="slide">
+<h1>Sequences</h1>
+<pre class="interactive">&gt;&gt;&gt; l = ['a','b','c','d','e']
+&gt;&gt;&gt; print l[0]
+a
+&gt;&gt;&gt; print l[-1]
+e
+&gt;&gt;&gt; print l[2:4]
+['c', 'd']
+&gt;&gt;&gt; s='abcde'
+&gt;&gt;&gt; print s[2:4]
+cd
+&gt;&gt;&gt; print s[::2]
+ace
+&gt;&gt;&gt; print s[::-1]
+edcba
+&gt;&gt;&gt; l.append(s)
+&gt;&gt;&gt; print l
+['a', 'b', 'c', 'd', 'e', 'abcde']
+</pre>
+</div>
+<div id="slide8" class="slide">
+<h1>Iterators</h1>
+<ul>
+<li><code>iter(object)</code> returns an iterator object</li>
+<li><code>iterobj.next()</code> returns the next object</li>
+<li><code>StopIteration</code> is raised when there are no more objects
+<pre class="interactive">&gt;&gt;&gt; # no normal person would do this
+&gt;&gt;&gt; l = [1, 2, 3]
+&gt;&gt;&gt; i = iter(l)
+&gt;&gt;&gt; i.next()
+1
+&gt;&gt;&gt; i.next()
+2
+&gt;&gt;&gt; i.next()
+3
+&gt;&gt;&gt; i.next()
+Traceback (most recent call last):
+  File "", line 1, in ?
+StopIteration
+</pre>
+</li>
+</ul>
+</div>
+<div id="slide9" class="slide">
+<h1>Common iterator usage</h1>
+<pre class="interactive">&gt;&gt;&gt; l = [1, 2, 3]
+&gt;&gt;&gt; for item in l:
+...     print item
+...
+1
+2
+3
+&gt;&gt;&gt; d = dict(a=1, b=2, c=3)
+&gt;&gt;&gt; for key in d:
+...     print key, d[key]
+...
+a 1
+c 3
+b 2
+</pre>
+</div>
+<div id="slide10" class="slide">
+<h1>Exceptions</h1>
+<pre>f = open("myfile", 'r')
+try:
+    try:
+        for line in f:
+            try:
+                process(line)
+            except TypeError:
+                line = mangle(line)
+                try:
+                    process(line)
+                except TypeError:
+                    raise FoobarError, line
+    except IOError, message:
+        print "Error reading:", message
+    except FoobarError:
+        print "This file is totally munged."
+    except:
+        print "Something inexplicable happened:"
+        raise # re-raise original exception
+finally:
+    f.close()
+</pre>
+</div>
+<div id="slide11" class="slide">
+<h1>Odds and ends</h1>
+<ul>
+<li>Code blocks are delimited by indentation
+<ul>
+<li>You probably do this already</li>
+<li>Space or tabs, your call; just be consistent</li>
+<li>No need for curly braces</li>
+<li>Less cluttered, easier to read</li>
+</ul>
+</li>
+<li>End-of-line is a statement separator (so is <code>;</code>)</li>
+<li>No type enforcement
+<ul>
+<li>Argument types are not checked</li>
+<li>Function return types are not checked</li>
+<li>Type checking makes your code less flexible</li>
+<li>If you still want it, you can add it cleanly with decorators</li>
+</ul>
+</li>
+<li>Operator overloading for user-defined classes</li>
+<li><em>Everything</em> is a reference (pass by reference)</li>
+<li><code>None</code> object for null/missing values (equivalent to <code>NULL</code>)</li>
+</ul>
+</div>
+<div id="slide12" class="slide">
+<h1>Odds and ends</h1>
+<ul>
+<li>Member access with <code>.</code> operator
+<ul>
+<li><code>instance.method()</code></li>
+<li><code>instance.attribute</code></li>
+<li><code>instance.attribute.another</code></li>
+</ul>
+</li>
+<li>Functions/methods are not the only things that are callable</li>
+<li>Decorators apply a callable to a function at creation time:
+<pre>@g
+def f(x):
+    ...
+</pre>
+is equivalent to:
+<pre>def f(x):
+    ...
+f = g(f)</pre>
+</li>
+</ul>
+</div>
+<div id="slide13" class="slide">
+<h1>The Python DB-API</h1>
+<ul>
+<li>Standard API for database access</li>
+<li>PEP 249: <a title="PEP 249: Python Database API v2.0" href="https://web.archive.org/web/20070104043701/http://www.python.org/peps/pep-0249.html">http://www.python.org/peps/pep-0249.html</a></li>
+<li>By convention, module name ends with "db", i.e. MySQLdb</li>
+<ul>
+<li>Module Interface</li>
+<li>Connection Objects</li>
+<li>Cursor Objects</li>
+<li>DBI Helper Objects</li>
+<li>Type Objects and Constructors</li>
+<li>Implementation Hints</li>
+<li>Major Changes from 1.0 to 2.0</li>
+</ul>
+</ul>
+</div>
+<div id="slide14" class="slide">
+<h1>Module Interface</h1>
+<dl><dt>connect(...)</dt><dd>Constructor for creating a connection to the database. Returns a Connection Object.</dd><dt>apilevel</dt><dd>String constant stating the supported DB API level.</dd><dt>threadsafety</dt><dd>Integer constant stating the level of thread safety the interface supports.</dd></dl></div>
+<div id="slide15" class="slide">
+<h1>SQL parameter placeholders</h1>
+paramstyleString constant stating the type of parameter marker formatting expected by the interface.<dl><dt>'qmark'</dt><dd>Question mark style, e.g. '...WHERE name=?'</dd><dt>'numeric'</dt><dd>Numeric, positional style, e.g. '...WHERE name=:1'</dd><dt>'named'</dt><dd>Named style, e.g. '...WHERE name=:name'</dd><dt>'format'</dt><dd>ANSI C printf format codes, e.g. '...WHERE name=%s'</dd><dt>'pyformat'</dt><dd>Python extended format codes, e.g. '...WHERE name=%(name)s'</dd></dl>MySQLdb 1.0 and 1.2 uses format and pyformat; 2.0 may also support qmark.</div>
+<div id="slide16" class="slide">
+<h1>Exceptions</h1>
+<ul>
+<li>StandardError
+<ul>
+<li>Warning</li>
+<li>Error
+<ul>
+<li>InterfaceError</li>
+<li>DatabaseError</li>
+<li>DataError</li>
+<li>OperationalError</li>
+<li>IntegrityError</li>
+<li>InternalError</li>
+<li>ProgrammingError</li>
+<li>NotSupportedError</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="slide17" class="slide">
+<h1>Connection Object</h1>
+<dl><dt>.close()</dt><dd>Close the connection now</dd><dt>.commit()</dt><dd>Commit any pending transaction to the database. Auto-commit off by default.</dd><dt>.rollback()</dt><dd>Rollback any pending transaction.</dd><dt>.cursor()</dt><dd>Return a new Cursor Object using the connection.</dd><dt><em>exceptions</em></dt><dd>The standard exception classes; simplfies error handling in some cases</dd><dt>.messages</dt><dd>list of error/warning messages since last method call</dd></dl></div>
+<div id="slide18" class="slide">
+<h1>Cursor Object</h1>
+<dl><dt>.description</dt><dd>A sequence of sequences, each of which describe a column of the result.</dd><dt>.rowcount</dt><dd>Number of rows affected by last query.</dd><dt>.callproc(procname[,parameters])</dt><dd>Call a stored database procedure with the given name.</dd><dt>.close()</dt><dd>Close the cursor now.</dd><dt>.execute(operation[,parameters])</dt><dd>Prepare and execute a database operation (query or command). Parameters: sequence or mapping.</dd><dt>.executemany(operation,seq_of_parameters)</dt><dd>Prepare a database operation (query or command) and then execute it against a sequence of parameters.</dd></dl></div>
+<div id="slide19" class="slide">
+<h1>Cursor Object</h1>
+<dl><dt>.fetchone()</dt><dd>Fetch the next row of the result set as a sequence, or <em>None</em> if there are no more rows.</dd><dt>.fetchmany(<em>[size=cursor.arraysize]</em>)</dt><dd>Fetch a sequence of up to <em>size</em> rows; may be fewer. Zero length sequence indicates end of result set.</dd><dt>.fetchall()</dt><dd>Fetch all remaining rows as a sequence of rows.</dd><dt>.nextset()</dt><dd>Skip to the next result set. Returns a true value if there is another result set; <em>None</em> (false) if not.</dd><dt>.arraysize</dt><dd>Default number of rows to return with cursor.fetchmany(). Default: 1.</dd></dl></div>
+<div id="slide20" class="slide">
+<h1>Cursor Object</h1>
+<dl><dt>.rownumber</dt><dd>Current index into result set</dd><dt>.connection</dt><dd>The Connection object for this cursor</dd><dt>.scroll(value<em>[,mode='relative']</em>)</dt><dd>Scroll to a new position in the result set (relative or absolute).</dd><dt>.messages</dt><dd>List containing warning/error messages since last method call (except the .fetch<em>XXX</em>() methods).</dd><dt>.next()</dt><dd>Fetches one row (like fetchone()) or raises <code>StopIteration</code> if no rows left. <em>Iterator protocol</em></dd><dt>.lastrowid</dt><dd>Row id of the last affected row (i.e. inserting <code>AUTO_INCREMENT</code> columns)</dd></dl></div>
+<div id="slide21" class="slide">
+<h1>MySQL for Python</h1>
+<ul>
+<li>MySQL-python project on SourceForge: <a title="MySQL-python project on SourceForge" href="https://web.archive.org/web/20070104043701/http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a></li>
+<li>Current best version: 1.2.0
+<ul>
+<li>Python-2.3 and newer (and maybe 2.2)</li>
+<li>MySQL-3.23, 4.0, and 4.1 (and maybe 5.0)</li>
+<li>Prepared statements not supported yet</li>
+</ul>
+</li>
+<li>Older version: 1.0.1
+<ul>
+<li>Python-1.5.2 (very old) and newer</li>
+<li>MySQL-3.22, 3.23, and 4.0 (not 4.1 or newer)</li>
+<li>Don't use if you can use 1.2.0</li>
+</ul>
+</li>
+<li>Vaporware version: 2.0
+<ul>
+<li>Python-2.4 and newer</li>
+<li>MySQL-4.0, 4.1, and 5.0</li>
+<li>Prepared statements will be supported</li>
+<li>Return all text columns as <code>unicode</code> by default</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="slide22" class="slide">
+<h1>Architecture</h1>
+<div class="twocol">
+<h2><code>_mysql</code></h2>
+<ul>
+<li>C extension module</li>
+<li>transliteration of MySQL C API into Python objects</li>
+<li>If you use the C API, this should be very familiar</li>
+<li>Deprecated API calls not implemented</li>
+<li>Not everything (particularly fields) is exposed</li>
+<li>SQL column type to Python type conversions handled by a dictionary</li>
+</ul>
+</div>
+<div class="twocol">
+<h2><code>MySQLdb</code></h2>
+<ul>
+<li>Adapts <code>_mysql</code> to DB-API</li>
+<li>Many non-standard C API calls are exposed</li>
+<li>Relatively light-weight wrapper</li>
+<li>Implements cursors</li>
+<li>Defines default type mappings; easily customizable</li>
+</ul>
+</div>
+</div>
+<div id="slide23" class="slide">
+<h1>Opening a connection</h1>
+<p><code>connect()</code> takes the same options as <code>mysql_real_connect()</code>, and then some.</p>
+<pre>import MySQLdb
+
+# These are all equivalent, for the most part
+db = MySQLdb.connect("myhost", "myuser", "mysecret", "mydb")
+db = MySQLdb.connect(host="myhost", user="myuser",
+                     passwd="mysecret", db="mydb")
+auth = dict(user="myuser", passwd="mysecret")
+db = MySQLdb.connect("myhost", db="mydb", **auth)
+db = MySQLdb.connect(read_default_file="/etc/mysql/myapp.cnf")
+</pre>
+<ul>
+<li><code>compress=1</code> enables gzip compression</li>
+<li><code>use_unicode=1</code> returns text-like columns as <code>unicode</code> objects</li>
+<li><code>ssl=dict(...)</code> negotiates SSL/TLS</li>
+</ul>
+</div>
+<div id="slide24" class="slide">
+<h1>Simple query example</h1>
+<pre>import MySQLdb
+
+db = MySQLdb.connect(read_default_file="/etc/mysql/myapp.cnf")
+c = db.cursor()
+c.execute("""SELECT * FROM users WHERE userid=%s""", ('monty',))
+print c.fetchone()
+</pre>
+<h2>Notes</h2>
+<ul>
+<li><code>('monty',)</code> is a 1-tuple; comma required to distinquish from algebraic grouping</li>
+<li>Good reasons not to use <code>*</code>
+<ul>
+<li>How many columns are being returned?</li>
+<li>What is the order of the columns?</li>
+</ul>
+</li>
+<li>Good reasons to use <code>*</code>
+<ul>
+<li>Table/database browser</li>
+<li>Lazy</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="slide25" class="slide">
+<h1>Multi-row query example</h1>
+<pre>c = db.cursor()
+c.execute("""SELECT userid, first_name, last_name, company
+FROM users WHERE status=%s and expire&gt;%s""",
+(status, today))
+users = c.fetchall()
+</pre>
+<h2>Notes</h2>
+<ul>
+<li>We know what the columns are</li>
+<li>Could use some object abstraction</li>
+</ul>
+</div>
+<div id="slide26" class="slide">
+<h1>A simple User class</h1>
+<pre>class User(object):
+
+    """A simple User class"""
+
+    def __init__(self, userid,
+                 first_name=None, last_name=None,
+                 company=None):
+        self.userid = userid
+        self.first_name = first_name
+        self.last_name = last_name
+        self.company = company
+
+    def announce(self):
+        """Announce User to the world."""
+        name = "%s %s" % (self.first_name, self.last_name)
+        if self.company:
+            return "%s of %s" % (name, self.company)
+        else:
+            return name
+
+    def __str__(self):
+        return self.announce()
+</pre>
+</div>
+<div id="slide27" class="slide">
+<h1>Multi-row query with User object</h1>
+<pre>users = []
+c = db.cursor()
+c.execute("""SELECT userid, first_name, last_name, company
+FROM users WHERE status=%s and expire&gt;%s""",
+(status, today))
+
+for userid, first_name, last_name, company in c.fetchall():
+    u = User(userid, first_name, last_name, company)
+    print u
+    users.append(u)
+</pre>
+<p>might produce output like:</p>
+<pre>Tim O'Reilly of O'Reilly Media, Inc.
+Monty Widenius of MySQL AB
+Carleton Fiorina
+Guido van Rossum of Elemental Security
+</pre>
+</div>
+<div id="slide28" class="slide">
+<h1>Cursors are iterators</h1>
+<p>Not necessary to use <code>c.fetchall()</code></p>
+<pre>users = []
+c = db.cursor()
+c.execute("""SELECT userid, first_name, last_name, company
+FROM users WHERE status=%s and expire&gt;%s""",
+(status, today))
+
+for userid, first_name, last_name, company in c:
+    u = User(userid, first_name, last_name, company)
+    print u
+    users.append(u)
+</pre>
+<p>Under certain conditions, this is more efficient than <code>fetchall()</code>, and no worse.</p>
+</div>
+<div id="slide29" class="slide">
+<h1>Dictionaries as parameters</h1>
+<p>Python classes typically store attributes in <code>__dict__</code>, so you can get away with this:</p>
+<pre>u = User(...)
+c = db.cursor()
+c.execute("""INSERT INTO users
+(userid, first_name, last_name, company)
+VALUES (%(userid)s, %(first_name)s,
+%(last_name)s, %(company)s)""", u.__dict__)
+db.commit()
+</pre>
+</div>
+<div id="slide30" class="slide">
+<h1>Multi-row INSERT</h1>
+<pre># users is a list of (userid, first_name, last_name, company)
+c = db.cursor()
+c.executemany("""INSERT INTO users
+(userid, first_name, last_name, company)
+VALUES (%s, %s, %s, %s)""", users)
+db.commit()
+</pre>
+<p>In MySQLdb, this is converted internally to a multi-row INSERT, which is reported to be 2-3 orders of magnitude faster. Also works for REPLACE.</p>
+</div>
+<div id="slide31" class="slide">
+<h1>Multi-row INSERT with dictionaries</h1>
+<pre># users is a list of Users
+c = db.cursor()
+c.executemany("""INSERT INTO users
+(userid, first_name, last_name, company)
+VALUES (%(userid)s, %(first_name)s,
+%(last_names, %(company)s)""",
+[ u.__dict__ for u in users ])
+db.commit()
+</pre>
+<p>This builds the parameter list with a list comprehension.</p>
+</div>
+<div id="slide32" class="slide">
+<h1>Never do this</h1>
+<h2>Biggest MySQLdb newbie mistake of all time: Seeing <code>%s</code> and thinking, "I should use the <code>%</code> operator here."</h2>
+<pre>users = []
+c = db.cursor()
+c.execute("""SELECT userid, first_name, last_name, company
+FROM users WHERE status='%s' and expire&gt;'%s'""" %
+(status, today))
+
+for userid, first_name, last_name, company in c:
+    u = User(userid, first_name, last_name, company)
+    print u
+    users.append(u)
+</pre>
+<p>Note use of <code>%</code> operator to insert parameter values. This does <strong>not</strong> provide proper quoting (escaping of <code>'</code>, <code>NULL</code>/<code>None</code>, or <code>\0</code>). Passing them separately (as the second parameter) ensures they are quoted correctly. However, <code>%</code> <strong>is</strong> necessary if you have to insert arbitrary SQL such as column or table names or <code>WHERE</code> clauses.</p>
+</div>
+<div id="slide33" class="slide">
+<h1>To buffer, or not to buffer...</h1>
+<div class="twocol">
+<h2><code>mysql_store_result()</code></h2>
+<ul>
+<li>Stores all rows of result set in client</li>
+<li>Large result sets can chew up a lot of memory</li>
+<li>Size of result set known immediately</li>
+<li>Result set is seekable</li>
+<li>Can issue another query immediately</li>
+<li>Used for standard MySQLdb cursor</li>
+</ul>
+</div>
+<div class="twocol">
+<h2><code>mysql_use_result()</code></h2>
+<ul>
+<li>Sends result set row by row</li>
+<li>Consumes resources on server</li>
+<li>Must fetch all rows before issuing any other queries</li>
+<li>Size of result set unknown until finished</li>
+<li>Not seekable</li>
+<li>Can be used with MySQLdb's <code>SSCursor</code></li>
+</ul>
+</div>
+</div>
+<div id="slide34" class="slide">
+<h1>Optional cursor classes</h1>
+<p><code>DictCursor</code> causes <code>fetchXXX()</code> methods to return mappings instead of sequences, with column names for keys.</p>
+<pre>users = []
+c = db.cursor(MySQLdb.cursors.DictCursor)
+c.execute("""SELECT userid, first_name, last_name, company
+FROM users WHERE status=%s and expire&gt;%s""",
+(status, today))
+
+for row in c:
+    u = User(**row)
+    print u
+    users.append(u)
+</pre>
+<p>Note that column names happen to match <code>User</code> member names in this case.</p>
+</div>
+<div id="slide35" class="slide">
+<h1>Type objects and constructors</h1>
+<ul>
+<li>Constructors
+<ul>
+<li>Date(year,month,day)</li>
+<li>Time(hour,minute,second)</li>
+<li>DateFromTicks(ticks)</li>
+<li>TimeFromTicks(ticks)</li>
+<li>TimestampFromTicks(ticks)</li>
+<li>Binary(string)</li>
+</ul>
+</li>
+<li>Types
+<ul>
+<li>STRING</li>
+<li>BINARY</li>
+<li>NUMBER</li>
+<li>DATETIME</li>
+<li>ROWID</li>
+</ul>
+</li>
+</ul>
+<p>These are not often used with MySQLdb.</p>
+</div>
+<div id="slide36" class="slide">
+<h1>Embedded server</h1>
+<ol>
+<li>Build with embedded server support:
+<pre>$ export mysqlclient=mysqld
+$ python setup.py build
+# python setup.py install
+</pre>
+</li>
+<li><code>_mysql.server_start()</code></li>
+<li>Use normally</li>
+<li><code>_mysql.server_end()</code></li>
+</ol></div>
+<div id="slide37" class="slide">
+<h1>Questions?</h1>
+<ul>
+<li>http://sourceforge.net/projects/mysql-python</li>
+<li>http://www.terry.uga.edu/</li>
+<li>http://www.uga.edu/</li>
+</ul>
+</div>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-09-17 21:43</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7538004" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7538004);return false;">收藏</a></div>
+        </div>

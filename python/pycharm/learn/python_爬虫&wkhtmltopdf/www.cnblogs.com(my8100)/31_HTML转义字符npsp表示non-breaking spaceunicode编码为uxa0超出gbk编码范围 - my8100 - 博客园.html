@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.目录 1.参考2.问题定位不间断空格的unicode表示为 u\xa0&amp;#39;,超出gbk编码范围？3.如何处理.extract_first().replace(u&amp;#39;\xa0&amp;#39;," />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>HTML转义字符&amp;npsp；表示non-breaking space，unicode编码为u&#39;\xa0&#39;,超出gbk编码范围？ - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7709371.html">
+    <span>HTML转义字符&amp;npsp；表示non-breaking space，unicode编码为u&#39;\xa0&#39;,超出gbk编码范围？</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p>1.参考<br />2.问题定位<br />不间断空格的unicode表示为 u\xa0',超出gbk编码范围？<br />3.如何处理<br />.extract_first().replace(u'\xa0', u' ').strip().encode('utf-8','replace')</p>
+<p>&nbsp;</p>
+<h1>1.参考</h1>
+<p><a href="https://stackoverflow.com/questions/19508442/beautiful-soup-and-unicode-problems" target="_blank">Beautiful Soup and Unicode Problems</a></p>
+<p>详细解释</p>
+<p><span style="color: #ff0000;">unicodedata.normalize('NFKD',string)&nbsp; 实际作用？？？</span></p>
+<p>&nbsp;</p>
+<p><a href="https://stackoverflow.com/questions/35364069/scrapy-select-tag-with-non-breaking-space-with-xpath" target="_blank">Scrapy : Select tag with non-breaking space with xpath</a></p>
+<pre><code>&gt;&gt;&gt; selector.xpath(u'''
+...     //p<span style="color: #000000;">[normalize-space()]</span>
+...        [not(contains(normalize-space(), "\u00a0"))]</code></pre>
+<p><span style="color: #ff0000;">normalize-space() 实际作用？？？</span></p>
+<p>&nbsp;</p>
+<div class="cnblogs_code">
+<pre>In [244]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">.content</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>244]: [&lt;Selector xpath=u<span style="color: #800000;">"</span><span style="color: #800000;">descendant-or-self::*[@class and contains(concat(' ', normalize-space(@class), ' '), ' content ')]</span><span style="color: #800000;">"</span> data=u<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p class="content text-</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href="http://www.cnblogs.com/skymoney/p/python_bs_unicode.html" target="_blank">BeautifulSoup下Unicode乱码解决&nbsp;</a></p>
+<p><code class="python plain">s.replace(u</code><code class="python string">'\xa0'</code><code class="python plain">, u'</code><code class="python string">').encode('</code><code class="python plain">utf</code><code class="python keyword">-</code><code class="python value">8</code><code class="python plain">')</code></p>
+<p>&nbsp;</p>
+<h1>2.问题定位</h1>
+<p><a href="https://en.wikipedia.org/wiki/Comparison_of_text_editors" target="_blank">https://en.wikipedia.org/wiki/Comparison_of_text_editors</a></p>
+<p>定位元素显示为 &amp;npsp；</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171022115649506-2066742783.jpg" alt="" /></p>
+<p>&nbsp;</p>
+<p>网页源代码表示为&nbsp;&amp;#160;</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">tr</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">td </span><span style="color: #ff0000;">style</span><span style="color: #0000ff;">="background: #FFD; color: black; vertical-align: middle; text-align: center;"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="partial table-partial"</span><span style="color: #0000ff;">&gt;</span>memory<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>= Limited by available memory &amp;#160;&amp;#160;<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">td </span><span style="color: #ff0000;">style</span><span style="color: #0000ff;">="background:#F99;vertical-align:middle;text-align:center;"</span><span style="color: #ff0000;"> class</span><span style="color: #0000ff;">="table-no"</span><span style="color: #0000ff;">&gt;</span>No (64&amp;#160;KB)<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>= Some limit less than available memory (give max size if known)<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">td</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">tr</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">table</span><span style="color: #0000ff;">&gt;</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>实际传输Hex为：</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171022115853177-343848855.jpg" alt="" /></p>
+<p>&nbsp;</p>
+<p><span style="color: #ff0000;">不间断空格的unicode表示为 u\xa0'，保存的时候编码 utf-8 则是 '\xc2\xa0'</span></p>
+<div class="cnblogs_code">
+<pre>In [211]: <span style="color: #0000ff;">for</span> tr <span style="color: #0000ff;">in</span> response.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//table[8]/tr[2]</span><span style="color: #800000;">'</span><span style="color: #000000;">):
+     ...:     </span><span style="color: #0000ff;">print</span> [u<span style="color: #800000;">''</span>.join(i.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">.//text()</span><span style="color: #800000;">'</span>).extract()) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> tr.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./*</span><span style="color: #800000;">'</span><span style="color: #000000;">)]
+     ...:
+
+[u</span><span style="color: #800000;">'</span><span style="color: #800000;">memory</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">= Limited by available memory \xa0\xa0</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">No (64\xa0KB)</span><span style="color: #800000;">'</span>, u<span style="color: #800000;">'</span><span style="color: #800000;">= Some limit less than available memory (give max size if known)</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>212]: u<span style="color: #800000;">'</span><span style="color: #800000;">No (64\xa0KB)</span><span style="color: #800000;">'</span>.encode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>212]: <span style="color: #800000;">'</span><span style="color: #800000;">No (64\xc2\xa0KB)</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>213]: u<span style="color: #800000;">'</span><span style="color: #800000;">No (64\xa0KB)</span><span style="color: #800000;">'</span>.encode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>).decode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>213]: u<span style="color: #800000;">'</span><span style="color: #800000;">No (64\xa0KB)</span><span style="color: #800000;">'</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>保存 csv <span style="color: #ff0000;">直接使用 excel 打开会有乱码（默认ANSI gbk 打开？？？</span>，u'\xa0' 超出 gbk 能够编码范围？？？），使用记事本或notepad++能够自动以 utf-8 正常打开。</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171022122840568-276222107.jpg" alt="" /></p>
+<p>&nbsp;</p>
+<p>使用记事本打开csv文件，另存为 ANSI 编码，之后 excel 正常打开。超出 gbk 编码范围的替换为'?'</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171022122918787-682057099.jpg" alt="" /></p>
+<p>&nbsp;</p>
+<h1>3.如何处理</h1>
+<p>.extract_first().replace(u'\xa0', u' ').strip().encode('utf-8','replace')</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-22 13:06</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7709371" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7709371);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7709371, cb_entryCreatedDate = '2017-10-22 13:06', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

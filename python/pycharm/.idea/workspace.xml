@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="292beb65-2a06-4a1f-8e58-cc4828206c5f" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/examples/1_Ecu_Normal_Addressing_Using_ODX_File.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Dynamic Function Generation/decode_PR_Boot_Software_Identification_Read.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-180">
+              <caret line="33" column="30" selection-start-line="33" selection-start-column="23" selection-end-line="33" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Dynamic Function Generation/readDataByIdentifier_template.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1064" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/ODX Parsing/Bootloader.odx">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/ODX Parsing/UdsConfigTool.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="13" column="36" lean-forward="true" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/iTimer.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ManualThreadTimer.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/MultiprocessingTimer.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ResettableTimer.py">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ThreadTimer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="624">
+              <caret line="36" column="24" lean-forward="true" selection-start-line="36" selection-start-column="24" selection-end-line="36" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$APPLICATION_CONFIG_DIR$/pycharm64.exe.vmoptions" />
+        <option value="$PROJECT_DIR$/review/闭包.py" />
+        <option value="$PROJECT_DIR$/review/test.py" />
+        <option value="$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/Uds/Uds.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="710" />
+    <option name="y" value="-8" />
+    <option name="width" value="1400" />
+    <option name="height" value="1000" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="learn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
+              <item name="final report" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+              <item name="Dynamic Function Generation" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+              <item name="ODX Parsing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="experiments" type="462c0819:PsiDirectoryNode" />
+              <item name="Timers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds" type="462c0819:PsiDirectoryNode" />
+              <item name="Functional Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds" type="462c0819:PsiDirectoryNode" />
+              <item name="Integration Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds" type="462c0819:PsiDirectoryNode" />
+              <item name="Unit Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds-Config-Tool" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds-Config-Tool" type="462c0819:PsiDirectoryNode" />
+              <item name="Functional Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds-Config-Tool" type="462c0819:PsiDirectoryNode" />
+              <item name="Profiling" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds-Config-Tool" type="462c0819:PsiDirectoryNode" />
+              <item name="Unit Tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_communications" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_communications" type="462c0819:PsiDirectoryNode" />
+              <item name="TransportProtocols" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_communications" type="462c0819:PsiDirectoryNode" />
+              <item name="TransportProtocols" type="462c0819:PsiDirectoryNode" />
+              <item name="Can" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_communications" type="462c0819:PsiDirectoryNode" />
+              <item name="TransportProtocols" type="462c0819:PsiDirectoryNode" />
+              <item name="Lin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_communications" type="462c0819:PsiDirectoryNode" />
+              <item name="Uds" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_config_tool" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_config_tool" type="462c0819:PsiDirectoryNode" />
+              <item name="FunctionCreation" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="python-uds-master" type="462c0819:PsiDirectoryNode" />
+              <item name="uds" type="462c0819:PsiDirectoryNode" />
+              <item name="uds_config_tool" type="462c0819:PsiDirectoryNode" />
+              <item name="ISOStandard" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pycharm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pycharm" type="462c0819:PsiDirectoryNode" />
+              <item name="review" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.test">
+    <configuration name="闭包" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/review" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/review/闭包.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pycharm" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/review" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/review/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.闭包" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="292beb65-2a06-4a1f-8e58-cc4828206c5f" name="Default Changelist" comment="" />
+      <created>1592840327113</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592840327113</updated>
+      <workItem from="1592840328957" duration="353000" />
+      <workItem from="1592840868365" duration="567000" />
+      <workItem from="1592841445163" duration="99000" />
+      <workItem from="1592841583433" duration="7000" />
+      <workItem from="1592912693020" duration="206000" />
+      <workItem from="1593146788705" duration="810000" />
+      <workItem from="1593163149089" duration="2201000" />
+      <workItem from="1594208280892" duration="3412000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="7655000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18600954" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32969603" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="11" />
+      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="3" />
+      <window_info anchor="right" id="Database" order="4" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/pycharm$.coverage" NAME="闭包 Coverage Results" MODIFIED="1593163631424" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/review" />
+    <SUITE FILE_PATH="coverage/pycharm$test.coverage" NAME="test Coverage Results" MODIFIED="1593164432071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/review" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/pycharm64.exe.vmoptions">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="13" column="59" lean-forward="true" selection-start-line="13" selection-start-column="59" selection-end-line="13" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/review/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="23" column="48" selection-start-line="23" selection-start-column="48" selection-end-line="23" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/review/闭包.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/FunctionCreation/DiagnosticSessionControlMethodFactory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5700">
+          <caret line="44" column="43" selection-start-line="44" selection-start-column="6" selection-end-line="44" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/FunctionCreation/WriteDataByIdentifierMethodFactory.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Lin/LinTp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4860" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/FunctionCreation/RoutineControlMethodFactory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4320" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/test/Uds/Unit Tests/unittest_Uds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-750" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/ISOStandard/ISOStandard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/CHANGES.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/LICENSE.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/MANIFEST.in">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="60">
+            <caret line="2" column="58" selection-start-line="2" selection-start-column="58" selection-end-line="2" selection-end-column="58" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Can/config.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="780">
+          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/FunctionCreation/RequestDownloadMethodFactory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4380">
+          <caret line="42" column="58" lean-forward="true" selection-start-line="42" selection-start-column="58" selection-end-line="42" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Can/CanConnection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Can/CanConnectionFactory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2370">
+          <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Can/CanTp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6420">
+          <caret line="315" column="63" lean-forward="true" selection-start-line="315" selection-start-column="63" selection-end-line="315" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/TransportProtocols/Can/CanTpTypes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1860">
+          <caret line="62" column="4" selection-start-line="62" selection-start-column="4" selection-end-line="62" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/test/Uds-Config-Tool/Profiling/test_profilingTestsOfDecodeMethods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-630" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/UdsConfigTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-6180">
+          <caret line="81" column="32" selection-start-line="81" selection-start-column="32" selection-end-line="81" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/UtilityFunctions.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/DecodeFunctions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2544">
+          <caret line="114" column="12" lean-forward="true" selection-start-line="114" selection-start-column="12" selection-end-line="114" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_config_tool/FunctionCreation/TransferExitMethodFactory.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/uds/uds_communications/Uds/Uds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1320">
+          <caret line="82" lean-forward="true" selection-start-line="82" selection-end-line="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/docs/examples/objectSetup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="21" column="17" lean-forward="true" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/examples/1_Ecu_Normal_Addressing_Peak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/examples/1_Ecu_Normal_Addressing_Using_ODX_File.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Dynamic Function Generation/decode_PR_Boot_Software_Identification_Read.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-180">
+          <caret line="33" column="30" selection-start-line="33" selection-start-column="23" selection-end-line="33" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Dynamic Function Generation/readDataByIdentifier_template.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1064" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/ODX Parsing/Bootloader.odx">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/ODX Parsing/UdsConfigTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="13" column="36" lean-forward="true" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/iTimer.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ManualThreadTimer.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/MultiprocessingTimer.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ResettableTimer.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python-uds-master/python-uds-master/experiments/Timers/ThreadTimer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="624">
+          <caret line="36" column="24" lean-forward="true" selection-start-line="36" selection-start-column="24" selection-end-line="36" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

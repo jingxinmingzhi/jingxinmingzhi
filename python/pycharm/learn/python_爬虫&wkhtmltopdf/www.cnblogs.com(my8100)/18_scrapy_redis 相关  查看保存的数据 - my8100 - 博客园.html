@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.参考资料 https://redis.io/topics/data-types-intro An introduction to Redis data types and abstractions" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>scrapy_redis 相关:  查看保存的数据 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_redis.html">
+    <span>scrapy_redis 相关:  查看保存的数据</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考资料</h2>
+<p><a href="https://redis.io/topics/data-types-intro" target="_blank">https://redis.io/topics/data-types-intro　　An introduction to Redis data types and abstractions</a></p>
+<p><a href="http://redisdoc.com/" target="_blank">http://redisdoc.com/　　Redis 命令参考</a></p>
+<h2>1.scrapy_redis</h2>
+<p>&nbsp;</p>
+<h2>2.redis-cli 查看数据</h2>
+<h3>2.1 匹配数据库内所有 key</h3>
+<p>redis-cli</p>
+<p>127.0.0.1:6379&gt;&nbsp;<span style="color: #ff0000;">KEYS *</span><br />1) "mycrawler_redis:dupefilter"<br />2) "mycrawler_redis:requests"<br />6) "mycrawler_redis:items"</p>
+<h3>2.2 List（列表）</h3>
+<p>127.0.0.1:6379&gt; type mycrawler_redis:items<br />list<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">llen <span style="color: #000000;">mycrawler_redis:items</span></span><br />(integer) 701<br />127.0.0.1:6379&gt;<span style="color: #ff0000;"> LRANGE mycrawler_redis:items 0 1</span><br />1) "{\"text\": \"\\u201cA woman is like a tea bag; you never know how strong it is until it's in hot water.\\u201d\", \"crawled\": \"2018-02-21 03:38:17\", \"spider\": \"mycrawler_redis\", \"author\": \"Eleanor Roosevelt\"}"<br />2) "{\"text\": \"\\u201cThe world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.\\u201d\", \"crawled\": \"2018-02-21 03:38:17\", \"spider\": \"mycrawler_redis\", \"author\": \"Albert Einstein\"}"<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">LRANGE mycrawler_redis:items -2 -1</span><br />1) "{\"text\": \"\\u201cThe opposite of love is not hate, it's indifference. The opposite of art is not ugliness, it's indifference. The opposite of faith is not heresy, it's indifference. And the opposite of life is not death, it's indifference.\\u201d\", \"crawled\": \"2018-02-21 03:43:34\", \"spider\": \"mycrawler_redis\", \"author\": \"Elie Wiesel\"}"<br />2) "{\"text\": \"\\u201cIt is not a lack of love, but a lack of friendship that makes unhappy marriages.\\u201d\", \"crawled\": \"2018-02-21 03:43:34\", \"spider\": \"mycrawler_redis\", \"author\": \"Friedrich Nietzsche\"}"</p>
+<h3>&nbsp;</h3>
+<h3>2.3 Set（集合）</h3>
+<p><span style="color: #ff00ff;">PS:&nbsp;size是容量，但cardinality是「基数」，是集合论中的术语</span></p>
+<p>127.0.0.1:6379&gt; type mycrawler_redis:dupefilter<br />set<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">SCARD<span style="color: #000000;"> mycrawler_redis:dupefilter</span></span><br />(integer) 18603<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">SRANDMEMBER</span> mycrawler_redis:dupefilter<br />"5faa874e145528c84d636d5a95959583301e18f2"<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">SRANDMEMBER</span> mycrawler_redis:dupefilter<br />"68f9f6842efcd0392236b953ba6cf5c4616d4c91"</p>
+<p>&nbsp;</p>
+<h3>2.4 SortedSet（有序集合）</h3>
+<p>20180726 更新: 也可通过 ZCARD&nbsp;key命令返回有序集 key 的基数。</p>
+<p>&nbsp;</p>
+<p>127.0.0.1:6379&gt; type mycrawler_redis:requests<br />zset<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">ZLEXCOUNT mycrawler_redis:requests - +</span><br />(integer) 18199<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">ZRANGE  mycrawler_redis:requests 0 1 WITHSCORES</span><br />1) "\x80\x02}q\x01(U\x04bodyq\x02U\x00U\t_encodingq\x03U\x05utf-8q\x04U\acookiesq\x05}q\x06U\x04metaq\a}q\b(U\x05depthq\tK\x02U\tlink_textq\nclxml.etree\n_ElementStringResult\nq\x0bU\x0cspiritualityq\x0c\x85\x81q\r}q\x0e(U\a_parentq\x0fNU\x0cis_attributeq\x10\x89U\battrnameq\x11NU\ais_textq\x12\x89U\ais_tailq\x13\x89ubU\x04ruleq\x14K\x00uU\aheadersq\x15}q\x16U\aRefererq\x17]q\x18U https://www.goodreads.com/quotesq\x19asU\x03urlq\x1aX1\x00\x00\x00https://www.goodreads.com/quotes/tag/spiritualityU\x0bdont_filterq\x1b\x89U\bpriorityq\x1cK\x00U\bcallbackq\x1dU\x14_response_downloadedq\x1eU\x05flagsq\x1f]q U\x06methodq!U\x03GETq\"U\aerrbackq#Nu."<br />2) "0"<br />3) "\x80\x02}q\x01(U\x04bodyq\x02U\x00U\t_encodingq\x03U\x05utf-8q\x04U\acookiesq\x05}q\x06U\x04metaq\a}q\b(U\x05depthq\tK\x02U\tlink_textq\nclxml.etree\n_ElementStringResult\nq\x0bU\rChoice Awardsq\x0c\x85\x81q\r}q\x0e(U\a_parentq\x0fNU\x0cis_attributeq\x10\x89U\battrnameq\x11NU\ais_textq\x12\x89U\ais_tailq\x13\x89ubU\x04ruleq\x14K\x00uU\aheadersq\x15}q\x16U\aRefererq\x17]q\x18U https://www.goodreads.com/quotesq\x19asU\x03urlq\x1aX&amp;\x00\x00\x00https://www.goodreads.com/choiceawardsU\x0bdont_filterq\x1b\x89U\bpriorityq\x1cK\x00U\bcallbackq\x1dU\x14_response_downloadedq\x1eU\x05flagsq\x1f]q U\x06methodq!U\x03GETq\"U\aerrbackq#Nu."<br />4) "0"<br />127.0.0.1:6379&gt; <span style="color: #ff0000;">ZRANGE  mycrawler_redis:requests -2 -1 WITHSCORES</span><br />1) "\x80\x02}q\x01(U\x04bodyq\x02U\x00U\t_encodingq\x03U\x05utf-8q\x04U\acookiesq\x05}q\x06U\x04metaq\a}q\b(U\tlink_textq\tX\x00\x00\x00\x00U\x04ruleq\nK\x00U\x10download_timeoutq\x0bG@f\x80\x00\x00\x00\x00\x00U\x05depthq\x0cK\x02U\x0bretry_timesq\rK\x01U\rdownload_slotq\x0eU\x0fwww.youtube.comq\x0fuU\aheadersq\x10}q\x11(U\x0fAccept-Languageq\x12]q\x13U\x02enq\x14aU\aRefererq\x15]q\x16U\x17https://scrapinghub.comq\x17aU\x0fAccept-Encodingq\x18]q\x19U\x0cgzip,deflateq\x1aaU\x06Acceptq\x1b]q\x1cU?text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8q\x1daU\nUser-Agentq\x1e]q\x1fU7scrapy-redis (+https://github.com/rolando/scrapy-redis)q auU\x03urlq!X#\x00\x00\x00https://www.youtube.com/scrapinghubU\x0bdont_filterq\"\x88U\bpriorityq#J\xff\xff\xff\xffU\bcallbackq$U\x14_response_downloadedq%U\x05flagsq&amp;]q'U\x06methodq(U\x03GETq)U\aerrbackq*Nu."<br />2) "1"<br />3) "\x80\x02}q\x01(U\x04bodyq\x02U\x00U\t_encodingq\x03U\x05utf-8q\x04U\acookiesq\x05}q\x06U\x04metaq\a}q\b(U\tlink_textq\tX\x00\x00\x00\x00U\x04ruleq\nK\x00U\x10download_timeoutq\x0bG@f\x80\x00\x00\x00\x00\x00U\x05depthq\x0cK\x02U\x0bretry_timesq\rK\x01U\rdownload_slotq\x0eU\x10www.facebook.comq\x0fuU\aheadersq\x10}q\x11(U\x0fAccept-Languageq\x12]q\x13U\x02enq\x14aU\aRefererq\x15]q\x16U\x17https://scrapinghub.comq\x17aU\x0fAccept-Encodingq\x18]q\x19U\x0cgzip,deflateq\x1aaU\x06Acceptq\x1b]q\x1cU?text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8q\x1daU\nUser-Agentq\x1e]q\x1fU7scrapy-redis (+https://github.com/rolando/scrapy-redis)q auU\x03urlq!X%\x00\x00\x00https://www.facebook.com/ScrapingHub/U\x0bdont_filterq\"\x88U\bpriorityq#J\xff\xff\xff\xffU\bcallbackq$U\x14_response_downloadedq%U\x05flagsq&amp;]q'U\x06methodq(U\x03GETq)U\aerrbackq*Nu."<br />4) "1"</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-02-21 12:39</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8456479" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(8456479);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 8456479, cb_entryCreatedDate = '2018-02-21 12:39', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

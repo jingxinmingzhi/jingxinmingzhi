@@ -1,0 +1,275 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7504289.html">
+    <span>python之多线程 queue 实践 筛选有效url</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p> </p>
+<h1>1.背景</h1>
+<p>某号码卡申请页面通过省份+城市切换归属地，每次返回10个号码。</p>
+<p>通过 Fiddler 抓包确认 url 关键参数规律:</p>
+<p>provinceCode 两位数字</p>
+<p>cityCode 三位数字</p>
+<p>groupKey 与 provinceCode 为一一对应</p>
+<p><span style="color: #ff00ff;">所以任务是手动遍历省份，取得 provinceCode 和 groupKey 组合列表，对组合列表的每个组合执行 for 循环 cityCode ，确认有效 url 。</span></p>
+<p><span style="color: #ff00ff;">url 不对的时候正常返回，而使用 squid 多代理经常出现代理失效，需要排除 requests 相关异常，尽量避免错判。</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> In [88]: r.text</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> Out[88]: u'jsonp_queryMoreNums({"numRetailList":[],"code":"M1","uuid":"a95ca4c6-957e-462a-80cd-0412b</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> d5672df","numArray":[]});' </span></pre>
+</div>
+<p> </p>
+<h3>获取号码归属地信息：</h3>
+<p>url = 'http://www.ip138.com:8080/search.asp?action=mobile&amp;mobile=%s' %num</p>
+<p> </p>
+<h3>中文转换拼音：</h3>
+<p>from pypinyin import lazy_pinyin</p>
+<p>province_pinyin = ''.join(lazy_pinyin(province_zh))</p>
+<p> </p>
+<h3>确认任务队列已完成：</h3>
+<p><a href="https://docs.python.org/2/library/queue.html#module-Queue" target="_blank">https://docs.python.org/2/library/queue.html#module-Queue</a></p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">Queue.task_done()
+Indicate that a formerly enqueued task </span><span style="color: #0000ff;">is</span> complete. Used by queue consumer threads. For each get() used to fetch a task, a subsequent call to task_done() tells the queue that the processing on the task <span style="color: #0000ff;">is</span><span style="color: #000000;"> complete.
+
+If a join() </span><span style="color: #0000ff;">is</span> currently blocking, it will resume when all items have been processed (meaning that a task_done() call was received <span style="color: #0000ff;">for</span><span style="color: #000000;"> every item that had been put() into the queue).
+
+Raises a ValueError </span><span style="color: #0000ff;">if</span> called more times than there were items placed <span style="color: #0000ff;">in</span> the queue.</pre>
+</div>
+<p> </p>
+<h1>2.完整代码</h1>
+<p><span style="color: #ff00ff;">referer 和 url 细节已</span><span style="color: #008000;">#</span><span style="color: #008000;">!/usr/bin/env python</span><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span><span style="color: #0000ff;">import</span><span> time</span><em id="__mceDel" style="font-family: 'Courier New'; font-size: 12px; background-color: #f5f5f5;"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><span style="color: #0000ff;">import</span><span> re</span></em></em></em></em><em id="__mceDel" style="font-family: 'Courier New'; font-size: 12px; background-color: #f5f5f5;"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><span style="color: #0000ff;">import</span><span> json</span></em></em></em></em></em><em id="__mceDel" style="font-family: 'Courier New'; font-size: 12px; background-color: #f5f5f5;"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><span style="color: #0000ff;">import</span><span> traceback</span></em></em></em></em></em></em></p>
+<div class="cnblogs_code">
+<pre><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><em id="__mceDel"><span style="color: #0000ff;">import</span><span style="color: #000000;"> threading
+lock </span>=<span style="color: #000000;"> threading.Lock()
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> Queue
+task_queue </span>=<span style="color: #000000;"> Queue.Queue()
+write_queue </span>=<span style="color: #000000;"> Queue.Queue()
+ 
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">from</span> requests.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                                ProxyError, RetryError, InvalidSchema)
+s </span>=<span style="color: #000000;"> requests.Session()
+s.headers.update({</span><span style="color: #800000;">'</span><span style="color: #800000;">user-agent</span><span style="color: #800000;">'</span>:<span style="color: #800000;">'</span><span style="color: #800000;">Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_5 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G36 MicroMessenger/6.5.12 NetType/4G</span><span style="color: #800000;">'</span><span style="color: #000000;">})<br># 隐藏 referer 细节，实测可不用
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> s.headers.update({'Referer':'https://servicewechat.com/xxxxxxxx'})</span>
+s.verify =<span style="color: #000000;"> False
+s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">https://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">))
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> copy
+sp </span>=<span style="color: #000000;"> copy.deepcopy(s)</span>
+proxies = {<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:3128</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">https</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">https://127.0.0.1:3128</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+sp.proxies </span>=<span style="color: #000000;"> proxies 
+ 
+</span><span style="color: #0000ff;">from</span> urllib3.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> InsecureRequestWarning
+</span><span style="color: #0000ff;">from</span> warnings <span style="color: #0000ff;">import</span><span style="color: #000000;"> filterwarnings
+filterwarnings(</span><span style="color: #800000;">'</span><span style="color: #800000;">ignore</span><span style="color: #800000;">'</span>, category =<span style="color: #000000;"> InsecureRequestWarning)
+
+</span><span style="color: #0000ff;">from</span> bs4 <span style="color: #0000ff;">import</span><span style="color: #000000;"> BeautifulSoup as BS
+</span><span style="color: #0000ff;">from</span> pypinyin <span style="color: #0000ff;">import</span><span style="color: #000000;"> lazy_pinyin
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> pickle
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> logging
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_logger():
+    logger </span>= logging.getLogger(<span style="color: #800000;">"</span><span style="color: #800000;">threading_example</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+    logger.setLevel(logging.DEBUG)
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> fh = logging.FileHandler("d:/threading.log")</span>
+    fh =<span style="color: #000000;"> logging.StreamHandler()
+    fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%(asctime)s - %(threadName)-10s - %(levelname)s - %(message)s</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    formatter </span>=<span style="color: #000000;"> logging.Formatter(fmt)
+    fh.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> logger
+    
+logger </span>=<span style="color: #000000;"> get_logger() 
+    
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> url 不对的时候正常返回：</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> In [88]: r.text</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> Out[88]: u'jsonp_queryMoreNums({"numRetailList":[],"code":"M1","uuid":"a95ca4c6-957e-462a-80cd-0412b</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> d5672df","numArray":[]});'      </span>
+results =<span style="color: #000000;"> []
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_nums():
+    </span><span style="color: #0000ff;">global</span><span style="color: #000000;"> results
+    pattern </span>= re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">({.*?})</span><span style="color: #800000;">'</span>) <span style="color: #008000;">#</span><span style="color: #008000;">, re.S | re.I | re.X)</span>
+    <span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">try</span>:  <span style="color: #008000;">#</span><span style="color: #008000;">尽量缩小try代码块大小</span>
+            _url =<span style="color: #000000;"> task_queue.get()
+            url </span>= _url + str(int(time.time()*1000<span style="color: #000000;">))
+            resp </span>= sp.get(url, timeout=10<span style="color: #000000;">)
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                ProxyError, RetryError, InvalidSchema) as err:
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(_url)     
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            logger.debug(</span><span style="color: #800000;">'</span><span style="color: #800000;">\nstatus_code:{}\nurl:{}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(resp.status_code, url, err, traceback.format_exc()))
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(_url)
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> rst = resp.content    </span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> match = rst[rst.index('{'):rst.index('}')+1]</span>
+                <span style="color: #008000;">#</span><span style="color: #008000;"> m = re.search(r'({.*?})',resp.content)</span>
+                m =<span style="color: #000000;"> pattern.search(resp.content)
+                match </span>=<span style="color: #000000;"> m.group()
+                rst </span>=<span style="color: #000000;"> json.loads(match)
+                nums </span>= [num <span style="color: #0000ff;">for</span> num <span style="color: #0000ff;">in</span> rst[<span style="color: #800000;">'</span><span style="color: #800000;">numArray</span><span style="color: #800000;">'</span>] <span style="color: #0000ff;">if</span> num&gt;10000<span style="color: #000000;">]
+                nums_len </span>=<span style="color: #000000;"> len(nums)
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> assert nums_len == 10</span>
+                num = nums[-1<span style="color: #000000;">]    
+                province_zh, city_zh, province_pinyin, city_pinyin </span>=<span style="color: #000000;"> get_num_info(num)
+                result </span>=<span style="color: #000000;"> (str(num), province_zh, city_zh, province_pinyin, city_pinyin, _url)
+                results.append(result)
+                write_queue.put(result)
+                logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">results:{} threads: {} task_queue: {} {} {} {} {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(len(results), threading.activeCount(), task_queue.qsize(), 
+                                                                                   num, province_zh, city_zh, _url))   
+            
+            
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> (ValueError, AttributeError, IndexError) as err:
+                </span><span style="color: #0000ff;">pass</span>
+            <span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> print err,traceback.format_exc()</span>
+                logger.debug(<span style="color: #800000;">'</span><span style="color: #800000;">\nstatus_code:{}\nurl:{}\ncontent:{}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(resp.status_code, url, resp.content, err, traceback.format_exc()))                   
+            </span><span style="color: #0000ff;">finally</span><span style="color: #000000;">:
+                task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">##############</span>
+
+
+<span style="color: #0000ff;">def</span><span style="color: #000000;"> get_num_info(num):
+    </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+        url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://www.ip138.com:8080/search.asp?action=mobile&amp;mobile=%s</span><span style="color: #800000;">'</span> %<span style="color: #000000;">num
+        resp </span>=<span style="color: #000000;"> s.get(url)
+        soup </span>= BS(resp.content, <span style="color: #800000;">'</span><span style="color: #800000;">lxml</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> pro, cit = re.findall(r'&lt;TD class="tdc2" align="center"&gt;(.*?)&lt;', resp.content)[0].decode('gbk').split('&amp;nbsp;')</span>
+        rst = soup.select(<span style="color: #800000;">'</span><span style="color: #800000;">tr td.tdc2</span><span style="color: #800000;">'</span>)[1<span style="color: #000000;">].text.split()
+        </span><span style="color: #0000ff;">if</span> len(rst) == 2<span style="color: #000000;">:
+            province_zh, city_zh </span>=<span style="color: #000000;"> rst
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            province_zh </span>= city_zh =<span style="color: #000000;"> rst[0]
+        province_pinyin </span>= <span style="color: #800000;">''</span><span style="color: #000000;">.join(lazy_pinyin(province_zh))
+        city_pinyin </span>= <span style="color: #800000;">''</span><span style="color: #000000;">.join(lazy_pinyin(city_zh))        
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> err,traceback.format_exc()
+        province_zh </span>= city_zh = province_pinyin = city_pinyin = <span style="color: #800000;">'</span><span style="color: #800000;">xxx</span><span style="color: #800000;">'</span>
+        
+    <span style="color: #0000ff;">return</span><span style="color: #000000;"> province_zh, city_zh, province_pinyin, city_pinyin
+        
+ 
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> write_result():
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">10010temp.txt</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">w</span><span style="color: #800000;">'</span>,0) as f:  <span style="color: #008000;">#</span><span style="color: #008000;"> 'w' open时会截去之前内容,所以放在 while True 之上</span>
+        <span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                rst </span>= <span style="color: #800000;">'</span> <span style="color: #800000;">'</span>.join(write_queue.get()) + <span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">
+                f.write(rst.encode(</span><span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+                write_queue.task_done()
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+                </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> err,traceback.format_exc()                
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:        
+    
+    province_groupkey_list </span>=<span style="color: #000000;"> [
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">18</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">15237219</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">51</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">21236872</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">31</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">34236498</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">87</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">43236612</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">10</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">8400250331</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">89</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">90242110</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">83</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">99250240</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">19</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">59237227</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">36</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">60236866</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">97</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">49236584</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">79</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">13238152</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">34</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">33236916</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">71</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">40236873</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">88</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">9100283297</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">50</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">27237168</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">59</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">6800258755</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">74</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">71237034</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">11</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">85236889</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">84</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">13236970</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">76</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">85236973</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">13</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">36236594</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">85</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">53237275</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">86</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">79237759</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">90</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">19236614</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">30</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">2400265649</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">38</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">12236361</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">17</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">17236695</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">70</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">4900281779</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">75</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">67237076</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">91</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">19236028</span><span style="color: #800000;">'</span><span style="color: #000000;">),
+     (</span><span style="color: #800000;">'</span><span style="color: #800000;">81</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">20236750</span><span style="color: #800000;">'</span><span style="color: #000000;">)]    
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> province_groupkey_list = [('51', '21236872')]</span>
+    <span style="color: #0000ff;">import</span><span style="color: #000000;"> itertools
+    </span><span style="color: #0000ff;">for</span> (provinceCode, groupKey) <span style="color: #0000ff;">in</span><span style="color: #000000;"> province_groupkey_list:
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> for cityCode in range(1000):</span>
+        <span style="color: #0000ff;">for</span> cityCode <span style="color: #0000ff;">in</span> [<span style="color: #800000;">''</span>.join(i) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> itertools.product(<span style="color: #800000;">'</span><span style="color: #800000;">0123456789</span><span style="color: #800000;">'</span>,repeat=3<span style="color: #000000;">)]:<br>            fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">https://m.1xxxx.com/xxxxx&amp;provinceCode={provinceCode}&amp;cityCode={cityCode}&amp;xxxxx&amp;groupKey={groupKey}&amp;xxxxx</span><span style="color: #800000;">'    # url 细节已被隐藏</span><span style="color: #000000;">
+            url </span>= fmt.format(provinceCode=provinceCode, cityCode=cityCode, groupKey=groupKey)<span style="color: #008000;">#</span><span style="color: #008000;">, now=int(float(time.time())*1000))       </span>
+<span style="color: #000000;">            task_queue.put(url)
+    
+    threads </span>=<span style="color: #000000;"> []
+    </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(300<span style="color: #000000;">):
+        t </span>= threading.Thread(target=get_nums)  <span style="color: #008000;">#</span><span style="color: #008000;">args接收元组，至少(a,)</span>
+<span style="color: #000000;">        threads.append(t)
+
+    t_write_result </span>= threading.Thread(target=<span style="color: #000000;">write_result) 
+    threads.append(t_write_result)
+
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> for t in threads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.setDaemon(True)</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.start()  </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> while True:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> pass</span>
+
+    <span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> threads:
+        t.setDaemon(True) 
+        t.start()  
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> for t in threads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.join() </span>
+<span style="color: #000000;">        
+    task_queue.join()    
+    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">task done</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    write_queue.join()   
+    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">write done</span><span style="color: #800000;">'</span><span style="color: #000000;">    
+    
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">10010temp</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">w</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+        pickle.dump(results, f)
+    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">all done</span><span style="color: #800000;">'</span>
+        
+    <span style="color: #008000;">#</span><span style="color: #008000;"> while True:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> pass</span></em></em></em></em></em></em></pre>
+</div>
+<p> </p>
+<h1>3.运行结果</h1>
+<p>多运行几次，确认最终 results 数量339</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201709/892328-20170911125213157-537072746.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-09-11 12:53</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7504289" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7504289);return false;">收藏</a></div>
+        </div>

@@ -1,0 +1,113 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/parse_html_with_lxml.html">
+    <span>lxml.etree.HTML(text) 解析HTML文档</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<p><a href="http://lxml.de/tutorial.html#the-xml-function" target="_blank">http://lxml.de/tutorial.html#the-xml-function</a></p>
+<p>There is also a corresponding function <tt class="docutils literal">HTML()</tt> for HTML literals.</p>
+<div class="syntax">
+<pre><span class="gp">&gt;&gt;&gt; <span class="n">root <span class="o">= <span class="n">etree<span class="o">.<span class="n">HTML<span class="p">(<span class="s2">"&lt;p&gt;data&lt;/p&gt;"<span class="p">)
+<span class="gp">&gt;&gt;&gt; <span class="n">etree<span class="o">.<span class="n">tostring<span class="p">(<span class="n">root<span class="p">)
+<span class="go">b'&lt;html&gt;&lt;body&gt;&lt;p&gt;data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;'</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+<h2>1.基本用法</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">from</span> lxml <span style="color: #0000ff;">import</span><span style="color: #000000;"> etree
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> Parses an HTML document from a string constant.  Returns the root nood</span>
+root = etree.HTML(r.text) <span style="color: #008000;">#</span><span style="color: #008000;">&lt;Element html at 0x7bb8208&gt;</span></pre>
+</div>
+<p> </p>
+<h3>1.1 xpath 和 cssselect 获取文字和属性</h3>
+<div class="cnblogs_code">
+<pre>In [83]: <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> root.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//button</span><span style="color: #800000;">'</span>)[:1<span style="color: #000000;">]:
+    ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(item)
+    ...:     </span><span style="color: #0000ff;">print</span>(item.text)                           <span style="color: #008000;">#</span><span style="color: #008000;">获取文字</span>
+    ...:     <span style="color: #0000ff;">print</span>(item.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./@id</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+    ...:
+</span>&lt;Element button at 0x84277c8&gt;<span style="color: #000000;">
+Requests Generator
+[</span><span style="color: #800000;">'</span><span style="color: #800000;">btn_requests</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+</span><span style="color: #008000;">#</span><span style="color: #008000;">##</span>
+In [84]: <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> root.cssselect(<span style="color: #800000;">'</span><span style="color: #800000;">button</span><span style="color: #800000;">'</span>)[:1<span style="color: #000000;">]:
+    ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(item)
+    ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(item.text)
+    ...:     </span><span style="color: #0000ff;">print</span>(item.cssselect(<span style="color: #800000;">'</span><span style="color: #800000;">::attr(id)</span><span style="color: #800000;">'</span>))        <span style="color: #008000;">#</span><span style="color: #008000;">不支持伪元素写法</span>
+<span style="color: #000000;">    ...:
+    ...:
+</span>&lt;Element button at 0x84277c8&gt;<span style="color: #000000;">
+Requests Generator
+ExpressionError: Pseudo</span>-elements are <span style="color: #0000ff;">not</span><span style="color: #000000;"> supported.
+</span><span style="color: #008000;">#</span><span style="color: #008000;">##</span>
+In [92]: <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> root.cssselect(<span style="color: #800000;">'</span><span style="color: #800000;">button</span><span style="color: #800000;">'</span>)[:1<span style="color: #000000;">]:
+    ...:     </span><span style="color: #0000ff;">print</span>(item.get(<span style="color: #800000;">'</span><span style="color: #800000;">id</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span>))                  <span style="color: #008000;">#</span><span style="color: #008000;">获取属性</span>
+<span style="color: #000000;">
+btn_requests
+</span><span style="color: #008000;">#</span><span style="color: #008000;">##</span>
+In [93]: <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span> root.cssselect(<span style="color: #800000;">'</span><span style="color: #800000;">button</span><span style="color: #800000;">'</span>)[:1<span style="color: #000000;">]:
+    ...:     </span><span style="color: #0000ff;">print</span>(item.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">./@id</span><span style="color: #800000;">'</span>))                 <span style="color: #008000;">#</span><span style="color: #008000;">嵌套</span>
+<span style="color: #000000;">    ...:
+[</span><span style="color: #800000;">'</span><span style="color: #800000;">btn_requests</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<p> </p>
+<h3>1.2 美化打印</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">print</span>(etree.tostring(root, pretty_print=True).decode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>))      <span style="color: #008000;">#</span><span style="color: #008000;"> 美化打印</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> You can also serialise to a Unicode string without declaration by</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> passing the ``unicode`` function as encoding (or ``str`` in Py3),</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> or the name 'unicode'.  This changes the return value from a byte</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> string to an unencoded unicode string.</span>
+<span style="color: #0000ff;">print</span>(etree.tostring(root, encoding=str, pretty_print=True))        <span style="color: #008000;">#</span><span style="color: #008000;">py3 使之返回 text</span>
+<span style="color: #0000ff;">print</span>(etree.tostring(root, encoding=unicode, pretty_print=True))    <span style="color: #008000;">#</span><span style="color: #008000;">py2 使之返回 unicode</span></pre>
+</div>
+<p> </p>
+<h3>1.3 自动补全</h3>
+<div class="cnblogs_code">
+<pre>In [109]: rt = etree.HTML(<span style="color: #800000;">'</span><span style="color: #800000;">&lt;html&gt;&lt;p&gt;123&lt;/p&gt;&lt;/html&gt;</span><span style="color: #800000;">'</span>)            <span style="color: #008000;">#</span><span style="color: #008000;">自动补全</span>
+In [110]: <span style="color: #0000ff;">print</span>(etree.tostring(rt, encoding=str, pretty_print=<span style="color: #000000;">True))
+</span>&lt;html&gt;
+  &lt;body&gt;
+    &lt;p&gt;123&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+</div>
+<p> </p>
+<h3><span style="text-decoration: line-through;">1.4 fromstring 不支持残缺片段，不会自动补全</span></h3>
+<div class="cnblogs_code">
+<pre>In [115]: rt = etree.fromstring(<span style="color: #800000;">'</span><span style="color: #800000;">&lt;html&gt;&lt;p&gt;456&lt;/html&gt;</span><span style="color: #800000;">'</span>)           <span style="color: #008000;">#</span><span style="color: #008000;">fromstring 不支持残缺片段，不会自动补全</span>
+XMLSyntaxError: Opening <span style="color: #0000ff;">and</span> ending tag mismatch: p line 1 <span style="color: #0000ff;">and</span> html, line 1, column 20<span style="color: #000000;">
+In [</span>116]: rt = etree.fromstring(<span style="color: #800000;">'</span><span style="color: #800000;">&lt;html&gt;&lt;p&gt;456&lt;/p&gt;&lt;/html&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+In [</span>117]: <span style="color: #0000ff;">print</span>(etree.tostring(rt, encoding=str, pretty_print=<span style="color: #000000;">True))
+</span>&lt;html&gt;
+  &lt;p&gt;456&lt;/p&gt;
+&lt;/html&gt;</pre>
+</div>
+<p> </p>
+<p>.</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-06-01 16:38</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9122312" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9122312);return false;">收藏</a></div>
+        </div>

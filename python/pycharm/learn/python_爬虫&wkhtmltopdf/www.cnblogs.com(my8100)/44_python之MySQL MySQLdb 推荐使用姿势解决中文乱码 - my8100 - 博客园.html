@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.目录 2.setup(1) 安装步骤，可以顺带安装mysql administrator和mysql query browser(2) 安装完毕，修改 my.ini(3) 重启 mysql 服务：" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>python之MySQL MySQLdb 推荐使用姿势，解决中文乱码 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/mysql.html">
+    <span>python之MySQL MySQLdb 推荐使用姿势，解决中文乱码</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.目录</h2>
+<p>2.setup<br />(1) 安装步骤，可以顺带安装mysql administrator和mysql query browser<br />(2) 安装完毕，修改 my.ini<br />(3) 重启 mysql 服务：<br />(4) cmd 确认可用：<br />(5) 安装 MySQLdb<br />(6) 脚本内部会先对 execute 的unicode query 参数进行编码，可以手动加一句 print repr(query) 方便调试，懒得打monkey_patch的话。。。</p>
+<p><br />3.推荐使用姿势<br />(1)连接：<br />(2)创建数据库：不可省略COLLATE 'utf8_general_ci'，有(2)则(3)可以省略 DEFAULT CHARSET=utf8<br />(3)创建表</p>
+<p><br />4.中文乱码或其他异常<br />(1)检查配置<br />(2)在Windows cmd 插入或查询中文出现乱码<br />(3)更改数据库编码<br />(4)更改表编码</p>
+<h2>1.参考</h2>
+<p>有关编码，中文字符的官方解答，必看！！！</p>
+<p><a href="https://dev.mysql.com/doc/refman/5.7/en/faqs-cjk.html" target="_blank">A.11 MySQL 5.7 FAQ: MySQL Chinese, Japanese, and Korean Character Sets</a></p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span><span style="color: #000000;"> status;
+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------</span>
+mysql  Ver <span style="color: #800000; font-weight: bold;">14.14</span> Distrib <span style="color: #800000; font-weight: bold;">5.7</span>.<span style="color: #800000; font-weight: bold;">20</span>, <span style="color: #0000ff;">for</span><span style="color: #000000;"> Linux (x86_64) using  EditLine wrapper
+
+Connection id:          </span><span style="color: #800000; font-weight: bold;">21</span>
+<span style="color: #0000ff;">Current</span> <span style="color: #0000ff;">database</span><span style="color: #000000;">:
+</span><span style="color: #0000ff;">Current</span> <span style="color: #ff00ff;">user</span>:           root<span style="color: #008000;">@localhost</span><span style="color: #000000;">
+SSL:                    </span><span style="color: #808080;">Not</span> <span style="color: #808080;">in</span> <span style="color: #0000ff;">use</span>
+<span style="color: #0000ff;">Current</span><span style="color: #000000;"> pager:          stdout
+Using outfile:          </span><span style="color: #ff0000;">''</span><span style="color: #000000;">
+Using delimiter:        ;
+Server version:         </span><span style="color: #800000; font-weight: bold;">5.7</span>.<span style="color: #800000; font-weight: bold;">20</span><span style="color: #000000;"> MySQL Community Server (GPL)
+Protocol version:       </span><span style="color: #800000; font-weight: bold;">10</span><span style="color: #000000;">
+Connection:             Localhost via UNIX socket
+Server characterset:    latin1
+Db     characterset:    latin1
+Client characterset:    utf8
+Conn.  characterset:    utf8
+UNIX socket:            </span><span style="color: #808080;">/</span><span style="color: #ff00ff;">var</span><span style="color: #808080;">/</span>lib<span style="color: #808080;">/</span>mysql<span style="color: #808080;">/</span><span style="color: #000000;">mysql.sock
+Uptime:                 </span><span style="color: #800000; font-weight: bold;">4</span> days <span style="color: #800000; font-weight: bold;">23</span> hours <span style="color: #800000; font-weight: bold;">32</span> <span style="color: #ff00ff;">min</span> <span style="color: #800000; font-weight: bold;">54</span><span style="color: #000000;"> sec
+
+Threads: </span><span style="color: #800000; font-weight: bold;">1</span>  Questions: <span style="color: #800000; font-weight: bold;">186</span>  Slow queries: <span style="color: #800000; font-weight: bold;">0</span>  Opens: <span style="color: #800000; font-weight: bold;">141</span>  Flush tables: <span style="color: #800000; font-weight: bold;">1</span>  <span style="color: #0000ff;">Open</span> tables: <span style="color: #800000; font-weight: bold;">130</span>  Queries per second <span style="color: #ff00ff;">avg</span>: <span style="color: #800000; font-weight: bold;">0.000</span>
+<span style="color: #008080;">--</span><span style="color: #008080;">------------</span></pre>
+</div>
+<p>&nbsp;</p>
+<h2>2.setup</h2>
+<p>(1)安装步骤：&nbsp;<a href="http://blog.csdn.net/longyuhome/article/details/7913375" target="_blank">Windows 7系统安装MySQL5.5.21图解</a> ，可以顺带安装mysql administrator和mysql query browser</p>
+<p>14、在打开的字符编码的页面中，设置mysql要使用的字符编码，第一个是西文编码，第二个是多字节的通用utf8编码，第三个是手动，我们选择utf-8，如果在这里没有选择UTF-8这个编码的化，在使用JDBC连接数据库的时候，便会出现乱码，到那时需要加上如下的代码&ldquo;useUnicode=true&amp;characterEncoding=UTF-8 &rdquo;，才可以解决乱码问题，<span style="color: #ff0000;">为了以后的方便所以设置为UTF-8编码</span>，但是有一个问题，那就是当用哪个<span style="color: #ff0000;">控制台插入汉字的时候，会报错，查询带汉字的表时，无法显示汉字</span>，所在需要在每次进入MySQL后，设置一个系统参数&ldquo;set names&nbsp; gbk&rdquo;，即可解决该问题，接下来单击&ldquo;next&rdquo;，继续配置，如图所示：</p>
+<p>(2) 安装完毕，修改 my.ini</p>
+<p><a href="http://www.cnblogs.com/yplong/p/3720735.html" target="_blank">客户端cmd打开mysql，执行插入中文报错或插入中文乱码解决方案</a></p>
+<p>D:\Program Files\MySQL\MySQL Server 5.5</p>
+<p>原来是latin1，修改如下：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> CLIENT SECTION  #will be read by MySQL client applications.</span>
+default-character-set=<span style="color: #000000;">utf8
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> SERVER SECTION    #will be used when a new schema or table</span>
+character-set-server=utf8</pre>
+</div>
+<p><span style="color: #000000;">根据下文的&nbsp;show variables like 'char%'; 显示：</span></p>
+<p>CLIENT SECTION对应如下三项，可以被连接参数临时覆盖 <span style="color: #ff0000;">--default-character-set=utf8</span><br />character_set_client&nbsp;&nbsp;&nbsp;&nbsp; | latin1<br />character_set_connection | latin1<br />character_set_results&nbsp;&nbsp;&nbsp; | latin1<br /><br />SERVER SECTION对应如下二项：<br />character_set_database&nbsp;&nbsp; | latin1&nbsp; &nbsp;<br />character_set_server&nbsp;&nbsp;&nbsp;&nbsp; | latin1 </p>
+<p><span style="color: #000000;">(3) 重启 mysql 服务：</span></p>
+<div class="cnblogs_code">
+<pre>C:\Users\win7&gt;<span style="color: #000000;">net stop mysql
+C:\Users\win7</span>&gt;net start mysql</pre>
+</div>
+<p>(4) cmd 确认可用：</p>
+<div class="cnblogs_code">
+<pre>mysql -u root -<span style="color: #000000;">p
+回车然后输入密码</span></pre>
+</div>
+<p>(5) 安装 MySQLdb</p>
+<p><a href="https://pypi.python.org/pypi/MySQL-python/1.2.5" target="_blank">https://pypi.python.org/pypi/MySQL-python/1.2.5</a></p>
+<p><a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#mysql-python" target="_blank">http://www.lfd.uci.edu/~gohlke/pythonlibs/#mysql-python</a></p>
+<p>(6) 脚本内部会先对 execute 的unicode query 参数进行编码，可以手动加一句 print repr(query) 方便调试，懒得打monkey_patch的话。。。</p>
+<p>C:\Program Files\Anaconda2\Lib\site-packages\MySQLdb\cursors.py</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">class</span><span style="color: #000000;"> BaseCursor(object):
+
+    </span><span style="color: #0000ff;">def</span> execute(self, query, args=<span style="color: #000000;">None):
+    
+    
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> isinstance(query, unicode):
+            query </span>=<span style="color: #000000;"> query.encode(db.unicode_literal.charset)
+        </span><span style="color: #0000ff;">if</span> args <span style="color: #0000ff;">is</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> None:
+            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> isinstance(args, dict):
+                query </span>= query %<span style="color: #000000;"> dict((key, db.literal(item))
+                                     </span><span style="color: #0000ff;">for</span> key, item <span style="color: #0000ff;">in</span><span style="color: #000000;"> args.iteritems())
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                query </span>= query % tuple([db.literal(item) <span style="color: #0000ff;">for</span> item <span style="color: #0000ff;">in</span><span style="color: #000000;"> args])
+        </span><span style="color: #0000ff;">print</span> repr(query)  <span style="color: #008000;">#</span><span style="color: #008000;">手动加一句方便调试</span></pre>
+</div>
+<p>&nbsp;</p>
+<h2>3.推荐使用姿势</h2>
+<p>(1)连接：</p>
+<p><a href="http://blog.csdn.net/ericzhong83/article/details/7564207" target="_blank">Python调用MySQLdb插入中文乱码的问题</a></p>
+<p>conn&nbsp;=&nbsp;MySQLdb.connect(host=<span class="string">'localhost',&nbsp;user=<span class="string">'root',passwd=<span class="string">'123',&nbsp;db=<span class="string">'account',&nbsp;charset=<span class="string">'utf8')&nbsp;&nbsp;<span class="comment">#&nbsp;OK <br /></span></span></span></span></span></span></p>
+<p><a href="http://www.cnblogs.com/fnng/p/3565912.html" target="_blank"><span class="string"><span class="string"><span class="string"><span class="string"><span class="string"><span class="comment">Python使用MySQL数据库(新)</span></span></span></span></span></span></a></p>
+<p style="line-height: 20px;">如果连接数据库用localhost连接不上，可以换127.0.0.1</p>
+<p style="line-height: 20px;">&nbsp;</p>
+<p>mysql -h localhost -u root -p&nbsp;<span style="color: #ff0000;"> --default-character-set=utf8</span></p>
+<div class="cnblogs_code">
+<pre>import MySQLdb<br />conn=<span style="color: #000000;"> MySQLdb.connect(<br />　　　　#<span style="color: #000000;">host=<span style="color: #800000;">'<span style="color: #800000;">localhost<span style="color: #800000;">'<span style="color: #000000;">,</span></span></span></span></span>&nbsp;&nbsp;&nbsp; 
+       host</span>=<span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+       port </span>= 3306<span style="color: #000000;">,
+       user</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+       passwd</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+       #db </span>=<span style="color: #800000;">'</span><span style="color: #800000;">database_name</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+       <span style="color: #ff0000;">charset</span></span><span style="color: #ff0000;">=</span><span style="color: #800000;"><span style="color: #800000;">'</span></span><span style="color: #800000;">utf8</span><span style="color: #800000;"><span style="color: #800000;">'</span></span><span style="color: #000000;">
+       )<br />curs = conn.cursor()</span></pre>
+</div>
+<p><a href="https://www.2cto.com/database/201108/101151.html" target="_blank">Mysql中文乱码问题完美解决方案</a></p>
+<p>(2)创建数据库：<span style="color: #ff0000;">不可省略COLLATE 'utf8_general_ci'<span style="color: #000000;">，有(2)则(3)可以省略 DEFAULT CHARSET=utf8</span></span></p>
+<div class="cnblogs_code">
+<pre>curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+CREATE DATABASE database_name
+<span style="color: #ff0000;">CHARACTER SET 'utf8' </span>      
+<span style="color: #ff0000;">COLLATE 'utf8_general_ci';
+</span></span><span style="color: #800000;">"""</span>)<br /><br />#确认：<br />curs.execute('SHOW DATABASES')<br />curs.fetchall()</pre>
+</div>
+<p>(3)创建表</p>
+<div class="cnblogs_code">
+<pre>curs.execute('USE database_name')</pre>
+<pre><br />curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+CREATE TABLE <span style="color: #800000;">table</span>_name(
+    id int not null auto_increment,
+    name char(50) null,    
+    cate char(50) null,
+    date datetime null,
+    primary key(id)
+    )engine=InnoDB <span style="color: #ff0000;">DEFAULT CHARSET=utf8;
+</span></span><span style="color: #800000;">"""</span>)<br /><br />#确认：<br />curs.execute('SHOW TABLES')</pre>
+</div>
+<h2>4.中文乱码或其他异常</h2>
+<p>(1)检查配置</p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> show variables <span style="color: #808080;">like</span> <span style="color: #ff0000;">'</span><span style="color: #ff0000;">char%</span><span style="color: #ff0000;">'</span><span style="color: #000000;">;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+---------------------------------------------------------+</span>
+<span style="color: #808080;">|</span> Variable_name            <span style="color: #808080;">|</span> Value                                                   <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+---------------------------------------------------------+</span>
+<span style="color: #808080;">|</span> character_set_client     <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_connection <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_database   <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_filesystem <span style="color: #808080;">|</span> <span style="color: #0000ff;">binary</span>                                                  <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_results    <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_server     <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_set_system     <span style="color: #808080;">|</span> utf8                                                    <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> character_sets_dir       <span style="color: #808080;">|</span> D:\Program Files\MySQL\MySQL Server <span style="color: #800000; font-weight: bold;">5.5</span>\share\charsets\ <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+---------------------------------------------------------+</span>
+<span style="color: #800000; font-weight: bold;">8</span> rows <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span><span style="color: #000000;"> sec)
+
+mysql</span><span style="color: #808080;">&gt;</span><span style="color: #000000;"> \s
+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------</span>
+mysql  Ver <span style="color: #800000; font-weight: bold;">14.14</span> Distrib <span style="color: #800000; font-weight: bold;">5.5</span>.<span style="color: #800000; font-weight: bold;">56</span>, <span style="color: #0000ff;">for</span><span style="color: #000000;"> Win64 (AMD64)
+
+Connection id:          </span><span style="color: #800000; font-weight: bold;">743</span>
+<span style="color: #0000ff;">Current</span> <span style="color: #0000ff;">database</span><span style="color: #000000;">:
+</span><span style="color: #0000ff;">Current</span> <span style="color: #ff00ff;">user</span>:           root<span style="color: #008000;">@localhost</span><span style="color: #000000;">
+SSL:                    </span><span style="color: #808080;">Not</span> <span style="color: #808080;">in</span> <span style="color: #0000ff;">use</span><span style="color: #000000;">
+Using delimiter:        ;
+Server version:         </span><span style="color: #800000; font-weight: bold;">5.5</span>.<span style="color: #800000; font-weight: bold;">56</span><span style="color: #000000;"> MySQL Community Server (GPL)
+Protocol version:       </span><span style="color: #800000; font-weight: bold;">10</span><span style="color: #000000;">
+Connection:             localhost via TCP</span><span style="color: #808080;">/</span><span style="color: #000000;">IP
+Server characterset:    utf8
+Db     characterset:    utf8
+Client characterset:    utf8
+Conn.  characterset:    utf8
+TCP port:               </span><span style="color: #800000; font-weight: bold;">3306</span><span style="color: #000000;">
+Uptime:                 </span><span style="color: #800000; font-weight: bold;">1</span> <span style="color: #ff00ff;">day</span> <span style="color: #800000; font-weight: bold;">4</span> <span style="color: #ff00ff;">min</span> <span style="color: #800000; font-weight: bold;">47</span><span style="color: #000000;"> sec
+
+Threads: </span><span style="color: #800000; font-weight: bold;">4</span>  Questions: <span style="color: #800000; font-weight: bold;">7373195</span>  Slow queries: <span style="color: #800000; font-weight: bold;">1323</span>  Opens: <span style="color: #800000; font-weight: bold;">4725</span>  Flush tables: <span style="color: #800000; font-weight: bold;">1</span>  <span style="color: #0000ff;">Open</span> tables: <span style="color: #800000; font-weight: bold;">0</span><span style="color: #000000;">  Qu
+eries per second </span><span style="color: #ff00ff;">avg</span>: <span style="color: #800000; font-weight: bold;">85.055</span>
+<span style="color: #008080;">--</span><span style="color: #008080;">------------</span>
+<span style="color: #000000;">
+mysql</span><span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">use</span> <span style="color: #0000ff;">temp</span>
+<span style="color: #0000ff;">Database</span><span style="color: #000000;"> changed
+mysql</span><span style="color: #808080;">&gt;</span> show <span style="color: #0000ff;">create</span> <span style="color: #0000ff;">database</span> <span style="color: #0000ff;">temp</span><span style="color: #000000;">;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">--------+---------------------------------------------------------------+</span>
+<span style="color: #808080;">|</span> <span style="color: #0000ff;">Database</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">Create</span> <span style="color: #0000ff;">Database</span>                                               <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">--------+---------------------------------------------------------------+</span>
+<span style="color: #808080;">|</span> <span style="color: #0000ff;">temp</span>     <span style="color: #808080;">|</span> <span style="color: #0000ff;">CREATE</span> <span style="color: #0000ff;">DATABASE</span> `<span style="color: #0000ff;">temp</span>` <span style="color: #008080;">/*</span><span style="color: #008080;">!40100 DEFAULT CHARACTER SET utf8 </span><span style="color: #008080;">*/</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">--------+---------------------------------------------------------------+</span>
+<span style="color: #800000; font-weight: bold;">1</span> row <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span><span style="color: #000000;"> sec)
+
+mysql</span><span style="color: #808080;">&gt;</span> show <span style="color: #0000ff;">full</span> columns <span style="color: #0000ff;">from</span><span style="color: #000000;"> test;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+----------+-----------------+------+-----+---------+----------------+----------------------</span><span style="color: #008080;">
+--</span><span style="color: #008080;">---------+---------+</span>
+<span style="color: #808080;">|</span> Field <span style="color: #808080;">|</span> Type     <span style="color: #808080;">|</span> Collation       <span style="color: #808080;">|</span> <span style="color: #0000ff;">Null</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">Key</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">Default</span> <span style="color: #808080;">|</span> Extra          <span style="color: #808080;">|</span> <span style="color: #0000ff;">Privileges</span>
+           <span style="color: #808080;">|</span> Comment <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+----------+-----------------+------+-----+---------+----------------+----------------------</span><span style="color: #008080;">
+--</span><span style="color: #008080;">---------+---------+</span>
+<span style="color: #808080;">|</span> id    <span style="color: #808080;">|</span> <span style="color: #0000ff;">int</span>(<span style="color: #800000; font-weight: bold;">11</span>)  <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>            <span style="color: #808080;">|</span> NO   <span style="color: #808080;">|</span> PRI <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>    <span style="color: #808080;">|</span> auto_increment <span style="color: #808080;">|</span> <span style="color: #0000ff;">select</span>,<span style="color: #0000ff;">insert</span>,<span style="color: #0000ff;">update</span><span style="color: #000000;">,
+</span><span style="color: #0000ff;">references</span> <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> name  <span style="color: #808080;">|</span> <span style="color: #0000ff;">char</span>(<span style="color: #800000; font-weight: bold;">50</span>) <span style="color: #808080;">|</span> utf8_general_ci <span style="color: #808080;">|</span> YES  <span style="color: #808080;">|</span>     <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>    <span style="color: #808080;">|</span>                <span style="color: #808080;">|</span> <span style="color: #0000ff;">select</span>,<span style="color: #0000ff;">insert</span>,<span style="color: #0000ff;">update</span><span style="color: #000000;">,
+</span><span style="color: #0000ff;">references</span> <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> cate  <span style="color: #808080;">|</span> <span style="color: #0000ff;">char</span>(<span style="color: #800000; font-weight: bold;">50</span>) <span style="color: #808080;">|</span> utf8_general_ci <span style="color: #808080;">|</span> YES  <span style="color: #808080;">|</span>     <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>    <span style="color: #808080;">|</span>                <span style="color: #808080;">|</span> <span style="color: #0000ff;">select</span>,<span style="color: #0000ff;">insert</span>,<span style="color: #0000ff;">update</span><span style="color: #000000;">,
+</span><span style="color: #0000ff;">references</span> <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> date  <span style="color: #808080;">|</span> <span style="color: #0000ff;">datetime</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>            <span style="color: #808080;">|</span> YES  <span style="color: #808080;">|</span>     <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>    <span style="color: #808080;">|</span>                <span style="color: #808080;">|</span> <span style="color: #0000ff;">select</span>,<span style="color: #0000ff;">insert</span>,<span style="color: #0000ff;">update</span><span style="color: #000000;">,
+</span><span style="color: #0000ff;">references</span> <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+----------+-----------------+------+-----+---------+----------------+----------------------</span><span style="color: #008080;">
+--</span><span style="color: #008080;">---------+---------+</span>
+<span style="color: #800000; font-weight: bold;">4</span> rows <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.19</span> sec)</pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>mysql&gt; <span style="color: #ff0000;">show variables like 'char%';</span></p>
+<p>除了character_set_filesystem | binary，一般要求其他项都是 utf8，<span style="color: #ff00ff;">通过按照前文的 2.setup 修改 my.ini 可以永久生效。</span></p>
+<p>&nbsp;</p>
+<p>mysql&gt; set names utf8;&nbsp;</p>
+<p>一次性修改 character_set_client, character_set_connection, and character_set_results</p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> help <span style="color: #0000ff;">set</span><span style="color: #000000;"> names
+Name: </span><span style="color: #ff0000;">'</span><span style="color: #ff0000;">SET NAMES</span><span style="color: #ff0000;">'</span><span style="color: #000000;">
+Description:
+Syntax:
+</span><span style="color: #0000ff;">SET</span> NAMES {<span style="color: #ff0000;">'</span><span style="color: #ff0000;">charset_name</span><span style="color: #ff0000;">'</span>
+    <span style="color: #ff0000;">[</span><span style="color: #ff0000;">COLLATE 'collation_name'</span><span style="color: #ff0000;">]</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">DEFAULT</span><span style="color: #000000;">}
+
+This statement sets the three session system variables
+character_set_client, character_set_connection, </span><span style="color: #808080;">and</span><span style="color: #000000;">
+character_set_results </span><span style="color: #0000ff;">to</span> the given <span style="color: #0000ff;">character</span> <span style="color: #0000ff;">set</span><span style="color: #000000;">. Setting
+character_set_connection </span><span style="color: #0000ff;">to</span><span style="color: #000000;"> charset_name also sets collation_connection
+</span><span style="color: #0000ff;">to</span> the <span style="color: #0000ff;">default</span> collation <span style="color: #0000ff;">for</span><span style="color: #000000;"> charset_name. See
+http:</span><span style="color: #808080;">//</span>dev.mysql.com<span style="color: #808080;">/</span>doc<span style="color: #808080;">/</span>refman<span style="color: #808080;">/</span><span style="color: #800000; font-weight: bold;">5.5</span><span style="color: #808080;">/</span>en<span style="color: #808080;">/</span>charset<span style="color: #808080;">-</span><span style="color: #000000;">connection.html.
+
+The optional COLLATE clause may be used </span><span style="color: #0000ff;">to</span><span style="color: #000000;"> specify a collation
+explicitly. </span><span style="color: #0000ff;">If</span> given, the collation must one <span style="color: #0000ff;">of</span><span style="color: #000000;"> the permitted
+collations </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> charset_name.
+
+charset_name </span><span style="color: #808080;">and</span> collation_name may be quoted <span style="color: #808080;">or</span><span style="color: #000000;"> unquoted.
+
+The </span><span style="color: #0000ff;">default</span> mapping can be restored <span style="color: #0000ff;">by</span> using a value <span style="color: #0000ff;">of</span> <span style="color: #0000ff;">DEFAULT</span><span style="color: #000000;">. The
+</span><span style="color: #0000ff;">default</span> depends <span style="color: #0000ff;">on</span><span style="color: #000000;"> the server configuration.
+
+ucs2, utf16, </span><span style="color: #808080;">and</span> utf32 cannot be used <span style="color: #0000ff;">as</span> a client <span style="color: #0000ff;">character</span> <span style="color: #0000ff;">set</span><span style="color: #000000;">, which
+means that they do </span><span style="color: #808080;">not</span> <span style="color: #0000ff;">work</span> <span style="color: #0000ff;">for</span> <span style="color: #0000ff;">SET</span><span style="color: #000000;"> NAMES.
+
+URL: http:</span><span style="color: #808080;">//</span>dev.mysql.com<span style="color: #808080;">/</span>doc<span style="color: #808080;">/</span>refman<span style="color: #808080;">/</span><span style="color: #800000; font-weight: bold;">5.5</span><span style="color: #808080;">/</span>en<span style="color: #808080;">/</span><span style="color: #0000ff;">set</span><span style="color: #808080;">-</span>names.html</pre>
+</div>
+<p>&nbsp;</p>
+<p>(2)在Windows cmd 插入或查询中文出现乱码</p>
+<p><a href="http://webnoties.blog.163.com/blog/static/183525141201351741319749/" target="_blank">mysql insert中文乱码无法插入ERROR 1366 (HY000): Incorrect string value: '\xB1\ </a></p>
+<p>需要<span style="color: #ff00ff;">每次连接</span>后输入如下：</p>
+<div class="cnblogs_code">
+<pre>set character_set_client =<span style="color: #000000;"> gbk;
+set character_set_results = gbk;</span></pre>
+</div>
+<p>(3)更改数据库编码</p>
+<p>ALTER DATABASE db_name CHARACTER SET [=] charset_name</p>
+<p>ALTER DATABASE db_name COLLATE [=] collation_name</p>
+<p>仅对当前连接有效，实际意义？？？：set character_set_database = utf8;</p>
+<p>(4)更改表编码</p>
+<p><a href="http://blog.csdn.net/acmain_chm/article/details/4174186" target="_blank">MySQL 中文显示乱码</a>&nbsp; 看评论！</p>
+<p>ALTER TABLE tbl_name&nbsp; CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-09-03 23:15</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7470572" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7470572);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7470572, cb_entryCreatedDate = '2017-09-03 23:15', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

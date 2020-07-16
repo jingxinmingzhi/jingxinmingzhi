@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root><desc>包含各种类型的 JSON 测试数据</desc><items><item><amount>200</amount><desc>A book</desc><is_sale>false</is_sale><name>book</name><owner>alice</owner><price>24.51</price><update_at>2019-04-13T14:23:53.193Z</update_at></item><item><amount>1</amount><desc>A car</desc><is_sale>true</is_sale><name>car</name><owner>bob</owner><price>241241</price><update_at>2019-04-13T14:23:53.193Z</update_at></item><item><name>pen</name><price>1.2</price></item></items></root>

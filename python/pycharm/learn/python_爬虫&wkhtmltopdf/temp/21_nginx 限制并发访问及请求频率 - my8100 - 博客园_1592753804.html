@@ -1,0 +1,84 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/8057804.html">
+    <span>nginx 限制并发访问及请求频率</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p> </p>
+<h2>1.参考</h2>
+<p><a href="http://www.jiagoumi.com/work/718.html" target="_blank">【工作】Nginx限制IP并发连接数和请求数的研究</a></p>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_limit_conn_module.html" target="_blank">Module ngx_http_limit_conn_module</a></p>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_limit_req_module.html" target="_blank">Module ngx_http_limit_req_module</a></p>
+<p><a href="https://www.chrisyue.com/leaky-bucket-and-nginx-limit_req-module.html" target="_blank">漏桶算法和 NGINX 的 limit_req 模块</a></p>
+<p>漏桶这个名字，其实就非常形象的描述了算法本身的原理。大家都知道，一个身上打了 n 个眼儿的桶，无论你倒进桶里的水多还是少，漏出来的水的流速也会保持稳定，这就是此算法的本质。再以 NGINX + PHP-FPM 为例，我们在 NGINX 配置里定义一个最大处理请求的速度，如果 PHP-FPM 的稳定处理速度峰值是 1000 RPS，那就在 NGINX 里定义处理请求速度最大为 1000 RPS。当 RPS 已经大于这个值的时候，多出来的请求就被 NGINX 这个桶暂时储存起来，排着队等待处理。在 NGINX 的精心照料下，PHP-FPM 会相对稳定的处理来自 NGINX 的请求，而不会出现突然暴增的请求让 PHP-FPM 处理不过来，甚至挂掉。</p>
+<p>然而桶也有大小，NGINX 也一样，假如请求太多太多，桶都装不下了，那么桶将会把多出来的请求直接漏掉，返回 503 错误。</p>
+<p> </p>
+<p><a href="https://www.kancloud.cn/digest/php-src/136260" target="_blank">php-fpm 与 Nginx优化总结</a></p>
+<p>最大请求数max_requests</p>
+<p>最长执行时间request_terminate_timeout</p>
+<h2>2.vi /etc/nginx/nginx.conf</h2>
+<p>在 http{} 添加：</p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #008000;">#</span><span style="color: #008000;"># 2017-12-18 【工作】Nginx限制IP并发连接数和请求数的研究 http://www.jiagoumi.com/work/718.html</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">调整为1，nginx -t 检查，再reload，查看 error.log</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">默认为503 Service Unavailable，由于临时的服务器维护或者过载，</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">可以429 Too Many Requests 用户在给定的时间内发送了太多的请求</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> [error] limiting connections by zone "conn_ip"</span>
+    limit_conn_zone <span style="color: #800080;">$binary_remote_addr</span> zone=conn_ip:<span style="color: #000000;">10m;
+    limit_conn conn_ip </span>10;  <span style="color: #008000;">#</span><span style="color: #008000;">如果这里设置为限制1个ip只能1个连接，log 显示 req_freq_ip 相关控制信息</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> [error] limiting connections by zone "conn_server"</span>
+    limit_conn_zone <span style="color: #800080;">$server_name</span> zone=conn_server:<span style="color: #000000;">10m;
+    limit_conn conn_server </span>1000<span style="color: #000000;">;
+    
+    
+    limit_req_zone  </span><span style="color: #800080;">$binary_remote_addr</span> zone=req_freq_ip:10m rate=3r/<span style="color: #000000;">s;
+    </span><span style="color: #008000;">#</span><span style="color: #008000;">这样相当于容量为0，都会被503，没有意义</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">limit_req zone=req_freq_ip；  #By default, the maximum burst size is equal to zero</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;">超过每秒3个请求，放入最多容纳10个的缓冲区，或者理解为10个令牌？</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">超过3.x，则log显示 [warn] delaying; 超过10.x，则log显示 [error] limiting, 会被503</span>
+    limit_req zone=req_freq_ip burst=10<span style="color: #000000;">;
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;">后面加 nodelay 则未超过10.x的拿到令牌的请求不会被延迟</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;">limit_req zone=req_freq_ip burst=10 nodelay;  </span>
+<span style="color: #000000;">    
+    limit_req_status </span>429<span style="color: #000000;">;
+    
+    
+    limit_conn_log_level error;  </span><span style="color: #008000;">#</span><span style="color: #008000;">info | notice | warn | error 不支持 debug</span></pre>
+</div>
+<p> </p>
+<p> </p>
+<p> </p>
+<p>3.这里打开一个网页，实际上建立了多个连接，其中也包括连接复用。</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201712/892328-20171218153317740-1937556163.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-12-18 15:22</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8057804" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(8057804);return false;">收藏</a></div>
+        </div>

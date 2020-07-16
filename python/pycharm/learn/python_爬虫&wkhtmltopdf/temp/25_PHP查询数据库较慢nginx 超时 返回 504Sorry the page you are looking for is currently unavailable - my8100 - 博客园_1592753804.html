@@ -1,0 +1,66 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/8034291.html">
+    <span>PHP查询数据库较慢，nginx 超时 返回 504：Sorry, the page you are looking for is currently unavailable.</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h3>现象：</h3>
+<p>PHP查询数据库较慢，大约 60s 后 nginx 返回 504：Sorry, the page you are looking for is currently unavailable.</p>
+<h3>检查log：</h3>
+<p>从 /etc/nginx/nginx.conf 找到 /var/log/nginx/access.log 和 /var/log/nginx/error.log</p>
+<p>log 显示 upstream timed out (110: Connection timed out) while reading response header from upstream</p>
+<h3>解决办法：</h3>
+<p><a href="https://distinctplace.com/2017/04/22/nginx-upstream-timed-out/" target="_blank">Nginx upstream timed out (why and how to fix)</a></p>
+<p>添加带有注释的语句</p>
+<div class="cnblogs_code">
+<pre>    location ~ \.<span style="color: #000000;">php$ {
+    </span><span style="color: #008000;">#</span><span style="color: #008000;">    root           html;</span>
+        <span style="color: #ff0000;">fastcgi_read_timeout 300;</span>  <span style="color: #008000;">#</span><span style="color: #008000;">########https://distinctplace.com/2017/04/22/nginx-upstream-timed-out/       upstream timed out (110: Connection timed out) while reading response header from upstream</span>
+        fastcgi_pass   127.0.0.1:9000<span style="color: #000000;">;
+        fastcgi_index  index</span>.<span style="color: #000000;">php;
+        fastcgi_param  SCRIPT_FILENAME  </span><span style="color: #800080;">$document_root$fastcgi_script_name</span><span style="color: #000000;">;
+        </span><span style="color: #0000ff;">include</span><span style="color: #000000;">        fastcgi_params;
+    }</span></pre>
+</div>
+<p> </p>
+<p>执行 service nginx reload 之后，执行查询，返回页面没有显示 table，继续检查log</p>
+<p>"PHP message: PHP Warning: file_get_contents(http://127.0.0.1/xxx): failed to open stream: HTTP request failed! in /home/www/uninum/web.php on line 50</p>
+<p>PHP message: PHP Notice:  Trying to get property of non-object in xxx.php on line 54" while reading response header from upstream</p>
+<h3>同步设置  file_get_contents 超时</h3>
+<p><a href="http://www.manongjc.com/article/613.html" target="_blank">php file_get_contents 获取文件超时的处理方法</a>  以及post 和 多次重试</p>
+<div class="cnblogs_code">
+<pre><span style="color: #800080;">$opts</span> = <span style="color: #0000ff;">array</span><span style="color: #000000;">(  
+    </span>'http'=&gt;<span style="color: #0000ff;">array</span><span style="color: #000000;">(  
+        </span>'method'=&gt;"GET",  
+        <span style="color: #ff0000;">'timeout'=&gt;300,</span><span style="color: #000000;">  
+    )  );  
+</span><span style="color: #800080;">$context</span> = <span style="color: #008080;">stream_context_create</span>(<span style="color: #800080;">$opts</span><span style="color: #000000;">);       
+</span><span style="color: #800080;">$html</span> =<span style="color: #008080;">file_get_contents</span>('http://www.example.com', <span style="color: #0000ff;">false</span>, <span style="color: #800080;">$context</span>); </pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-12-13 18:13</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8034291" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(8034291);return false;">收藏</a></div>
+        </div>

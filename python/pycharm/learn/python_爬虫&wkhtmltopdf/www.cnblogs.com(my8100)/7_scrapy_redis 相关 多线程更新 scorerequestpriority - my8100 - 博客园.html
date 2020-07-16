@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.背景 使用 scrapy_redis 爬虫， 忘记或错误设置 request.priority(Rule 也可以通过参数 process_request 设置 request.priority)，" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>scrapy_redis 相关: 多线程更新 score/request.priority - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_redis_update_score.html">
+    <span>scrapy_redis 相关: 多线程更新 score/request.priority</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.背景</h2>
+<p>使用 scrapy_redis 爬虫， 忘记或错误设置 request.priority(Rule 也可以通过参数 process_request 设置 request.priority)，导致提取 item 的 request 排在有序集 xxx:requests 的队尾，持续占用内存。</p>
+<p>&nbsp;</p>
+<h2>1.代码实现</h2>
+<p>遍历 SortedSet 的所有 item 并根据预定义字典对 data 中的 url 进行正则匹配，更新 score 并复制到临时 newkey，最后执行 rename&nbsp;</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> sys
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">from</span> multiprocessing.dummy <span style="color: #0000ff;">import</span><span style="color: #000000;"> Pool as ThreadPool
+</span><span style="color: #0000ff;">from</span> functools <span style="color: #0000ff;">import</span><span style="color: #000000;"> partial
+
+</span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+   input </span>= raw_input <span style="color: #008000;">#</span><span style="color: #008000;">For py2</span>
+<span style="color: #0000ff;">except</span><span style="color: #000000;"> NameError:
+   </span><span style="color: #0000ff;">pass</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> redis
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> print_line(string):
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">\n{symbol}{space}{string}</span><span style="color: #800000;">'</span>.format(symbol=<span style="color: #800000;">'</span><span style="color: #800000;">#</span><span style="color: #800000;">'</span>*10, space=<span style="color: #800000;">'</span> <span style="color: #800000;">'</span>*5, string=<span style="color: #000000;">string))
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> check_key_scores(key):
+    </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+        total </span>=<span style="color: #000000;"> redis_server.zcard(key)
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> redis.exceptions.ResponseError:
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">The value of '{key}' is not a SortedSet</span><span style="color: #800000;">"</span>.format(key=<span style="color: #000000;">key))
+        sys.exit()
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(err)
+        sys.exit()
+
+    </span><span style="color: #0000ff;">if</span> total ==<span style="color: #000000;"> 0:
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">key '{key}' does not exist or has no items</span><span style="color: #800000;">"</span>.format(key=<span style="color: #000000;">key))
+        sys.exit()
+
+    __, min_score </span>= redis_server.zrange(key, 0, 0, withscores=<span style="color: #000000;">True)[0]
+    __, max_score </span>= redis_server.zrange(key, -1, -1, withscores=<span style="color: #000000;">True)[0]
+
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">score  amount</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    total_ </span>=<span style="color: #000000;"> 0
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> Asuming that score/request.priority is an integer, rather than float number like 1.1</span>
+    <span style="color: #0000ff;">for</span> score <span style="color: #0000ff;">in</span> range(int(min_score), int(max_score)+1<span style="color: #000000;">):
+        count </span>=<span style="color: #000000;"> redis_server.zcount(key, score, score)
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(score, count)
+        total_ </span>+=<span style="color: #000000;"> count
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">"</span><span style="color: #800000;">{total_}/{total} items of key '{key}' have an integer priority</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            total_</span>=total_, total=total_, key=<span style="color: #000000;">key))
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> zadd_with_new_score(startstop, total_items):
+    data, ori_score </span>= redis_server.zrange(key, startstop, startstop, withscores=<span style="color: #000000;">True)[0]
+    </span><span style="color: #0000ff;">for</span> pattern, score <span style="color: #0000ff;">in</span><span style="color: #000000;"> pattern_score:
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> data eg: b'\\x80\\x02}q\\x00(X\\x03\\x00\\x00\\x00urlq\\x01X\\x13\\x00\\x00\\x00http://httpbin.org/q\\x02X\\x08\\x00\\x00\\x00callbackq\\x03X\\x</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> See /site-packages/scrapy_redis/queue.py</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> We don't use zadd method as the order of arguments change depending on</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> whether the class is Redis or StrictRedis, and the option of using</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;"> kwargs only accepts strings, not bytes.</span>
+        m = pattern.search(data.decode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> m:
+            redis_server.execute_command(</span><span style="color: #800000;">'</span><span style="color: #800000;">ZADD</span><span style="color: #800000;">'</span><span style="color: #000000;">, newkey, score, data)
+            </span><span style="color: #0000ff;">break</span>
+    <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+        redis_server.execute_command(</span><span style="color: #800000;">'</span><span style="color: #800000;">ZADD</span><span style="color: #800000;">'</span><span style="color: #000000;">, newkey, ori_score, data)
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">{startstop} / {total_items}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+            startstop</span>=startstop+1, total_items=<span style="color: #000000;">total_items))
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+
+    password </span>= <span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    host </span>= <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    port </span>= <span style="color: #800000;">'</span><span style="color: #800000;">6379</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    database_num </span>=<span style="color: #000000;"> 0
+
+    <span style="color: #ff0000;">key </span></span><span style="color: #ff0000;">= 'test:requests'</span><span style="color: #000000;">
+    newkey </span>= <span style="color: #800000;">'</span><span style="color: #800000;">temp</span><span style="color: #800000;">'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Request whose url matching any key of keyword_score would be updated with the corresponding value as its score</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Smaller value/score means higher request.priority</span>
+    <span style="color: #ff0000;">keyword_score = {'httpbin': -12, 'apps/details': 1</span><span style="color: #000000;"><span style="color: #ff0000;">}</span>
+    pattern_score </span>= [(re.compile(r<span style="color: #800000;">'</span><span style="color: #800000;">url.*?%s.*?callback</span><span style="color: #800000;">'</span>%k), v)<span style="color: #0000ff;">for</span> (k, v) <span style="color: #0000ff;">in</span><span style="color: #000000;"> keyword_score.items()]
+    
+    <span style="color: #ff0000;">threads_amount </span></span><span style="color: #ff0000;">= 10</span><span style="color: #000000;">
+
+    redis_server </span>= redis.StrictRedis.from_url(<span style="color: #800000;">'</span><span style="color: #800000;">redis://:{password}@{host}:{port}/{database_num}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                                password</span>=password, host=<span style="color: #000000;">host,
+                                                port</span>=port, database_num=<span style="color: #000000;">database_num))
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 0: pre check</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    check_key_scores(key)
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 1: copy items and update score</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> total_items = redis_server.zlexcount(key, '-', '+')</span>
+    total_items =<span style="color: #000000;"> redis_server.zcard(key)
+    input(</span><span style="color: #800000;">"</span><span style="color: #800000;">Press Enter to copy {total_items} items of '{key}' into '{newkey}' with new score</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            total_items</span>=total_items, key=key, newkey=<span style="color: #000000;">newkey))
+    p </span>=<span style="color: #000000;"> ThreadPool(threads_amount)
+    p.map(partial(zadd_with_new_score, total_items</span>=<span style="color: #000000;">total_items), range(total_items))
+    p.close()   </span><span style="color: #008000;">#</span><span style="color: #008000;">Prevents any more tasks from being submitted to the pool. Once all the tasks have been completed the worker processes will exit.</span>
+    p.join()    <span style="color: #008000;">#</span><span style="color: #008000;">Wait for the worker processes to exit. One must call close() or terminate() before using join().</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> For py3</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> https://stackoverflow.com/questions/5442910/python-multiprocessing-pool-map-for-multiple-arguments</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> with ThreadPool(threads_amount) as pool:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> pool.map(partial(zadd_with_new_score, total_items=total_items), range(total_items))</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> print('zadd_with_new_score done')</span>
+<span style="color: #000000;">
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 2: check copy result</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    check_key_scores(key)
+    check_key_scores(newkey)
+
+
+    print_line(</span><span style="color: #800000;">'</span><span style="color: #800000;">Step 3: delete, rename and check key</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    input(</span><span style="color: #800000;">"</span><span style="color: #800000;">Press Enter to DELETE '{key}' and RENAME '{newkey}' to '{key}'</span><span style="color: #800000;">"</span><span style="color: #000000;">.format(
+            key</span>=key, newkey=<span style="color: #000000;">newkey))
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(redis_server.delete(key))
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;">(redis_server.rename(newkey, key))
+    check_key_scores(key)
+    check_key_scores(newkey)</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>2.运行结果</h2>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180726184006505-1503160063.png" alt="" /></p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-26 18:52</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9373669" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(9373669);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 9373669, cb_entryCreatedDate = '2018-07-26 18:52', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

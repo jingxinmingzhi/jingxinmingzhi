@@ -1,0 +1,176 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7649965.html">
+    <span>wb 黑名单批量操作</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0. 参考</h1>
+<p><a href="https://github.com/yu961549745/WeiboBlackList" target="_blank">yu961549745/WeiboBlackList  微博批量拉黑</a></p>
+<h1>1. 代码 block.py</h1>
+<p>更新内容：多线程，urllib.request 改为 requests + session</p>
+<p>改成从 firefox 或 chrome 读取 cookie 更方便，懒得改了</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">!/usr/bin/env python</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">from</span> requests.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                                ProxyError, RetryError, InvalidSchema)
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> threading
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> Queue
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> traceback
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> logging
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_logger():
+    logger </span>= logging.getLogger(<span style="color: #800000;">"</span><span style="color: #800000;">threading_example</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+    logger.setLevel(logging.DEBUG)
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> fh = logging.FileHandler("d:/threading.log")</span>
+    fh =<span style="color: #000000;"> logging.StreamHandler()
+    fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%(asctime)s - %(threadName)-10s - %(levelname)s - %(message)s</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    formatter </span>=<span style="color: #000000;"> logging.Formatter(fmt)
+    fh.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> logger
+    
+logger </span>=<span style="color: #000000;"> get_logger() 
+    
+
+  
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> block():
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            uid </span>=<span style="color: #000000;"> task_queue.get()
+            data </span>= dict(payload)  <span style="color: #008000;">#</span><span style="color: #008000;">dict</span>
+            data.update({<span style="color: #800000;">'</span><span style="color: #800000;">uid</span><span style="color: #800000;">'</span><span style="color: #000000;">: uid})
+            resp </span>= s.post(url, data=<span style="color: #000000;">data)
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                ProxyError, RetryError, InvalidSchema) as err:
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(uid)     
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">\nuid: {}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, err, traceback.format_exc()))
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(uid)
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                code </span>= resp.json()[<span style="color: #800000;">'</span><span style="color: #800000;">code</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+                </span><span style="color: #0000ff;">if</span> code != <span style="color: #800000;">'</span><span style="color: #800000;">100000</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+                    logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">uid: {} code: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, code))
+                </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                    logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">uid: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid))    
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+                logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">\nuid: {}\nresp: {}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, resp.text, err, traceback.format_exc()))
+            </span><span style="color: #0000ff;">finally</span><span style="color: #000000;">:
+                task_queue.task_done()
+                
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> lines: request in raw format captured from Fiddler </span>
+    <span style="color: #800000;">'''</span><span style="color: #800000;">
+    ['POST http://weibo.com/aj/filter/block?ajwvr=6 HTTP/1.1',
+     'Host: weibo.com',
+     'User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0',
+     'Accept: */*',
+     'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+     'Accept-Encoding: gzip, deflate',
+     'Content-Type: application/x-www-form-urlencoded',
+     'X-Requested-With: XMLHttpRequest',
+     'Referer: http://weibo.com/u/5471246591?is_hot=1',
+     'Content-Length: 57',
+     'Cookie: your cookie###########################################',
+     'Connection: keep-alive',
+     '',
+     'uid=5471246591&amp;filter_type=1&amp;status=1&amp;interact=1&amp;follow=1']
+    </span><span style="color: #800000;">'''</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> 移除黑名单：</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [317]: url2='http://weibo.com/aj/f/delblack?ajwvr=6'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [318]: resp = s.post(url2, data={'uid':'5209943797'})</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [320]: resp.json()</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Out[320]: {u'code': u'100000', u'data': {}, u'msg': u''}</span>
+<span style="color: #000000;">    
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">uids.txt</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+        uids </span>= [uid.strip() <span style="color: #0000ff;">for</span> uid <span style="color: #0000ff;">in</span><span style="color: #000000;"> f.readlines()]
+
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">headers.txt</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+        lines </span>= [i.strip() <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> f.readlines()]
+    
+    url </span>= lines[0].split()[1<span style="color: #000000;">] 
+    
+    headers </span>=<span style="color: #000000;"> {}
+    </span><span style="color: #0000ff;">for</span> line <span style="color: #0000ff;">in</span> lines[2:-2<span style="color: #000000;">]:
+        k, v </span>= line.split(<span style="color: #800000;">'</span><span style="color: #800000;">: </span><span style="color: #800000;">'</span>,1)  <span style="color: #008000;">#</span><span style="color: #008000;">:space</span>
+        headers[k] =<span style="color: #000000;"> v
+        
+    data</span>=lines[-1<span style="color: #000000;">]
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> datas = [re.sub(r'uid=\d+','uid=%s'%uid ,data) for uid in uids]</span>
+    payload = dict([i.split(<span style="color: #800000;">'</span><span style="color: #800000;">=</span><span style="color: #800000;">'</span>,1) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> data.split(<span style="color: #800000;">'</span><span style="color: #800000;">&amp;</span><span style="color: #800000;">'</span><span style="color: #000000;">)])
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> payloads = [payload.update({'uid': uid}) for uid in uids]</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> payloads = []</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> for uid in uids:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> payload.update({'uid': uid})</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> payloads.append(dict(payload))  ### dict</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> for payload in payloads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> r = requests.post(url, headers=headers, data=payload)</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> r.text</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> {"code":"100000","msg":"\u96b1\u85cf\u6210\u529f","data":{}}        </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [287]: r.json()['code']</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Out[287]: u'100000'</span>
+<span style="color: #000000;">
+
+    s </span>=<span style="color: #000000;"> requests.Session()
+    s.headers </span>=<span style="color: #000000;"> headers
+    s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">http://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">))
+    
+
+    task_queue </span>=<span style="color: #000000;"> Queue.Queue()        
+    </span><span style="color: #0000ff;">for</span> uid <span style="color: #0000ff;">in</span><span style="color: #000000;"> uids:
+        task_queue.put(uid)
+    
+    threads </span>=<span style="color: #000000;"> []
+    </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(100<span style="color: #000000;">):
+        t </span>= threading.Thread(target=block)  <span style="color: #008000;">#</span><span style="color: #008000;">args接收元组，至少(a,)</span>
+<span style="color: #000000;">        threads.append(t)
+
+    </span><span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> threads:
+        t.setDaemon(True) 
+        t.start()  
+      
+    task_queue.join()    
+    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">task done</span><span style="color: #800000;">'</span>
+
+        </pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-11 12:21</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7649965" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7649965);return false;">收藏</a></div>
+        </div>

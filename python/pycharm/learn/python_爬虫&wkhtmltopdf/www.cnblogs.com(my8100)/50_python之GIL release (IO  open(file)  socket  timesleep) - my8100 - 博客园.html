@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.目录 2.线索 C源代码 Py_BEGIN_ALLOW_THREADS Py_END_ALLOW_THREADS3.open(name[, mode[, buffering]]) -&amp;gt; fi" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>python之GIL release (I/O  open(file)  socket  time.sleep) - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7405385.html">
+    <span>python之GIL release (I/O  open(file)  socket  time.sleep)</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p>2.线索 C源代码 Py_BEGIN_ALLOW_THREADS Py_END_ALLOW_THREADS<br />3.open(name[, mode[, buffering]]) -&gt; file object<br />4.socket<br />5.time.sleep</p>
+<h1>1.参考</h1>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="http://www.cnblogs.com/CareySon/archive/2012/04/25/2470063.html" target="_blank"><span style="color: #3366ff; text-decoration: underline;">浅谈操作系统对内存的管理</span></a></span></span></p>
+<p>&nbsp;</p>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="https://www.zhihu.com/question/31259327" target="_blank"><span style="color: #3366ff; text-decoration: underline;">为何IO操作不需要CPU?</span></a></span></span></p>
+<p><span style="color: #ff00ff;">DMA控制器类似于一个小的CPU, 有自己的寄存器(记录主存地址和取到的字的count等).</span> CPU可以发起一个DMA请求, 传入读写操作类型, 相关I/O设备地址, 内存的起始地址, 要操作的字数.然后DMA就可以获取总线的控制权, 将一大块内存和外部I/O读入或写出.等操作完成后, 再通知CPU. 释放总线控制权.</p>
+<p>&nbsp;</p>
+<h1>2.线索 C源代码 Py_BEGIN_ALLOW_THREADS &nbsp; &nbsp;<strong>Py_END_ALLOW_THREADS</strong></h1>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff; text-decoration: underline;"><a href="https://docs.python.org/2/c-api/init.html#thread-state-and-the-global-interpreter-lock" target="_blank"><span style="color: #3366ff; text-decoration: underline;">https://docs.python.org/2/c-api/init.html#thread-state-and-the-global-interpreter-lock</span></a></span></span><br /><span style="text-decoration: underline;"><span style="color: #3366ff; text-decoration: underline;"><a href="https://docs.python.org/3/c-api/init.html#thread-state-and-the-global-interpreter-lock" target="_blank"><span style="color: #3366ff; text-decoration: underline;">https://docs.python.org/3/c-api/init.html#thread-state-and-the-global-interpreter-lock</span></a></span></span></p>
+<h3>Releasing the GIL from extension code</h3>
+<p>Most extension code manipulating the&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-gil">GIL</a>&nbsp;has the following simple structure:</p>
+<div class="highlight-c">
+<div class="highlight">
+<pre><span class="n">Save <span class="n">the <span class="kr">thread <span class="n">state <span class="n">in <span class="n">a <span class="n">local <span class="n">variable<span class="p">.
+<span class="n">Release <span class="n">the <span class="n">global <span class="n">interpreter <span class="n">lock<span class="p">.
+<span class="p">... <span class="n">Do <span class="n">some <span class="n">blocking <span class="n">I<span class="o">/<span class="n">O <span class="n">operation <span class="p">...
+<span class="n">Reacquire <span class="n">the <span class="n">global <span class="n">interpreter <span class="n">lock<span class="p">.
+<span class="n">Restore <span class="n">the <span class="kr">thread <span class="n">state <span class="n">from <span class="n">the <span class="n">local <span class="n">variable<span class="p">.
+</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+</div>
+<p><span style="color: #ff00ff;">This is so common that a pair of macros exists to simplify it:</span></p>
+<div class="highlight-c">
+<div class="highlight">
+<pre><span class="n" style="color: #ff00ff;">Py_BEGIN_ALLOW_THREADS
+<span class="p">... <span class="n">Do <span class="n">some <span class="n">blocking <span class="n">I<span class="o">/<span class="n">O <span class="n">operation <span class="p">...
+<span class="n">Py_END_ALLOW_THREADS
+</span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+</div>
+<p id="index-16">The&nbsp;<a class="reference internal" title="Py_BEGIN_ALLOW_THREADS" href="https://docs.python.org/2/c-api/init.html#c.Py_BEGIN_ALLOW_THREADS"><code class="xref c c-macro docutils literal">Py_BEGIN_ALLOW_THREADS</code></a>&nbsp;macro opens a new block and declares a hidden local variable; the&nbsp;<a class="reference internal" title="Py_END_ALLOW_THREADS" href="https://docs.python.org/2/c-api/init.html#c.Py_END_ALLOW_THREADS"><code class="xref c c-macro docutils literal">Py_END_ALLOW_THREADS</code></a>&nbsp;macro closes the block. These two macros are still available when Python is compiled without thread support (they simply have an empty expansion).</p>
+<p>When thread support is enabled, the block above expands to the following code:</p>
+<div class="highlight-c">
+<div class="highlight">
+<pre><span class="n">PyThreadState <span class="o">*<span class="n">_save<span class="p">;
+
+<span class="n">_save <span class="o">= <span class="n">PyEval_SaveThread<span class="p">();
+<span class="p">...<span class="n">Do <span class="n">some <span class="n">blocking <span class="n">I<span class="o">/<span class="n">O <span class="n">operation<span class="p">...
+<span class="n">PyEval_RestoreThread<span class="p">(<span class="n">_save<span class="p">);
+</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></pre>
+</div>
+</div>
+<p id="index-17">Here is how these functions work: the global interpreter lock is used to protect the pointer to the current thread state. When releasing the lock and saving the thread state, the current thread state pointer must be retrieved before the lock is released (since another thread could immediately acquire the lock and store its own thread state in the global variable). Conversely, when acquiring the lock and restoring the thread state, the lock must be acquired before storing the thread state pointer.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Calling system I/O functions is the most common use case for releasing the GIL, but it can also be useful before calling long-running computations which don&rsquo;t need access to Python objects, such as compression or cryptographic functions operating over memory buffers. For example, the standard&nbsp;<a class="reference internal" title="zlib: Low-level interface to compression and decompression routines compatible with gzip." href="https://docs.python.org/2/library/zlib.html#module-zlib"><code class="xref py py-mod docutils literal">zlib</code></a>&nbsp;and&nbsp;<a class="reference internal" title="hashlib: Secure hash and message digest algorithms." href="https://docs.python.org/2/library/hashlib.html#module-hashlib"><code class="xref py py-mod docutils literal">hashlib</code></a>&nbsp;modules release the GIL when compressing or hashing data.</p>
+</div>
+<h1>3.open(name[, mode[, buffering]]) -&gt; file object</h1>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="https://stackoverflow.com/questions/43863685/where-to-find-python-source-code-for-built-in-open" target="_blank"><span style="color: #3366ff; text-decoration: underline;">Where to find python source code for built in open()</span></a></span></span></p>
+<p>&nbsp; &nbsp; With&nbsp;<a href="https://github.com/python/" rel="nofollow noreferrer">Python on GitHub</a>, have a look at:</p>
+<ul>
+<li><a href="https://github.com/python/cpython/blob/master/Lib/io.py#L59" rel="nofollow noreferrer">https://github.com/python/cpython/blob/master/Lib/io.py#L59</a></li>
+<li><a href="https://github.com/python/cpython/blob/master/Lib/_pyio.py#L40" rel="nofollow noreferrer">https://github.com/python/cpython/blob/master/Lib/_pyio.py#L40</a></li>
+<li><a href="https://github.com/python/cpython/blob/master/Python/fileutils.c#L989" rel="nofollow noreferrer">https://github.com/python/cpython/blob/master/Python/fileutils.c#L989</a></li>
+</ul>
+<h1>4.socket</h1>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="http://blog.csdn.net/hguisu/article/details/7453390" target="_blank"><span style="color: #3366ff; text-decoration: underline;">socket阻塞与非阻塞，同步与异步、I/O模型</span></a></span></span></p>
+<p><span style="color: #ff00ff;">在进行网络编程时，我们常常见到同步(Sync)/异步(Async)，阻塞(Block)/非阻塞(Unblock)四种调用方式：</span></p>
+<p>同步/异步主要针对C端: <br />同步：<br />      所谓同步，就是在c端发出一个功能调用时，在没有得到结果之前，该调用就不返回。也就是必须一件一件事做,等前一件做完了才能做下一件事。<br />例如普通B/S模式（同步）：提交请求-&gt;等待服务器处理-&gt;处理完毕返回 这个期间客户端浏览器不能干任何事<br />异步：<br />      异步的概念和同步相对。当c端一个异步过程调用发出后，调用者不能立刻得到结果。实际处理这个调用的部件在完成后，通过状态、通知和回调来通知调用者。<br />     例如 ajax请求（异步）: 请求通过事件触发-&gt;服务器处理（这是浏览器仍然可以作其他事情）-&gt;处理完毕</p>
+<p>阻塞/非阻塞主要针对S端:<br />阻塞<br />     阻塞调用是指调用结果返回之前，当前线程会被挂起（线程进入非可执行状态，在这个状态下，cpu不会给线程分配时间片，即线程暂停运行）。函数只有在得到结果之后才会返回。</p>
+<p>     有人也许会把阻塞调用和同步调用等同起来，实际上他是不同的。对于同步调用来说，很多时候当前线程还是激活的，只是从逻辑上当前函数没有返回而已。 例如，我们在socket中调用recv函数，如果缓冲区中没有数据，这个函数就会一直等待，直到有数据才返回。而此时，当前线程还会继续处理各种各样的消息。<br />   快递的例子：比如到你某个时候到A楼一层（假如是内核缓冲区）取快递，但是你不知道快递什么时候过来，你又不能干别的事，只能死等着。但你可以睡觉（进程处于休眠状态），因为你知道快递把货送来时一定会给你打个电话（假定一定能叫醒你）。</p>
+<p>非阻塞<br />      非阻塞和阻塞的概念相对应，指在不能立刻得到结果之前，该函数不会阻塞当前线程，而会立刻返回。<br />     还是等快递的例子：如果用忙轮询的方法，每隔5分钟到A楼一层(内核缓冲区）去看快递来了没有。如果没来，立即返回。而快递来了，就放在A楼一层，等你去取。</p>
+<p>&nbsp;</p>
+<p><span style="color: #ff00ff;">Node.js里面的描述：</span><br />线程在执行中如果遇到磁盘读写或网络通信（统称为I/O 操作），通常要耗费较长的时间，这时操作系统会剥夺这个线程的CPU 控制权，使其暂停执行，同时将资源让给其他的工作线程，这种线程调度方式称为 阻塞。当I/O 操作完毕时，操作系统将这个线程的阻塞状态解除，恢复其对CPU的控制权，令其继续执行。这种I/O 模式就是通常的同步式I/O（Synchronous I/O）或阻塞式I/O （Blocking I/O）。  <br /> 相应地，异步式I/O （Asynchronous I/O）或非阻塞式I/O （Non-blocking I/O）则针对所有I/O 操作不采用阻塞的策略。当线程遇到I/O 操作时，不会以阻塞的方式等待I/O 操作的完成或数据的返回，而只是将I/O 请求发送给操作系统，继续执行下一条语句。当操作系统完成I/O 操作时，以事件的形式通知执行I/O 操作的线程，线程会在特定时候处理这个事件。为了处理异步I/O，线程必须有事件循环，不断地检查有没有未处理的事件，依次予以处理。阻塞模式下，一个线程只能处理一项任务，要想提高吞吐量必须通过多线程。而非阻塞模式下，一个线程永远在执行计算操作，&lt;span style="color:#ff0000;"&gt;这个线程所使用的CPU 核心利用率永远是100%&lt;/span&gt;，I/O 以事件的方式通知。&lt;span style="color:#ff0000;"&gt;在阻塞模式下，多线程往往能提高系统吞吐量，因为一个线程阻塞时还有其他线程在工作，多线程可以让CPU 资源不被阻塞中的线程浪费。&lt;/span&gt;而在非阻塞模式下，线程不会被I/O 阻塞，永远在利用CPU。多线程带来的好处仅仅是在多核CPU 的情况下利用更多的核，而Node.js的单线程也能带来同样的好处。这就是为什么Node.js 使用了单线程、非阻塞的事件编程模式。</p>
+<h1>5.time.sleep</h1>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="https://stackoverflow.com/questions/92928/time-sleep-sleeps-thread-or-process" target="_blank"><span style="color: #3366ff; text-decoration: underline;">time.sleep &mdash; sleeps thread or process?</span></a></span></span></p>
+<p>&nbsp;It blocks the thread. If you look in Modules/timemodule.c in the Python source, you'll see that in the call to floatsleep(), the substantive part of<span style="color: #ff00ff;"> the sleep operation is wrapped in a Py_BEGIN_ALLOW_THREADS and Py_END_ALLOW_THREADS block,</span> allowing other threads to continue to execute while the current one sleeps. &nbsp;</p>
+<p><span style="text-decoration: underline;"><span style="color: #3366ff;"><a href="https://stackoverflow.com/questions/269795/how-do-i-find-the-location-of-python-module-sources" target="_blank"><span style="color: #3366ff; text-decoration: underline;">How do I find the location of Python module sources?</span></a></span></span></p>
+<p>For a pure python module you can find the source by looking at themodule.__file__. The datetime module, however, is written in C, and therefore datetime.__file__ points to a .so file (there is no datetime.__file__ on Windows), and therefore, you can't see the source.</p>
+<p>If you download a python source tarball and extract it, the modules' code can be found in the Modules subdirectory.</p>
+<p>For example, if you want to find the datetime code for python 2.6, you can look at</p>
+<p>Python-2.6/Modules/datetimemodule.c<br />You can also find the latest Mercurial version on the web at <span style="color: #ff00ff;">https://hg.python.org/cpython/file/tip/Modules/_datetimemodule.c </span></p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-08-21 17:31</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7405385" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7405385);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7405385, cb_entryCreatedDate = '2017-08-21 17:31', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

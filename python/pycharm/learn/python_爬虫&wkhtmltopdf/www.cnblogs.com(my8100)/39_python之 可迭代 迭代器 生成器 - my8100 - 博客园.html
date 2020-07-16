@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0. 1.总结 (1) (a)iterable 可迭代(对象) 能力属性 指一个对象能够一次返回它的一个成员，for i in a_list 而不需要通过下标完成迭代。&#x9;例子包括所有序列类型(list" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>python之 可迭代 迭代器 生成器 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7528836.html">
+    <span>python之 可迭代 迭代器 生成器</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>&nbsp;</p>
+<h1>1.总结</h1>
+<h2>(1)</h2>
+<h3>(a)iterable 可迭代(对象) <span style="color: #ff00ff;">能力属性</span></h3>
+<p>指一个对象能够一次返回它的一个成员，for i in a_list 而不需要通过下标完成迭代。<br />	例子包括所有序列类型(list, str, tuple), 以及 dict， file， 还包括定义了 __iter__() 或 __getitem__() 方法的类实例。</p>
+<h3>(b)iterator 迭代器 <span style="color: #ff00ff;">具体实现</span></h3>
+<p>代表数据流的对象。重复调用迭代器的 next() (python3为 __next__()) 方法将依次返回流中的项。当没有更多可用数据时，将抛出 StopIteration 异常。</p>
+<h3>(c)两者关系 iterator = iter(iterable)	</h3>
+<p>使用可迭代对象时，通常不需要调用 iter() 或亲自处理迭代器对象。<span style="color: #ff00ff;">for 语句会自动创建一个临时未命名变量，以便在循环期间保存迭代器。</span></p>
+<h2>(2)&nbsp;名叫&nbsp;generator <span style="color: #ff00ff;">生成器</span> 的&nbsp;iterator 迭代器：通过某种算法&ldquo;生成&rdquo;一系列数据，通过 for 循环 或 next() 逐个返回数据。</h2>
+<p>(a)简单算法：list comprehension 列表生成式直接返回完整列表，generator expression 生成器表达式返回名叫&nbsp;generator 生成器 的&nbsp;iterator 迭代器。</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('823ae559-59ee-47f6-a73a-e1d6546dbb69')"><img id="code_img_closed_823ae559-59ee-47f6-a73a-e1d6546dbb69" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_823ae559-59ee-47f6-a73a-e1d6546dbb69" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('823ae559-59ee-47f6-a73a-e1d6546dbb69',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_823ae559-59ee-47f6-a73a-e1d6546dbb69" class="cnblogs_code_hide">
+<pre>In [84]: [i**2 <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10) <span style="color: #0000ff;">if</span> i % 2 ==<span style="color: #000000;"> 0]
+Out[</span>84]: [0, 4, 16, 36, 64<span style="color: #000000;">]
+
+In [</span>85]: (i**2 <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10) <span style="color: #0000ff;">if</span> i % 2 ==<span style="color: #000000;"> 0)
+Out[</span>85]: &lt;generator object &lt;genexpr&gt; at 0x000000000A284CA8&gt;<span style="color: #000000;">
+
+In [</span>86]: [i**2 <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10) <span style="color: #0000ff;">if</span> i % 2 ==<span style="color: #000000;"> 0]
+Out[</span>86]: [0, 4, 16, 36, 64<span style="color: #000000;">]
+
+In [</span>87]: gen = (i**2 <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10) <span style="color: #0000ff;">if</span> i % 2 ==<span style="color: #000000;"> 0)
+
+In [</span>88<span style="color: #000000;">]: gen
+Out[</span>88]: &lt;generator object &lt;genexpr&gt; at 0x000000000A3AE510&gt;<span style="color: #000000;">
+
+In [</span>89<span style="color: #000000;">]: gen.next()
+Out[</span>89<span style="color: #000000;">]: 0
+
+In [</span>90<span style="color: #000000;">]: gen.next()
+Out[</span>90]: 4<span style="color: #000000;">
+
+In [</span>91]: <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> gen:
+    ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> i
+    ...:
+</span>16
+36
+64<span style="color: #000000;">
+
+In [</span>92<span style="color: #000000;">]: gen.next()
+</span>---------------------------------------------------------------------------<span style="color: #000000;">
+StopIteration                             Traceback (most recent call last)
+</span>&lt;ipython-input-92-b2c61ce5e131&gt; <span style="color: #0000ff;">in</span> &lt;module&gt;<span style="color: #000000;">()
+</span>----&gt; 1<span style="color: #000000;"> gen.next()
+
+StopIteration:</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>(b)复杂算法：普通函数含有 yield 变成&ldquo;生成器函数&rdquo;，调用该函数返回名叫&nbsp;generator 生成器 的&nbsp;iterator 迭代器。</p>
+<p><span style="color: #ff00ff;">每次遇到 yield 将临时挂起</span>，并保存当前执行状态(包括局部变量和 try 语句)。当生成器恢复执行时，将从挂起的位置继续执行，而不是像调用函数一样每次从头开始执行。</p>
+<p><a href="https://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/00138681965108490cb4c13182e472f8d87830f13be6e88000" target="_blank">参考廖雪峰 生成器&nbsp;斐波拉契数列（Fibonacci），除第一个和第二个数外，任意一个数都可由前两个数相加得到：</a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('7c2615ec-4381-4ffa-b580-7cc35be0dab9')"><img id="code_img_closed_7c2615ec-4381-4ffa-b580-7cc35be0dab9" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_7c2615ec-4381-4ffa-b580-7cc35be0dab9" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('7c2615ec-4381-4ffa-b580-7cc35be0dab9',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_7c2615ec-4381-4ffa-b580-7cc35be0dab9" class="cnblogs_code_hide">
+<pre>In [96]: <span style="color: #0000ff;">def</span><span style="color: #000000;"> fib(max):
+    ...:     n, a, b </span>= 0, 0, 1<span style="color: #000000;">
+    ...:     </span><span style="color: #0000ff;">while</span> n &lt;<span style="color: #000000;"> max:
+    ...:         </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> b
+    ...:         a, b </span>= b, a +<span style="color: #000000;"> b
+    ...:         n </span>= n + 1<span style="color: #000000;">
+    ...:
+    ...:
+
+In [</span>97]: fib(6<span style="color: #000000;">)
+</span>1
+1
+2
+3
+5
+8<span style="color: #000000;">
+
+
+In [</span>98]: <span style="color: #0000ff;">def</span><span style="color: #000000;"> fib(max):
+    ...:     n, a, b </span>= 0, 0, 1<span style="color: #000000;">
+    ...:     </span><span style="color: #0000ff;">while</span> n &lt;<span style="color: #000000;"> max:
+    ...:         </span><span style="color: #0000ff;">yield</span> b    <span style="color: #008000;">#</span><span style="color: #008000;">将 print 修改为 yield</span>
+    ...:         a, b = b, a +<span style="color: #000000;"> b
+    ...:         n </span>= n + 1<span style="color: #000000;">
+    ...:
+    ...:
+
+In [</span>99]: gen = fib(6<span style="color: #000000;">)
+
+In [</span>100<span style="color: #000000;">]: gen?
+Type:        generator
+String form: </span>&lt;generator object fib at 0x000000000A417F30&gt;<span style="color: #000000;">
+Docstring:   </span>&lt;no docstring&gt;<span style="color: #000000;">
+
+In [</span>101]: gen = fib(6<span style="color: #000000;">)
+
+In [</span>102<span style="color: #000000;">]: gen.next()
+Out[</span>102]: 1<span style="color: #000000;">
+
+In [</span>103]: <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> gen:
+     ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> i
+     ...:
+</span>1
+2
+3
+5
+8<span style="color: #000000;">
+
+In [</span>104<span style="color: #000000;">]: gen.next()
+</span>---------------------------------------------------------------------------<span style="color: #000000;">
+StopIteration                             Traceback (most recent call last)
+</span>&lt;ipython-input-104-b2c61ce5e131&gt; <span style="color: #0000ff;">in</span> &lt;module&gt;<span style="color: #000000;">()
+</span>----&gt; 1<span style="color: #000000;"> gen.next()
+
+StopIteration:</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>(c)判断是否可迭代，是否生成器类型</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('4efa43f1-7077-48c4-87b6-420a8cf4508f')"><img id="code_img_closed_4efa43f1-7077-48c4-87b6-420a8cf4508f" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_4efa43f1-7077-48c4-87b6-420a8cf4508f" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('4efa43f1-7077-48c4-87b6-420a8cf4508f',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_4efa43f1-7077-48c4-87b6-420a8cf4508f" class="cnblogs_code_hide">
+<pre>In [131]: <span style="color: #0000ff;">from</span> collections <span style="color: #0000ff;">import</span><span style="color: #000000;"> Iterable
+
+In [</span>132]: isinstance(fib(6<span style="color: #000000;">), Iterable)
+Out[</span>132<span style="color: #000000;">]: True
+
+In [</span>133]: <span style="color: #0000ff;">import</span><span style="color: #000000;"> types
+
+In [</span>134]: isinstance(fib(6<span style="color: #000000;">), types.GeneratorType)
+Out[</span>134]: True</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<p>(d)相比如下通过在类中定义 def __iter__(self) 和 def next(self) 来实现可迭代，仅仅把 print b 改为了 yield b，就在保持简洁性的同时获得了 iterable 的效果。</p>
+<p><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/" target="_blank">参考廖雪峰 IBM Python yield 使用浅析</a></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('87ddec46-751a-4c50-922f-acd8463b986d')"><img id="code_img_closed_87ddec46-751a-4c50-922f-acd8463b986d" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_87ddec46-751a-4c50-922f-acd8463b986d" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('87ddec46-751a-4c50-922f-acd8463b986d',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_87ddec46-751a-4c50-922f-acd8463b986d" class="cnblogs_code_hide">
+<pre>In [106]: <span style="color: #0000ff;">class</span><span style="color: #000000;"> Fib(object):
+     ...:
+     ...:    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, max):
+     ...:        self.max </span>=<span style="color: #000000;"> max
+     ...:        self.n, self.a, self.b </span>= 0, 0, 1<span style="color: #000000;">
+     ...:
+     ...:    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__iter__</span><span style="color: #000000;">(self):
+     ...:        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> self
+     ...:
+     ...:    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> next(self):
+     ...:        </span><span style="color: #0000ff;">if</span> self.n &lt;<span style="color: #000000;"> self.max:
+     ...:            r </span>=<span style="color: #000000;"> self.b
+     ...:            self.a, self.b </span>= self.b, self.a +<span style="color: #000000;"> self.b
+     ...:            self.n </span>= self.n + 1<span style="color: #000000;">
+     ...:            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> r
+     ...:        </span><span style="color: #0000ff;">raise</span><span style="color: #000000;"> StopIteration()
+     ...:
+
+In [</span>107]: gen = Fib(6<span style="color: #000000;">)
+
+In [</span>108<span style="color: #000000;">]: gen
+Out[</span>108]: &lt;<span style="color: #800080;">__main__</span>.Fib at 0xa3cd160&gt;<span style="color: #000000;">
+
+In [</span>109<span style="color: #000000;">]: gen?
+Type:        Fib
+String form: </span>&lt;<span style="color: #800080;">__main__</span>.Fib object at 0x000000000A3CD160&gt;<span style="color: #000000;">
+Docstring:   </span>&lt;no docstring&gt;<span style="color: #000000;">
+
+In [</span>110<span style="color: #000000;">]: gen.next()
+Out[</span>110]: 1<span style="color: #000000;">
+
+In [</span>111]: <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> gen:
+     ...:     </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> i
+     ...:
+</span>1
+2
+3
+5
+8<span style="color: #000000;">
+
+In [</span>112<span style="color: #000000;">]: gen.next()
+</span>---------------------------------------------------------------------------<span style="color: #000000;">
+StopIteration                             Traceback (most recent call last)
+</span>&lt;ipython-input-112-b2c61ce5e131&gt; <span style="color: #0000ff;">in</span> &lt;module&gt;<span style="color: #000000;">()
+</span>----&gt; 1<span style="color: #000000;"> gen.next()
+
+</span>&lt;ipython-input-106-0ae2acae18e3&gt; <span style="color: #0000ff;">in</span><span style="color: #000000;"> next(self)
+     </span>14            self.n = self.n + 1
+     15            <span style="color: #0000ff;">return</span><span style="color: #000000;"> r
+</span>---&gt; 16        <span style="color: #0000ff;">raise</span><span style="color: #000000;"> StopIteration()
+     </span>17<span style="color: #000000;">
+
+StopIteration:
+
+In [</span>113]:</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p>&nbsp;</p>
+<h1>2.参考资料</h1>
+<p><a href="https://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/0013868196435255fcca20a1630446ea2dd434a7176e152000" target="_blank">廖雪峰 迭代 列表生成式 生成器</a></p>
+<p><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/" target="_blank">廖雪峰 IBM&nbsp;Python yield 使用浅析</a></p>
+<p><a href="https://foofish.net/iterators-vs-generators.html" target="_blank">完全理解Python迭代对象、迭代器、生成器</a></p>
+<p><a href="http://nvie.com/posts/iterators-vs-generators/" target="_blank">Iterables vs. Iterators vs. Generators</a></p>
+<p>&nbsp;</p>
+<h1>3.官网资料</h1>
+<p><a href="https://docs.python.org/2/glossary.html#term-generator" target="_blank">https://docs.python.org/2/glossary.html#term-generator</a></p>
+<p>http://python.usyiyi.cn/documents/python_278/glossary.html</p>
+<p><a href="http://python.usyiyi.cn/documents/python_352/glossary.html" target="_blank">http://python.usyiyi.cn/documents/python_352/glossary.html</a></p>
+<h3>sequence 序列</h3>
+<p>An&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-iterable">iterable</a>&nbsp;which supports efficient element access using integer indices via the&nbsp;<a class="reference internal" title="object.__getitem__" href="https://docs.python.org/2/reference/datamodel.html#object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a>&nbsp;special method and defines a&nbsp;<a class="reference internal" title="len" href="https://docs.python.org/2/library/functions.html#len"><code class="xref py py-meth docutils literal"><span class="pre">len()</span></code></a>method that returns the length of the sequence.</p>
+<p>Some built-in sequence types are&nbsp;<code class="xref py py-class docutils literal"><span class="pre">list</span></code>,&nbsp;<a class="reference internal" title="str" href="https://docs.python.org/2/library/functions.html#str"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a>,&nbsp;<a class="reference internal" title="tuple" href="https://docs.python.org/2/library/functions.html#tuple"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a>, and&nbsp;<a class="reference internal" title="unicode" href="https://docs.python.org/2/library/functions.html#unicode"><code class="xref py py-class docutils literal"><span class="pre">unicode</span></code></a>.</p>
+<p>Note that&nbsp;<a class="reference internal" title="dict" href="https://docs.python.org/2/library/stdtypes.html#dict"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>&nbsp;also supports&nbsp;<a class="reference internal" title="object.__getitem__" href="https://docs.python.org/2/reference/datamodel.html#object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a>&nbsp;and&nbsp;<a class="reference internal" title="object.__len__" href="https://docs.python.org/2/reference/datamodel.html#object.__len__"><code class="xref py py-meth docutils literal"><span class="pre">__len__()</span></code></a>, but is considered a mapping rather than a sequence because the lookups use arbitrary&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-immutable">immutable</a>keys rather than integers.&nbsp;</p>
+<p>一个可迭代对象，它支持通过 __getitem__() 特殊方法使用整数索引来访问元素，并定义 len() 方法来返回该序列的长度。</p>
+<p>一些内建序列类型包括 list, str, tuple 和 unicode (python3: bytes)。</p>
+<p>注意 dict 也支持&nbsp;__getitem__() &nbsp;和&nbsp;len() ，但由于它通过任意&nbsp;&nbsp;immutable 不可变的 keys 而不是整数来查找，dict 被认为是映射而不是序列。</p>
+<p class="first"><span id="yiyi-445" class="yiyi-st">&nbsp;</span></p>
+<h3>iterable&nbsp;可迭代(对象)</h3>
+<p>An object capable of returning its members one at a time. Examples of iterables include all sequence types (such as&nbsp;<code class="xref py py-class docutils literal"><span class="pre">list</span></code>,&nbsp;<a class="reference internal" title="str" href="https://docs.python.org/2/library/functions.html#str"><code class="xref py py-class docutils literal"><span class="pre">str</span></code></a>, and&nbsp;<a class="reference internal" title="tuple" href="https://docs.python.org/2/library/functions.html#tuple"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a>) and some non-sequence types like&nbsp;<a class="reference internal" title="dict" href="https://docs.python.org/2/library/stdtypes.html#dict"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>&nbsp;and&nbsp;<a class="reference internal" title="file" href="https://docs.python.org/2/library/functions.html#file"><code class="xref py py-class docutils literal"><span class="pre">file</span></code></a>&nbsp;and objects of any classes you define with an&nbsp;<a class="reference internal" title="object.__iter__" href="https://docs.python.org/2/reference/datamodel.html#object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a>&nbsp;or&nbsp;<a class="reference internal" title="object.__getitem__" href="https://docs.python.org/2/reference/datamodel.html#object.__getitem__"><code class="xref py py-meth docutils literal"><span class="pre">__getitem__()</span></code></a>&nbsp;method.</p>
+<p>Iterables can be used in a&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a>&nbsp;loop and in many other places where a sequence is needed (<a class="reference internal" title="zip" href="https://docs.python.org/2/library/functions.html#zip"><code class="xref py py-func docutils literal"><span class="pre">zip()</span></code></a>,&nbsp;<a class="reference internal" title="map" href="https://docs.python.org/2/library/functions.html#map"><code class="xref py py-func docutils literal"><span class="pre">map()</span></code></a>, &hellip;).</p>
+<p>When an iterable object is passed as an argument to the built-in function&nbsp;<a class="reference internal" title="iter" href="https://docs.python.org/2/library/functions.html#iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a>, it returns an iterator for the object. This iterator is good for one pass over the set of values. When using iterables, it is usually not necessary to call&nbsp;<a class="reference internal" title="iter" href="https://docs.python.org/2/library/functions.html#iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a>&nbsp;or deal with iterator objects yourself. The&nbsp;<code class="docutils literal"><span class="pre">for</span></code>&nbsp;statement does that automatically for you, creating a temporary unnamed variable to hold the iterator for the duration of the loop. See also&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-iterator">iterator</a>,&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-sequence">sequence</a>, and&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-generator">generator</a>.</p>
+<p><span style="color: #ff00ff;">可迭代(对象)是指一个对象能够一次返回它的一个成员</span>，<span style="color: #ff0000;">例子包括所有序列类型(list, str, tuple), 以及 dict， file， 还包括定义了 __iter__() 或 __getitem__() 方法的类实例。</span></p>
+<p>可迭代可以应用在 for 循环，以及需要一个序列的其他场合(zip(), map(), ...)。</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">zip([iterable, &hellip;])</span>
+In [7]: zip([1,2,3],[4,5,6<span style="color: #000000;">])
+Out[</span>7]: [(1, 4), (2, 5), (3, 6<span style="color: #000000;">)]
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;">map(function, iterable, &hellip;)</span>
+In [11]: map(<span style="color: #0000ff;">lambda</span> x,y:x+y,[1,2,3],[4,5,6<span style="color: #000000;">])
+Out[</span>11]: [5, 7, 9]</pre>
+</div>
+<p>&nbsp;</p>
+<p><a href="https://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000/0013868196435255fcca20a1630446ea2dd434a7176e152000" target="_blank">廖雪峰 迭代</a>&nbsp;：<span style="text-decoration: underline;">在Python中，迭代是通过<code>for ... in</code>来完成的，而很多语言比如C或者Java，迭代list是通过下标完成的。</span></p>
+<p>&nbsp;</p>
+<p>当可迭代对象作为参数传递给内建函数 iter() 时，将返回对象的迭代器。这个迭代器。。。这个迭代器对于一组值是有利的。</p>
+<p>使用可迭代对象时，通常不需要调用 iter() 或亲自处理迭代器对象。<span style="color: #ff00ff;">for 语句会自动创建一个临时未命名变量，以便在循环期间保存迭代器。</span></p>
+<p>&nbsp;</p>
+<div class="cnblogs_code">
+<pre>In [33]: iter(<span style="color: #800000;">'</span><span style="color: #800000;">abc</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>33]: &lt;iterator at 0xa387588&gt;<span style="color: #000000;">
+
+In [</span>34]: iter([1,2,3<span style="color: #000000;">])
+Out[</span>34]: &lt;listiterator at 0xa387da0&gt;<span style="color: #000000;">
+
+In [</span>35]: iter((1,2,3<span style="color: #000000;">))
+Out[</span>35]: &lt;tupleiterator at 0xa387fd0&gt;<span style="color: #000000;">
+
+In [</span>36]: d={<span style="color: #800000;">'</span><span style="color: #800000;">a</span><span style="color: #800000;">'</span>:1,<span style="color: #800000;">'</span><span style="color: #800000;">b</span><span style="color: #800000;">'</span>:2<span style="color: #000000;">}
+
+In [</span>37<span style="color: #000000;">]: iter(d)
+Out[</span>37]: &lt;dictionary-keyiterator at 0xa33def8&gt;<span style="color: #000000;">
+
+In [</span>38<span style="color: #000000;">]: d.items()
+Out[</span>38]: [(<span style="color: #800000;">'</span><span style="color: #800000;">a</span><span style="color: #800000;">'</span>, 1), (<span style="color: #800000;">'</span><span style="color: #800000;">b</span><span style="color: #800000;">'</span>, 2<span style="color: #000000;">)]
+
+In [</span>39<span style="color: #000000;">]: d.iteritems()
+Out[</span>39]: &lt;dictionary-itemiterator at 0x3e96458&gt;<span style="color: #000000;">
+
+In [</span>40<span style="color: #000000;">]: d.iterkeys()
+Out[</span>40]: &lt;dictionary-keyiterator at 0xa3a24f8&gt;<span style="color: #000000;">
+
+In [</span>41<span style="color: #000000;">]: d.itervalues()
+Out[</span>41]: &lt;dictionary-valueiterator at 0xa3750e8&gt;</pre>
+</div>
+<p>&nbsp;</p>
+<h3>iterator 迭代器</h3>
+<p class="first">An object representing a stream of data. Repeated calls to the iterator&rsquo;s&nbsp;<a class="reference internal" title="generator.next" href="https://docs.python.org/2/reference/expressions.html#generator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&nbsp;method return successive items in the stream. When no more data are available a&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;exception is raised instead. At this point, the iterator object is exhausted and any further calls to its&nbsp;<a class="reference internal" title="generator.next" href="https://docs.python.org/2/reference/expressions.html#generator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&nbsp;method just raise&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;again.</p>
+<p class="first">Iterators are required to have an&nbsp;<a class="reference internal" title="object.__iter__" href="https://docs.python.org/2/reference/datamodel.html#object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a>&nbsp;method that returns the iterator object itself so every iterator is also iterable and may be used in most places where other iterables are accepted. One notable exception is code which attempts multiple iteration passes.</p>
+<p class="first">A container object (such as a&nbsp;<code class="xref py py-class docutils literal"><span class="pre">list</span></code>) produces a fresh new iterator each time you pass it to the<a class="reference internal" title="iter" href="https://docs.python.org/2/library/functions.html#iter"><code class="xref py py-func docutils literal"><span class="pre">iter()</span></code></a>&nbsp;function or use it in a&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a>&nbsp;loop. <span style="color: #ff00ff;">Attempting this with an iterator will just return the same exhausted iterator object used in the previous iteration pass, making it appear like an empty container.</span></p>
+<p class="last">More information can be found in&nbsp;<a class="reference internal" href="https://docs.python.org/2/library/stdtypes.html#typeiter">Iterator Types</a>.</p>
+<p class="last">代表数据流的对象。重复调用迭代器的 next() (python3为 __next__()) 方法将依次返回流中的项。当没有更多可用数据时，将抛出 StopIteration 异常。此时，迭代器对象被耗尽，并且对其 next() 方法的任何进一步调用都会再次引发 StopIteration。</p>
+<p class="last">迭代器需要定义 __iter__() 方法来返回迭代器对象本身，因此每一个迭代器也是可迭代对象，并且可以被用于大多数接受可迭代对象的场合。一个值得注意的例外是尝试。。。一个值得注意的例外是尝试多次迭代的代码。</p>
+<p class="last">每次将容器对象(比如 list) 传递给 iter() 函数或将其用于 for 循环，都将生成一个全新的迭代器。</p>
+<p class="last">&nbsp;</p>
+<p class="last">&nbsp;</p>
+<p class="last"><a href="https://docs.python.org/2/library/stdtypes.html#typeiter" target="_blank">https://docs.python.org/2/library/stdtypes.html#typeiter</a></p>
+<p class="last"><a href="http://python.usyiyi.cn/documents/python_278/library/stdtypes.html#typeiter" target="_blank">http://python.usyiyi.cn/documents/python_278/library/stdtypes.html#typeiter</a></p>
+<p class="last"><a href="http://python.usyiyi.cn/documents/python_352/library/stdtypes.html#typeiter" target="_blank">http://python.usyiyi.cn/documents/python_352/library/stdtypes.html#typeiter</a></p>
+<h2>5.5. Iterator Types 迭代器</h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.2.</span></p>
+</div>
+<p id="index-20">Python supports a concept of iteration over containers. This is implemented using two distinct methods; these are used to allow user-defined classes to support iteration.</p>
+<p>Sequences, described below in more detail, always support the iteration methods.</p>
+<p>One method needs to be defined for container objects to provide iteration support:</p>
+<p id="index-20"><span id="yiyi-120" class="yiyi-st">Python支持容器上迭代的概念。<span id="yiyi-121" class="yiyi-st">这种实现使用了两种独特的方法；<span id="yiyi-122" class="yiyi-st">它们被用于让用户定义的类支持迭代。</span></span></span></p>
+<p><span id="yiyi-120" class="yiyi-st"><span id="yiyi-121" class="yiyi-st"><span id="yiyi-122" class="yiyi-st">&ldquo;<span id="yiyi-123" class="yiyi-st">序列&rdquo;都支持迭代方法。</span></span></span></span></p>
+<p><span id="yiyi-124" class="yiyi-st">容器对象需要定义一个方法以支持迭代：</span></p>
+<dl class="method"><dt id="container.__iter__"><code class="descclassname">container.</code><code class="descname">__iter__</code><span class="sig-paren">(<span class="sig-paren">)</span></span></dt><dd>
+<p>Return an iterator object. The object is required to support the iterator protocol described below. If a container supports different types of iteration, additional methods can be provided to specifically request iterators for those iteration types. (An example of an object supporting multiple forms of iteration would be a tree structure which supports both breadth-first and depth-first traversal.) This method corresponds to the&nbsp;<a class="reference internal" title="PyTypeObject.tp_iter" href="https://docs.python.org/2/c-api/typeobj.html#c.PyTypeObject.tp_iter"><code class="xref c c-member docutils literal"><span class="pre">tp_iter</span></code></a>&nbsp;slot of the type structure for Python objects in the Python/C API.</p>
+<p>返回一个迭代器对象。<span id="yiyi-126" class="yiyi-st">该对象必须支持如下所述的迭代器协议。<span id="yiyi-127" class="yiyi-st">如果一个容器支持不同类型的迭代，可以提供额外的方法来返回相应的迭代器。<span id="yiyi-128" class="yiyi-st">（对象支持多种迭代形式的一个示例是支持广度和深度优先遍历的树结构）。</span></span></span></p>
+</dd></dl>
+<p>The iterator objects themselves are required to support the following two methods, which together form the&nbsp;<em class="dfn">iterator protocol</em>:</p>
+<p>迭代器对象本身需要支持以下两种方法，它们组合在一起形成<span class="dfn">迭代器协议：</span></p>
+<dl class="method"><dt id="iterator.__iter__"><code class="descclassname">iterator.</code><code class="descname">__iter__</code><span class="sig-paren">(<span class="sig-paren">)</span></span></dt><dd>
+<p>Return the iterator object itself. This is required to allow both containers and iterators to be used with the&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a>&nbsp;and&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#in"><code class="xref std std-keyword docutils literal"><span class="pre">in</span></code></a>&nbsp;statements. This method corresponds to the&nbsp;<a class="reference internal" title="PyTypeObject.tp_iter" href="https://docs.python.org/2/c-api/typeobj.html#c.PyTypeObject.tp_iter"><code class="xref c c-member docutils literal"><span class="pre">tp_iter</span></code></a>&nbsp;slot of the type structure for Python objects in the Python/C API.</p>
+<p>返回迭代器对象本身。<span id="yiyi-289" class="yiyi-st">它使得容器和迭代器能够应用于 for 和 in 语句。</span></p>
+</dd></dl><dl class="method"><dt id="iterator.next"><code class="descclassname">iterator.</code><code class="descname">next</code><span class="sig-paren">(<span class="sig-paren">)</span></span></dt><dd>
+<p>Return the next item from the container. If there are no further items, raise the&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;exception. This method corresponds to the<a class="reference internal" title="PyTypeObject.tp_iternext" href="https://docs.python.org/2/c-api/typeobj.html#c.PyTypeObject.tp_iternext"><code class="xref c c-member docutils literal"><span class="pre">tp_iternext</span></code></a>&nbsp;slot of the type structure for Python objects in the Python/C API.</p>
+<p>从容器中返回下一个元素。<span id="yiyi-293" class="yiyi-st">如果没有更多的元素，则引发 StopIteration 异常。</span></p>
+<p>&nbsp;</p>
+</dd></dl>
+<p>Python defines several iterator objects to support iteration over general and specific sequence types, dictionaries, and other more specialized forms. The specific types are not important beyond their implementation of the iterator protocol.</p>
+<p><span id="yiyi-137" class="yiyi-st">Python定义了几个迭代器对象，以支持在通用和特定的序列类型、字典以及其他更多特殊形式上的迭代。<span id="yiyi-138" class="yiyi-st">相比迭代器协议的实现，具体的类型并不重要。</span></span></p>
+<p>&nbsp;</p>
+<p>The intention of the protocol is that once an iterator&rsquo;s&nbsp;<a class="reference internal" title="iterator.next" href="https://docs.python.org/2/library/stdtypes.html#iterator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&nbsp;method raises&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>, it will continue to do so on subsequent calls. Implementations that do not obey this property are deemed broken. (This constraint was added in Python 2.3; in Python 2.2, various iterators are broken according to this rule.)</p>
+<p>该协议的意图是一旦迭代器的 next() 方法引发 StopIteration&nbsp;，后续调用将继续这样的行为。<span id="yiyi-140" class="yiyi-st">不遵守此性质的实现被认为是有问题的。</span></p>
+<p>&nbsp;</p>
+<div id="generator-types" class="section">
+<h3>5.5.1. Generator Types &nbsp;<span id="yiyi-1006" class="yiyi-st">生成器　　</span></h3>
+<p>Python&rsquo;s&nbsp;<a class="reference internal" href="https://docs.python.org/2/glossary.html#term-generator">generator</a>s provide a convenient way to implement the iterator protocol. If a container object&rsquo;s&nbsp;<a class="reference internal" title="object.__iter__" href="https://docs.python.org/2/reference/datamodel.html#object.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a>&nbsp;method is implemented as a generator, it will automatically return an iterator object (technically, a generator object) supplying the&nbsp;<a class="reference internal" title="iterator.__iter__" href="https://docs.python.org/2/library/stdtypes.html#iterator.__iter__"><code class="xref py py-meth docutils literal"><span class="pre">__iter__()</span></code></a>&nbsp;and<a class="reference internal" title="iterator.next" href="https://docs.python.org/2/library/stdtypes.html#iterator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&nbsp;methods. More information about generators can be found in&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#yieldexpr">the documentation for the yield expression</a>.</p>
+</div>
+<p><span id="yiyi-142" class="yiyi-st">Python的生成器提供了一种方便的方法来实现迭代器协议。<span id="yiyi-143" class="yiyi-st">如果容器对象的 __iter__() 方法实现为一个生成器，它将自动返回一个提供 __iter__() 和 next() (python3为 __next__())方法的迭代器对象（从技术上讲，是生成器对象）。有关<span id="yiyi-144" class="yiyi-st">生成器的更多信息可以在<a class="reference internal" href="http://python.usyiyi.cn/documents/python_278/reference/expressions.html#yieldexpr">yield表达式的文档</a>中找到。</span></span></span></p>
+<p class="last"><span id="yiyi-301" class="yiyi-st">&nbsp;</span></p>
+<p><a href="https://docs.python.org/2/reference/expressions.html#yieldexpr" target="_blank">https://docs.python.org/2/reference/expressions.html#yieldexpr</a></p>
+<h3>5.2.10. Yield expressions 通过 yield 定义&ldquo;生成器函数&rdquo;，调用时返回一个被称为&ldquo;生成器&rdquo;的&ldquo;迭代器&rdquo;，具有 .next() 以及 StopIteration</h3>
+<pre><strong id="grammar-token-yield_atom">yield_atom      </strong> ::=  &ldquo;(&rdquo; <a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#grammar-token-yield_expression"><code class="xref docutils literal"><span class="pre">yield_expression</span></code></a> &ldquo;)&rdquo;
+<strong id="grammar-token-yield_expression">yield_expression</strong> ::=  &ldquo;yield&rdquo; [<a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#grammar-token-expression_list"><code class="xref docutils literal"><span class="pre">expression_list</span></code></a>]
+</pre>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+<p>The&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression is only used when defining a generator function, and can only be used in the body of a function definition. Using a<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression in a function definition is sufficient to cause that definition to create a generator function instead of a normal function.</p>
+<p>When a generator function is called, it returns an iterator known as a generator. That generator then controls the execution of a generator function. The execution starts when one of the generator&rsquo;s methods is called. At that time, the execution proceeds to the first&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>expression, where it is suspended again, returning the value of&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#grammar-token-expression_list"><code class="xref std std-token docutils literal"><span class="pre">expression_list</span></code></a>&nbsp;to generator&rsquo;s caller. By suspended we mean that all local state is retained, including the current bindings of local variables, the instruction pointer, and the internal evaluation stack. When the execution is resumed by calling one of the generator&rsquo;s methods, the function can proceed exactly as if the&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression was just another external call. The value of the&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression after resuming depends on the method which resumed the execution.</p>
+<p id="index-23">All of this makes generator functions quite similar to coroutines; they yield multiple times, they have more than one entry point and their execution can be suspended. The only difference is that a generator function cannot control where should the execution continue after it yields; the control is always transferred to the generator&rsquo;s caller.</p>
+<p>&nbsp;</p>
+<p><span id="yiyi-94" class="yiyi-st"><span style="color: #ff00ff;"><span style="font-family: monospace;">yield </span>表达式只用于定义生成器函数</span>，且只能用于函数的定义体中。<span id="yiyi-95" class="yiyi-st">在函数定义中使用 yield 表达式就可以充分使得该函数定义<span style="color: #ff00ff;">创建一个生成器函数而不是普通的函数。</span></span></span></p>
+<p><span id="yiyi-96" class="yiyi-st"><span style="color: #ff00ff;">当调用生成器函数时，它返回一个称为生成器的迭代器。</span><span id="yiyi-97" class="yiyi-st">然后该生成器控制生成器函数的执行。<span id="yiyi-98" class="yiyi-st">当调用生成器的其中一个方法时，执行开始。<span id="yiyi-99" class="yiyi-st">此时，<span style="color: #ff00ff;">执行会行进到第一个 yield 表达式，在那里执行被挂起</span>并返回<a class="reference internal" href="http://python.usyiyi.cn/documents/python_278/reference/expressions.html#grammar-token-expression_list"><tt class="xref std std-token docutils literal"><span class="pre">expression_list</span></tt></a>的值给生成器的调用者。<span id="yiyi-100" class="yiyi-st">挂起的意思是保存所有的局部状态，包括当前局部变量的绑定、指令的指针和内部的计算栈。<span id="yiyi-101" class="yiyi-st"><span style="color: #ff00ff;">当通过调用生成器的一个方法来恢复执行时，函数可以准确地继续执行就好像 yield 表达式只是一个外部的调用。</span><span id="yiyi-102" class="yiyi-st">恢复执行后 yield 表达式的值取决于恢复执行的方法。</span></span></span></span></span></span></span></p>
+<p id="index-23"><span id="yiyi-103" class="yiyi-st">所有这些使得生成器函数与协程非常类似；<span id="yiyi-104" class="yiyi-st">它们可以 yield 多次，它们有多个入口点且它们的执行可以挂起。<span id="yiyi-105" class="yiyi-st">唯一的区别是生成器函数不可以控制 yield 之后执行应该从何处继续；<span id="yiyi-106" class="yiyi-st">控制始终被转让给生成器的调用者。</span></span></span></span></p>
+<p>&nbsp;</p>
+<div id="generator-iterator-methods" class="section">
+<h4>5.2.10.1. Generator-iterator methods</h4>
+<p>This subsection describes the methods of a generator iterator. They can be used to control the execution of a generator function.</p>
+<p><span id="yiyi-107" class="yiyi-st">该小节讲述&ldquo;生成器迭代器&rdquo;</span><span id="yiyi-107" class="yiyi-st">的方法。<span id="yiyi-108" class="yiyi-st">它们可用于控制生成器函数的执行。</span></span></p>
+<p>Note that calling any of the generator methods below when the generator is already executing raises a&nbsp;<a class="reference internal" title="exceptions.ValueError" href="https://docs.python.org/2/library/exceptions.html#exceptions.ValueError"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a>&nbsp;exception.</p>
+<p><span style="color: #ff00ff;">注意当生成器已经在执行时调用下面的任何一个生成器方法都将引发 ValueError 异常？？？？？</span></p>
+<dl class="method"><dt id="generator.next"><code class="descclassname">generator.</code><code class="descname">next</code><span class="sig-paren">(<span class="sig-paren">)</span></span></dt><dd>
+<p>Starts the execution of a generator function or resumes it at the last executed&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression. When a generator function is resumed with a&nbsp;<a class="reference internal" title="generator.next" href="https://docs.python.org/2/reference/expressions.html#generator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&nbsp;method, the current&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression always evaluates to&nbsp;<a class="reference internal" title="None" href="https://docs.python.org/2/library/constants.html#None"><code class="xref py py-const docutils literal"><span class="pre">None</span></code></a>. The execution then continues to the next&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression, where the generator is suspended again, and the value of the&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/expressions.html#grammar-token-expression_list"><code class="xref std std-token docutils literal"><span class="pre">expression_list</span></code></a>&nbsp;is returned to&nbsp;<a class="reference internal" title="generator.next" href="https://docs.python.org/2/reference/expressions.html#generator.next"><code class="xref py py-meth docutils literal"><span class="pre">next()</span></code></a>&rsquo;s caller. If the generator exits without yielding another value, a&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;exception is raised.</p>
+<p>开始生成器函数的执行或者在最后一次执行的yield表达式处恢复执行。当生成器函数使用next()方法恢复执行时，当前的yield表达式始终None。然后执行继续行进到下一个yield表达式，在那里生成器被再次挂起并返回expression_list的值给next()的调用者。如果生成器退出时没有yield另外一个值，则引发一个StopIteration异常。</p>
+</dd></dl><dl class="method"><dt id="generator.send"><code class="descclassname">generator.</code><code class="descname">send</code><span class="sig-paren">(<em>value</em><span class="sig-paren">)</span></span></dt><dd>
+<p>Resumes the execution and &ldquo;sends&rdquo; a value into the generator function. The&nbsp;<code class="docutils literal"><span class="pre">value</span></code>&nbsp;argument becomes the result of the current&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>expression. The&nbsp;<a class="reference internal" title="generator.send" href="https://docs.python.org/2/reference/expressions.html#generator.send"><code class="xref py py-meth docutils literal"><span class="pre">send()</span></code></a>&nbsp;method returns the next value yielded by the generator, or raises&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;if the generator exits without yielding another value. When&nbsp;<a class="reference internal" title="generator.send" href="https://docs.python.org/2/reference/expressions.html#generator.send"><code class="xref py py-meth docutils literal"><span class="pre">send()</span></code></a>&nbsp;is called to start the generator, it must be called with&nbsp;<a class="reference internal" title="None" href="https://docs.python.org/2/library/constants.html#None"><code class="xref py py-const docutils literal"><span class="pre">None</span></code></a>&nbsp;as the argument, because there is no<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;expression that could receive the value.</p>
+<p>恢复执行并&ldquo;发送&rdquo;一个值到生成器中。<span style="color: #ff00ff;">该value参数成为当前yield表达式的结果。send()方法返回生成器yield的下一个值</span>，如果生成器退出时没有yield另外一个值则引发StopIteration。 当调用send()用于（第一次）开始生成器的执行时，它必须以None作为参数进行调用，因为没有接受该值的yield表达式。</p>
+</dd></dl><dl class="method"><dt id="generator.throw"><code class="descclassname">generator.</code><code class="descname">throw</code><span class="sig-paren">(<em>type</em><span class="optional">[,&nbsp;<em>value</em><span class="optional">[,&nbsp;<em>traceback</em><span class="optional">]<span class="optional">]<span class="sig-paren">)</span></span></span></span></span></span></dt><dd>
+<p>Raises an exception of type&nbsp;<code class="docutils literal"><span class="pre">type</span></code>&nbsp;at the point where generator was paused, and returns the next value yielded by the generator function. If the generator exits without yielding another value, a&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;exception is raised. If the generator function does not catch the passed-in exception, or raises a different exception, then that exception propagates to the caller.</p>
+<p>在生成器暂停的地方引发一个type类型的异常，并返回生成器函数yield的下一个值。如果生成器在退出时没有yield一个值，则引发StopIteration异常。如果生成器函数没有捕获传递进来的异常或者引发一个不同的异常，那么该异常将传播到调用者。</p>
+</dd></dl><dl class="method"><dt id="generator.close"><code class="descclassname">generator.</code><code class="descname">close</code><span class="sig-paren">(<span class="sig-paren">)</span></span></dt><dd>
+<p>Raises a&nbsp;<a class="reference internal" title="exceptions.GeneratorExit" href="https://docs.python.org/2/library/exceptions.html#exceptions.GeneratorExit"><code class="xref py py-exc docutils literal"><span class="pre">GeneratorExit</span></code></a>&nbsp;at the point where the generator function was paused. If the generator function then raises&nbsp;<a class="reference internal" title="exceptions.StopIteration" href="https://docs.python.org/2/library/exceptions.html#exceptions.StopIteration"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a>&nbsp;(by exiting normally, or due to already being closed) or&nbsp;<a class="reference internal" title="exceptions.GeneratorExit" href="https://docs.python.org/2/library/exceptions.html#exceptions.GeneratorExit"><code class="xref py py-exc docutils literal"><span class="pre">GeneratorExit</span></code></a>&nbsp;(by not catching the exception), close returns to its caller. If the generator yields a value, a&nbsp;<a class="reference internal" title="exceptions.RuntimeError" href="https://docs.python.org/2/library/exceptions.html#exceptions.RuntimeError"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></a>&nbsp;is raised. If the generator raises any other exception, it is propagated to the caller.&nbsp;<a class="reference internal" title="generator.close" href="https://docs.python.org/2/reference/expressions.html#generator.close"><code class="xref py py-meth docutils literal"><span class="pre">close()</span></code></a>&nbsp;does nothing if the generator has already exited due to an exception or normal exit.</p>
+<p>在生成器函数暂停的地方引发一个GeneratorExit。如果生成器函数此后引发StopIteration（正常退出或者由于已经正在关闭）或者GeneratorExit（没有捕获该异常），close会返回到调用者。如果生成器yield一个值，则引发一个RuntimeError。如果生成器引发其它任何异常，它会被传播到调用者。如果生成器已经由于异常退出或正常退出，close()不会做任何事情。</p>
+</dd></dl>
+<p>Here is a simple example that demonstrates the behavior of generators and generator functions:</p>
+<p>这里有个简单的例子演示生成器和生成器函数的行为：</p>
+<div class="cnblogs_code">
+<pre>&gt;&gt;&gt; <span style="color: #0000ff;">def</span> echo(value=<span style="color: #000000;">None):
+...     </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">"</span><span style="color: #800000;">Execution starts when 'next()' is called for the first time.</span><span style="color: #800000;">"</span><span style="color: #000000;">
+...     </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+...         </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+...             </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+...                 value </span>= (<span style="color: #0000ff;">yield</span><span style="color: #000000;"> value)
+...             </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception, e:
+...                 value </span>=<span style="color: #000000;"> e
+...     </span><span style="color: #0000ff;">finally</span><span style="color: #000000;">:
+...         </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">"</span><span style="color: #800000;">Don't forget to clean up when 'close()' is called.</span><span style="color: #800000;">"</span><span style="color: #000000;">
+...
+</span>&gt;&gt;&gt; generator = echo(1<span style="color: #000000;">)
+</span>&gt;&gt;&gt; <span style="color: #0000ff;">print</span><span style="color: #000000;"> generator.next()
+Execution starts when </span><span style="color: #800000;">'</span><span style="color: #800000;">next()</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">is</span> called <span style="color: #0000ff;">for</span><span style="color: #000000;"> the first time.
+</span>1
+&gt;&gt;&gt; <span style="color: #0000ff;">print</span><span style="color: #000000;"> generator.next()
+None
+</span>&gt;&gt;&gt; <span style="color: #0000ff;">print</span> generator.send(2<span style="color: #000000;">)
+</span>2
+&gt;&gt;&gt; generator.throw(TypeError, <span style="color: #800000;">"</span><span style="color: #800000;">spam</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+TypeError(</span><span style="color: #800000;">'</span><span style="color: #800000;">spam</span><span style="color: #800000;">'</span><span style="color: #000000;">,)
+</span>&gt;&gt;&gt;<span style="color: #000000;"> generator.close()
+Don</span><span style="color: #800000;">'</span><span style="color: #800000;">t forget to clean up when </span><span style="color: #800000;">'</span>close()<span style="color: #800000;">'</span><span style="color: #800000;"> is called.</span></pre>
+</div>
+<p>&nbsp;</p>
+</div>
+<p class="last"><a href="https://docs.python.org/2/glossary.html#term-generator" target="_blank">https://docs.python.org/2/glossary.html#term-generator</a></p>
+<h3 class="last">generator 生成器(函数)</h3>
+<p class="last">A function which returns an iterator. It looks like a normal function except that it contains&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;statements for producing a series of values usable in a for-loop or that can be retrieved one at a time with the&nbsp;<a class="reference internal" title="next" href="https://docs.python.org/2/library/functions.html#next"><code class="xref py py-func docutils literal"><span class="pre">next()</span></code></a>&nbsp;function. Each&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>&nbsp;temporarily suspends processing, remembering the location execution state (including local variables and pending try-statements). When the generator resumes, it picks-up where it left-off (in contrast to functions which start fresh on every invocation).</p>
+<p>返回一个迭代器 iterator 的函数。它看起来像一个普通函数，除了它包含yield表达式，用于产生一系列在 for 循环中可用的值，或者可以使用 next() 函数一次获取一个值。</p>
+<p>每次遇到 yield 将临时挂起，并保存当前执行状态(包括局部变量和 try 语句)。当生成器恢复执行时，将从挂起的位置继续执行，而不是像调用函数一样每次从头开始执行。</p>
+<p>通常指生成器函数，但在某些上下文中可以引用生成器迭代器。在预期意义不清楚的情况下，使用完整术语避免歧义。</p>
+<p>&nbsp;</p>
+<h3><span id="yiyi-196" class="yiyi-st">generator iterator 生成器迭代器</span></h3>
+<p><a href="https://docs.python.org/3/glossary.html#term-generator-iterator" target="_blank"><span class="yiyi-st">https://docs.python.org/3/glossary.html#term-generator-iterator</span></a></p>
+<p class="first"><span id="yiyi-197" class="yiyi-st">由<a class="reference internal" href="http://python.usyiyi.cn/documents/python_352/glossary.html#term-generator"><span class="xref std std-term">generator</span></a>函数创建的对象。</span></p>
+<p class="last"><span id="yiyi-198" class="yiyi-st">每个<a class="reference internal" href="http://python.usyiyi.cn/documents/python_352/reference/simple_stmts.html#yield"><code class="xref std std-keyword docutils literal"><span class="pre">yield</span></code></a>暂时挂起处理，记住位置执行状态（包括局部变量和待处理的try语句）。<span id="yiyi-199" class="yiyi-st">当生成器迭代器恢复时，它会在其中删除的位置（与在每次调用时开始的函数相反）。</span></span></p>
+<p class="last">&nbsp;</p>
+<h3 class="last"><span id="term-generator-expression">generator expression&nbsp;生成器表达式</span></h3>
+<p class="first">An expression that returns an iterator. It looks like a normal expression followed by a&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a>&nbsp;expression defining a loop variable, range, and an optional&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a>&nbsp;expression. The combined expression generates values for an enclosing function:</p>
+<p class="first">返回迭代器的表达式。<span id="yiyi-202" class="yiyi-st">它看起来像是一个正常表达式，后面是定义循环变量，范围和可选的<a class="reference internal" href="http://python.usyiyi.cn/documents/python_352/reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a>表达式的<a class="reference internal" href="http://python.usyiyi.cn/documents/python_352/reference/compound_stmts.html#for"><code class="xref std std-keyword docutils literal"><span class="pre">for</span></code></a>表达式。<span id="yiyi-203" class="yiyi-st">组合表达式生成包围函数的值：</span></span></p>
+<div class="cnblogs_code">
+<pre>In [3]: [i*i <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10<span style="color: #000000;">)]
+Out[</span>3]: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81<span style="color: #000000;">]
+
+In [</span>4]: (i*i <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10<span style="color: #000000;">))
+Out[</span>4]: &lt;generator object &lt;genexpr&gt; at 0x000000000A284F78&gt;<span style="color: #000000;">
+
+In [</span>5]: sum(i*i <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(10<span style="color: #000000;">))
+Out[</span>5]: 285</pre>
+</div>
+<p>&nbsp;</p>
+<p><a href="https://docs.python.org/2/glossary.html#term-list-comprehension" target="_blank">https://docs.python.org/2/glossary.html#term-list-comprehension</a></p>
+<h3>list comprehension 列表推导式</h3>
+<p>A compact way to process all or part of the elements in a sequence and return a list with the results.&nbsp;<code class="docutils literal"><span class="pre">result&nbsp;<span class="pre">=&nbsp;<span class="pre">["0x%02x"&nbsp;<span class="pre">%&nbsp;<span class="pre">x&nbsp;<span class="pre">for&nbsp;<span class="pre">x&nbsp;<span class="pre">in<span class="pre">range(256)&nbsp;<span class="pre">if&nbsp;<span class="pre">x&nbsp;<span class="pre">%&nbsp;<span class="pre">2&nbsp;<span class="pre">==&nbsp;<span class="pre">0]</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code>&nbsp;generates a list of strings containing even hex numbers (0x..) in the range from 0 to 255. The&nbsp;<a class="reference internal" href="https://docs.python.org/2/reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a>&nbsp;clause is optional. If omitted, all elements in&nbsp;<code class="docutils literal"><span class="pre">range(256)</span></code>&nbsp;are processed.</p>
+<p><span id="yiyi-300" class="yiyi-st">list推导式</span></p>
+<p><span id="yiyi-301" class="yiyi-st">一种处理序列中所有或部分元素并返回结果列表的紧凑方法。<span id="yiyi-302" class="yiyi-st"><code class="docutils literal"><span class="pre">result&nbsp;<span class="pre">=&nbsp;<span class="pre">['{:#04x}'.format(x)&nbsp;<span class="pre">for&nbsp;<span class="pre">x&nbsp;<span class="pre">in&nbsp;<span class="pre">range(256)&nbsp;<span class="pre">if&nbsp;<span class="pre">x&nbsp;<span class="pre">%&nbsp;<span class="pre">2&nbsp;<span class="pre">==&nbsp;<span class="pre">0]</span></span></span></span></span></span></span></span></span></span></span></span></span></code>&nbsp;generates a list of strings containing even hex numbers (0x..) in the range from 0 to 255.&nbsp;<span id="yiyi-303" class="yiyi-st"><a class="reference internal" href="http://python.usyiyi.cn/documents/python_352/reference/compound_stmts.html#if"><code class="xref std std-keyword docutils literal"><span class="pre">if</span></code></a>子句是可选的。<span id="yiyi-304" class="yiyi-st">如果省略，则处理<code class="docutils literal"><span class="pre">range(256)</span></code>中的所有元素。</span></span></span></span></p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-09-18 12:00</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7528836" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7528836);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7528836, cb_entryCreatedDate = '2017-09-18 12:00', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

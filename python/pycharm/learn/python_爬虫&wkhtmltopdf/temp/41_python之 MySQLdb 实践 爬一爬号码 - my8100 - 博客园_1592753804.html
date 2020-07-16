@@ -1,0 +1,498 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7493771.html">
+    <span>python之 MySQLdb 实践 爬一爬号码</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p>2.构建URL<br>3.新建数据库<br>4.新建汇总表<br>5.定义连接数据库函数：connect_db(db=None, cursorclass=DictCursor)<br>6.汇总表填充必要数据<br>7.新建各省份子表<br>8.完整代码</p>
+<h1>1.参考</h1>
+<p> </p>
+<h1>2.构建URL</h1>
+<p><a href="http://www.cnblogs.com/my8100/p/7504289.html" target="_blank">python之多线程 queue 实践 筛选有效url</a></p>
+<h1>3.新建数据库</h1>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">CREATE</span> <span style="color: #0000ff;">DATABASE</span><span style="color: #000000;"> mobile
+    </span><span style="color: #808080;">-&gt;</span> <span style="color: #0000ff;">CHARACTER</span> <span style="color: #0000ff;">SET</span> <span style="color: #ff0000;">'</span><span style="color: #ff0000;">utf8</span><span style="color: #ff0000;">'</span>
+    <span style="color: #808080;">-&gt;</span> COLLATE <span style="color: #ff0000;">'</span><span style="color: #ff0000;">utf8_general_ci</span><span style="color: #ff0000;">'</span><span style="color: #000000;">;
+Query OK, </span><span style="color: #800000; font-weight: bold;">1</span> row affected (<span style="color: #800000; font-weight: bold;">0.00</span><span style="color: #000000;"> sec)
+
+mysql</span><span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">use</span><span style="color: #000000;"> mobile;
+</span><span style="color: #0000ff;">Database</span> changed</pre>
+</div>
+<h1>4.新建汇总表</h1>
+<p>int(M) M是显示宽度，无需设置。</p>
+<p>int 带符号表示范围 [-2147483648，2147483647] ，手机号码11位数字已超。</p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">use</span><span style="color: #000000;"> mobile
+</span><span style="color: #0000ff;">Database</span><span style="color: #000000;"> changed
+mysql</span><span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">CREATE</span> <span style="color: #0000ff;">TABLE</span><span style="color: #000000;"> china(
+    </span><span style="color: #808080;">-&gt;</span>     id <span style="color: #0000ff;">INT</span> <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;"> auto_increment,
+    </span><span style="color: #808080;">-&gt;</span>     province <span style="color: #0000ff;">VARCHAR</span>(<span style="color: #800000; font-weight: bold;">100</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     city <span style="color: #0000ff;">VARCHAR</span>(<span style="color: #800000; font-weight: bold;">100</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     num_count <span style="color: #0000ff;">INT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     new_time <span style="color: #0000ff;">DATETIME</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     update_time <span style="color: #0000ff;">DATETIME</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     latest_num <span style="color: #0000ff;">BIGINT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     province_zh <span style="color: #0000ff;">VARCHAR</span>(<span style="color: #800000; font-weight: bold;">100</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     city_zh <span style="color: #0000ff;">VARCHAR</span>(<span style="color: #800000; font-weight: bold;">100</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>     url <span style="color: #0000ff;">VARCHAR</span>(<span style="color: #800000; font-weight: bold;">255</span>) <span style="color: #808080;">NOT</span> <span style="color: #0000ff;">NULL</span><span style="color: #000000;">,
+    </span><span style="color: #808080;">-&gt;</span>
+    <span style="color: #808080;">-&gt;</span>     <span style="color: #0000ff;">PRIMARY</span> <span style="color: #0000ff;">KEY</span><span style="color: #000000;">(id)
+    </span><span style="color: #808080;">-&gt;</span>     )engine<span style="color: #808080;">=</span>InnoDB <span style="color: #0000ff;">DEFAULT</span> CHARSET<span style="color: #808080;">=</span><span style="color: #000000;">utf8;
+Query OK, </span><span style="color: #800000; font-weight: bold;">0</span> rows affected (<span style="color: #800000; font-weight: bold;">0.01</span> sec)</pre>
+</div>
+<p> </p>
+<h1>5.定义连接数据库函数：connect_db(db=None, cursorclass=DictCursor)</h1>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> MySQLdb
+</span><span style="color: #0000ff;">from</span> MySQLdb.cursors <span style="color: #0000ff;">import</span><span style="color: #000000;"> Cursor, DictCursor
+</span><span style="color: #0000ff;">def</span> connect_db(db=None, cursorclass=<span style="color: #000000;">DictCursor): 
+    conn</span>=<span style="color: #000000;"> MySQLdb.connect(
+           host</span>=<span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span>,  <span style="color: #008000;">#</span><span style="color: #008000;">'localhost'</span>
+           port = 3306<span style="color: #000000;">,
+           user</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+           passwd</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+           </span><span style="color: #008000;">#</span><span style="color: #008000;"> db ='mobile',</span>
+           charset=<span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span><span style="color: #000000;">
+           )
+    curs </span>=<span style="color: #000000;"> conn.cursor(cursorclass)
+    </span><span style="color: #0000ff;">if</span> db <span style="color: #0000ff;">is</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> None:
+        curs.execute(</span><span style="color: #800000;">"</span><span style="color: #800000;">USE %s</span><span style="color: #800000;">"</span>%<span style="color: #000000;">db)
+    </span><span style="color: #0000ff;">return</span> conn, curs</pre>
+</div>
+<p> </p>
+<div class="cnblogs_code">
+<pre>conn, curs = connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span>)</pre>
+</div>
+<h1>6.汇总表填充必要数据</h1>
+<p>info数据构成：</p>
+<div class="cnblogs_code">
+<pre>In [105]: info = pickle.load(open(<span style="color: #800000;">'</span><span style="color: #800000;">10010</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+
+In [</span>106<span style="color: #000000;">]: info[0]
+Out[</span>106<span style="color: #000000;">]:
+(</span><span style="color: #800000;">'</span><span style="color: #800000;">18xxxxx3664</span><span style="color: #800000;">'</span><span style="color: #000000;">,    #此处隐藏号码细节
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">\u6cb3\u5317</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">\u79e6\u7687\u5c9b\u5e02</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">hebei</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">qinhuangdaoshi</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">https://m.1xxxx.com/xxxxxxxxxx</span><span style="color: #800000;">'</span><span style="color: #000000;">)    #此处隐藏url细节
+
+In [</span>107]: info = [dict(province_zh=i[1], city_zh=i[2], province=i[3], city=i[4], url=i[-1]) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> info]
+
+In [</span>108<span style="color: #000000;">]: info[0]
+Out[</span>108<span style="color: #000000;">]:
+{</span><span style="color: #800000;">'</span><span style="color: #800000;">city</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">qinhuangdaoshi</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">city_zh</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">\u79e6\u7687\u5c9b\u5e02</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">province</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">hebei</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">province_zh</span><span style="color: #800000;">'</span>: u<span style="color: #800000;">'</span><span style="color: #800000;">\u6cb3\u5317</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">url</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">https://m.1xxxx.com/xxxxxxxxxx</span><span style="color: #800000;">'</span>}    #此处隐藏url细节<br><br># python中的排序问题——多属性排序<br># https://www.2cto.com/kf/201312/265675.html<br>In [114]: info = sorted(info, key=lambda x:(x.get('province'), x.get('city')))<br><br></pre>
+</div>
+<p>插入必要数据：</p>
+<div class="cnblogs_code">
+<pre>In [115]: curs.executemany(<span style="color: #800000;">"""</span><span style="color: #800000;">
+     ...: INSERT INTO china(province, city, province_zh, city_zh, url)
+     ...: values(%(province)s,%(city)s,%(province_zh)s,%(city_zh)s,%(url)s)</span><span style="color: #800000;">"""</span><span style="color: #000000;">, info)
+     ...: conn.commit()</span></pre>
+</div>
+<p>山西和陕西的拼音相同</p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">select</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> province),<span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> city),<span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> province_zh),<span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> city_zh),<span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> url) <span style="color: #0000ff;">from</span><span style="color: #000000;"> china;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+----------------------+-----------------------------+-------------------------+---------------------+</span>
+<span style="color: #808080;">|</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> province) <span style="color: #808080;">|</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> city) <span style="color: #808080;">|</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> province_zh) <span style="color: #808080;">|</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> city_zh) <span style="color: #808080;">|</span> <span style="color: #ff00ff;">count</span>(<span style="color: #0000ff;">distinct</span> url) <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+----------------------+-----------------------------+-------------------------+---------------------+</span>
+<span style="color: #808080;">|</span>                       <span style="color: #800000; font-weight: bold;">30</span> <span style="color: #808080;">|</span>                  <span style="color: #800000; font-weight: bold;">326</span> <span style="color: #808080;">|</span>                          <span style="color: #800000; font-weight: bold;">31</span> <span style="color: #808080;">|</span>                     <span style="color: #800000; font-weight: bold;">331</span> <span style="color: #808080;">|</span>                 <span style="color: #800000; font-weight: bold;">339</span> <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">------------------------+----------------------+-----------------------------+-------------------------+---------------------+</span>
+<span style="color: #800000; font-weight: bold;">1</span> row <span style="color: #808080;">in</span> <span style="color: #0000ff;">set</span> (<span style="color: #800000; font-weight: bold;">0.00</span> sec)</pre>
+</div>
+<p> 修正 陕西 为 shanxi3</p>
+<div class="cnblogs_code">
+<pre>mysql&gt; set character_set_client = gbk;<br>Query OK, 0 rows affected (0.00 sec)<br><br>mysql&gt; set character_set_results = gbk;<br>Query OK, 0 rows affected (0.00 sec)<br><br>mysql<span style="color: #808080;">&gt;</span> <span style="color: #0000ff;">UPDATE</span><span style="color: #000000;"> china
+    </span><span style="color: #808080;">-&gt;</span> <span style="color: #0000ff;">SET</span> province <span style="color: #808080;">=</span> <span style="color: #ff0000;">'</span><span style="color: #ff0000;">shanxi3</span><span style="color: #ff0000;">'</span>
+    <span style="color: #808080;">-&gt;</span> <span style="color: #0000ff;">WHERE</span> province_zh <span style="color: #808080;">=</span> <span style="color: #ff0000;">'</span><span style="color: #ff0000;">陕西</span><span style="color: #ff0000;">'</span><span style="color: #000000;">;
+Query OK, </span><span style="color: #800000; font-weight: bold;">10</span> rows affected (<span style="color: #800000; font-weight: bold;">0.01</span><span style="color: #000000;"> sec)
+Rows matched: </span><span style="color: #800000; font-weight: bold;">10</span>  Changed: <span style="color: #800000; font-weight: bold;">10</span>  Warnings: <span style="color: #800000; font-weight: bold;">0</span> </pre>
+</div>
+<p>如果使用curs 进行 update 操作需要 conn.commit()</p>
+<div class="cnblogs_code">
+<pre>In [99]: curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+    ...: UPDATE china
+    ...: SET province = 'shanxi3'
+    ...: WHERE province_zh = '陕西';
+    ...: </span><span style="color: #800000;">"""</span><span style="color: #000000;">)
+</span><span style="color: #800000;">"</span><span style="color: #800000;">\nUPDATE china\nSET province = 'shanxi3'\nWHERE province_zh = '\xe9\x99\x95\xe8\xa5\xbf';\n</span><span style="color: #800000;">"</span><span style="color: #000000;">
+Out[</span>99]: 10L<span style="color: #000000;">
+
+In [</span>100<span style="color: #000000;">]: conn.commit()
+
+In [</span>101<span style="color: #000000;">]: curs.fetchall()
+Out[</span>101]: ()</pre>
+</div>
+<p> </p>
+<h1>7.新建各省份子表</h1>
+<div class="cnblogs_code">
+<pre>curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+SELECT DISTINCT province
+FROM china
+</span><span style="color: #800000;">"""</span><span style="color: #000000;">)
+table_names </span>= [i.get(<span style="color: #800000;">'</span><span style="color: #800000;">province</span><span style="color: #800000;">'</span>) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> curs]
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> id 字段在这里并不是必要</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> UNIQUE 用于后续插入行时对已有号码只更新原记录的部分属性 on duplicate</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> FOREIGN KEY 用于同步跟随汇总表        </span>
+        
+<span style="color: #0000ff;">for</span> table_name <span style="color: #0000ff;">in</span><span style="color: #000000;"> table_names:
+    curs.execute(</span><span style="color: #800000;">"""</span><span style="color: #800000;">  
+    CREATE TABLE %s(
+        id INT NOT NULL AUTO_INCREMENT,
+        china_id INT NOT NULL,        
+        num BIGINT NOT NULL,
+        times INT NULL DEFAULT 1,  
+        update_time datetime NULL,
+        head INT(3) NULL,
+        mid INT(4) ZEROFILL NULL,
+        tail INT(4) ZEROFILL NULL,
+        mid_match CHAR(4) NULL,
+        tail_match CHAR(4) NULL,
+        
+        PRIMARY KEY(id),
+        UNIQUE KEY(num),        
+        FOREIGN KEY (china_id)
+            REFERENCES china(id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+        )ENGINE=InnoDB DEFAULT CHARSET=utf8;</span><span style="color: #800000;">"""</span>%(table_name))  </pre>
+</div>
+<p>参看索引 index</p>
+<div class="cnblogs_code">
+<pre>mysql<span style="color: #808080;">&gt;</span> show <span style="color: #0000ff;">index</span> <span style="color: #0000ff;">from</span><span style="color: #000000;"> anhui;
+</span><span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+</span>
+<span style="color: #808080;">|</span> <span style="color: #0000ff;">Table</span> <span style="color: #808080;">|</span> Non_unique <span style="color: #808080;">|</span> Key_name <span style="color: #808080;">|</span> Seq_in_index <span style="color: #808080;">|</span> Column_name <span style="color: #808080;">|</span> Collation <span style="color: #808080;">|</span> Cardinality <span style="color: #808080;">|</span> Sub_part <span style="color: #808080;">|</span> Packed <span style="color: #808080;">|</span> <span style="color: #0000ff;">Null</span> <span style="color: #808080;">|</span> Index_type <span style="color: #808080;">|</span> Comment <span style="color: #808080;">|</span> Index_comment <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+</span>
+<span style="color: #808080;">|</span> anhui <span style="color: #808080;">|</span>          <span style="color: #800000; font-weight: bold;">0</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">PRIMARY</span>  <span style="color: #808080;">|</span>            <span style="color: #800000; font-weight: bold;">1</span> <span style="color: #808080;">|</span> id          <span style="color: #808080;">|</span> A         <span style="color: #808080;">|</span>           <span style="color: #800000; font-weight: bold;">0</span> <span style="color: #808080;">|</span>     <span style="color: #0000ff;">NULL</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>   <span style="color: #808080;">|</span>      <span style="color: #808080;">|</span> BTREE      <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>               <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> anhui <span style="color: #808080;">|</span>          <span style="color: #800000; font-weight: bold;">0</span> <span style="color: #808080;">|</span> num      <span style="color: #808080;">|</span>            <span style="color: #800000; font-weight: bold;">1</span> <span style="color: #808080;">|</span> num         <span style="color: #808080;">|</span> A         <span style="color: #808080;">|</span>           <span style="color: #800000; font-weight: bold;">0</span> <span style="color: #808080;">|</span>     <span style="color: #0000ff;">NULL</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>   <span style="color: #808080;">|</span>      <span style="color: #808080;">|</span> BTREE      <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>               <span style="color: #808080;">|</span>
+<span style="color: #808080;">|</span> anhui <span style="color: #808080;">|</span>          <span style="color: #800000; font-weight: bold;">1</span> <span style="color: #808080;">|</span> china_id <span style="color: #808080;">|</span>            <span style="color: #800000; font-weight: bold;">1</span> <span style="color: #808080;">|</span> china_id    <span style="color: #808080;">|</span> A         <span style="color: #808080;">|</span>           <span style="color: #800000; font-weight: bold;">0</span> <span style="color: #808080;">|</span>     <span style="color: #0000ff;">NULL</span> <span style="color: #808080;">|</span> <span style="color: #0000ff;">NULL</span>   <span style="color: #808080;">|</span>      <span style="color: #808080;">|</span> BTREE      <span style="color: #808080;">|</span>         <span style="color: #808080;">|</span>               <span style="color: #808080;">|</span>
+<span style="color: #808080;">+</span><span style="color: #008080;">--</span><span style="color: #008080;">-----+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+</span></pre>
+</div>
+<h1>8.完整代码</h1>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">!/usr/bin/env python</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> time
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> MySQLdb
+</span><span style="color: #0000ff;">from</span> MySQLdb.cursors <span style="color: #0000ff;">import</span><span style="color: #000000;"> Cursor, DictCursor
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> json
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> traceback
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> threading
+lock </span>=<span style="color: #000000;"> threading.Lock()
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> Queue
+task_queue </span>=<span style="color: #000000;"> Queue.Queue()
+result_queue </span>=<span style="color: #000000;"> Queue.Queue()
+ 
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">from</span> requests.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                                ProxyError, RetryError, InvalidSchema)
+s </span>=<span style="color: #000000;"> requests.Session()
+s.headers.update({</span><span style="color: #800000;">'</span><span style="color: #800000;">user-agent</span><span style="color: #800000;">'</span>:<span style="color: #800000;">'</span><span style="color: #800000;">Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_5 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13G36 MicroMessenger/6.5.12 NetType/4G</span><span style="color: #800000;">'</span><span style="color: #000000;">})
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 此处隐藏 Referer 细节，也可不用</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> s.headers.update({'Referer':'https://servicewechat.com/xxxxxxxxxxx'})</span>
+s.verify =<span style="color: #000000;"> False
+s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">https://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">))
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> copy
+sp </span>=<span style="color: #000000;"> copy.deepcopy(s)
+proxies </span>= {<span style="color: #800000;">'</span><span style="color: #800000;">http</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">http://127.0.0.1:3128</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">https</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">https://127.0.0.1:3128</span><span style="color: #800000;">'</span><span style="color: #000000;">}
+sp.proxies </span>=<span style="color: #000000;"> proxies 
+ 
+</span><span style="color: #0000ff;">from</span> urllib3.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> InsecureRequestWarning
+</span><span style="color: #0000ff;">from</span> warnings <span style="color: #0000ff;">import</span><span style="color: #000000;"> filterwarnings
+filterwarnings(</span><span style="color: #800000;">'</span><span style="color: #800000;">ignore</span><span style="color: #800000;">'</span>, category =<span style="color: #000000;"> InsecureRequestWarning)
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> logging
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_logger():
+    logger </span>= logging.getLogger(<span style="color: #800000;">"</span><span style="color: #800000;">threading_example</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+    logger.setLevel(logging.DEBUG)
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> fh = logging.FileHandler("d:/threading.log")</span>
+    fh =<span style="color: #000000;"> logging.StreamHandler()
+    fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%(asctime)s - %(threadName)-10s - %(levelname)s - %(message)s</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    formatter </span>=<span style="color: #000000;"> logging.Formatter(fmt)
+    fh.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> logger
+    
+logger </span>=<span style="color: #000000;"> get_logger() 
+ 
+
+</span><span style="color: #0000ff;">def</span> connect_db(db=None, cursorclass=<span style="color: #000000;">DictCursor): 
+    conn</span>=<span style="color: #000000;"> MySQLdb.connect(
+           host</span>=<span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span>,  <span style="color: #008000;">#</span><span style="color: #008000;">'localhost'</span>
+           port = 3306<span style="color: #000000;">,
+           user</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+           passwd</span>=<span style="color: #800000;">'</span><span style="color: #800000;">root</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+           </span><span style="color: #008000;">#</span><span style="color: #008000;"> db ='mobile',</span>
+           charset=<span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span><span style="color: #000000;">
+           )
+    curs </span>=<span style="color: #000000;"> conn.cursor(cursorclass)
+    </span><span style="color: #0000ff;">if</span> db <span style="color: #0000ff;">is</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> None:
+        curs.execute(</span><span style="color: #800000;">"</span><span style="color: #800000;">USE %s</span><span style="color: #800000;">"</span>%<span style="color: #000000;">db)
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> conn, curs
+
+    
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> read_table_china():
+    dict_conn, dict_curs </span>= connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span><span style="color: #000000;">,DictCursor)
+    dict_curs.execute(</span><span style="color: #800000;">"""</span><span style="color: #800000;">
+    SELECT id, province, province_zh, city_zh, url
+    FROM china
+    </span><span style="color: #800000;">"""</span><span style="color: #000000;">)
+    table_china </span>=<span style="color: #000000;"> dict_curs.fetchall()
+    dict_conn.close()  
+    
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> table_china
+    
+    
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> add_task():
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">if</span> task_queue.qsize() &lt; 1000<span style="color: #000000;">:
+            </span><span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> table_china:
+                task_queue.put(t)   </span><span style="color: #008000;">#</span><span style="color: #008000;">队列里面依旧只有300多个id，重复引用，后续get还是得dict</span>
+<span style="color: #000000;">
+
+loop </span>=<span style="color: #000000;"> 0
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> do_task():
+    </span><span style="color: #0000ff;">global</span><span style="color: #000000;"> loop
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        task </span>= dict(task_queue.get())  <span style="color: #008000;">#</span><span style="color: #008000;">##########</span>
+        nums = get_nums(task.get(<span style="color: #800000;">'</span><span style="color: #800000;">url</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        </span><span style="color: #0000ff;">if</span> nums <span style="color: #0000ff;">is</span><span style="color: #000000;"> None:
+            </span><span style="color: #0000ff;">continue</span><span style="color: #000000;">
+        
+        task.update(dict(update_time</span>=time.strftime(<span style="color: #800000;">'</span><span style="color: #800000;">%y-%m-%d %H:%M:%S</span><span style="color: #800000;">'</span><span style="color: #000000;">)))  
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> results用于后续更新子表，executemany insert 效率更高</span>
+        results =<span style="color: #000000;"> []
+        </span><span style="color: #0000ff;">for</span> num <span style="color: #0000ff;">in</span><span style="color: #000000;"> nums:
+            result </span>= dict(task)  <span style="color: #008000;">#</span><span style="color: #008000;">##########</span>
+            match_dict =<span style="color: #000000;"> parse_num(num)
+            result.update(match_dict)
+            results.append(result)
+            
+        result_queue.put(results)
+        task_queue.task_done()   
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> 记得加u</span>
+        logger.debug(u<span style="color: #800000;">'</span><span style="color: #800000;">{} tasks:{} results:{} threads: {} loop: {} {}_{}</span><span style="color: #800000;">'</span>.format(nums[-1<span style="color: #000000;">], task_queue.qsize(), result_queue.qsize(),
+                                                                                threading.activeCount(), loop,
+                                                                                task.get(</span><span style="color: #800000;">'</span><span style="color: #800000;">province_zh</span><span style="color: #800000;">'</span>), task.get(<span style="color: #800000;">'</span><span style="color: #800000;">city_zh</span><span style="color: #800000;">'</span><span style="color: #000000;">)))
+        
+        with lock:
+            loop </span>+= 1                    
+
+            
+<span style="color: #0000ff;">def</span><span style="color: #000000;"> get_nums(url):
+    </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+        url </span>= url + str(int(time.time()*1000<span style="color: #000000;">))
+        resp </span>= sp.get(url)<span style="color: #008000;">#</span><span style="color: #008000;">, timeout=10)  #加上超时，网络性能矩形陡降</span>
+        rst =<span style="color: #000000;"> resp.content    
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> rst = rst[rst.index('{'):rst.index('}')+1]</span>
+        m = re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">({.*?})</span><span style="color: #800000;">'</span><span style="color: #000000;">, rst)
+        match </span>=<span style="color: #000000;"> m.group()          
+        rst </span>=<span style="color: #000000;"> json.loads(match)
+        nums </span>= [num <span style="color: #0000ff;">for</span> num <span style="color: #0000ff;">in</span> rst[<span style="color: #800000;">'</span><span style="color: #800000;">numArray</span><span style="color: #800000;">'</span>] <span style="color: #0000ff;">if</span> num&gt;10000<span style="color: #000000;">]
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> nums_len = len(nums)</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> assert nums_len == 10</span>
+        <span style="color: #0000ff;">assert</span> nums !=<span style="color: #000000;"> []
+        
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> nums
+
+    </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+            ProxyError, RetryError, InvalidSchema) as err:
+        </span><span style="color: #0000ff;">pass</span>
+    <span style="color: #0000ff;">except</span><span style="color: #000000;"> (ValueError, AttributeError, IndexError) as err:
+        </span><span style="color: #0000ff;">pass</span>
+    <span style="color: #0000ff;">except</span><span style="color: #000000;"> AssertionError as err:
+        </span><span style="color: #0000ff;">pass</span>            
+    <span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> err,traceback.format_exc()
+
+            
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> 解析号码特征</span>
+<span style="color: #0000ff;">def</span><span style="color: #000000;"> parse_num(num):
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> num = 18522223333</span>
+    num_str =<span style="color: #000000;"> str(num)
+    head </span>= num_str[:3<span style="color: #000000;">]
+    mid </span>= num_str[3:7<span style="color: #000000;">]
+    tail </span>= num_str[-4<span style="color: #000000;">:]
+    
+    match_dict </span>= {<span style="color: #800000;">'</span><span style="color: #800000;">mid_match</span><span style="color: #800000;">'</span>:mid, <span style="color: #800000;">'</span><span style="color: #800000;">tail_match</span><span style="color: #800000;">'</span><span style="color: #000000;">:tail}
+    </span><span style="color: #0000ff;">for</span> k,v <span style="color: #0000ff;">in</span><span style="color: #000000;"> match_dict.items():
+        part_1, part_2, part_3, part_4 </span>= [int(i) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> v]
+        </span><span style="color: #0000ff;">if</span> part_1-part_2==part_2-part_3==part_3-part_4== -1<span style="color: #000000;">:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">ABCD</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">elif</span> part_1-part_2==part_2-part_3==part_3-part_4== 1<span style="color: #000000;">:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">DCBA</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">elif</span> part_1==part_2==part_3==<span style="color: #000000;">part_4:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">SSSS</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">elif</span> part_2==part_3 <span style="color: #0000ff;">and</span> (part_1==part_2 <span style="color: #0000ff;">or</span> part_3==<span style="color: #000000;">part_4):
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">3S</span><span style="color: #800000;">'</span>                    
+        <span style="color: #0000ff;">elif</span> part_1==part_2 <span style="color: #0000ff;">and</span> part_3==<span style="color: #000000;">part_4:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">XXYY</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">elif</span> part_1==part_3 <span style="color: #0000ff;">and</span> part_2==<span style="color: #000000;">part_4:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">XYXY</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">elif</span> part_1==part_3 <span style="color: #0000ff;">and</span> k == <span style="color: #800000;">'</span><span style="color: #800000;">mid_match</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+            match_dict[k] </span>= <span style="color: #800000;">'</span><span style="color: #800000;">XYXZ</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            match_dict[k] </span>=<span style="color: #000000;"> None
+            
+    match_dict.update(dict(num</span>=num, head=int(head), mid=int(mid), tail=<span style="color: #000000;">int(tail)))
+ 
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> match_dict
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> update_table_province():
+    conn, curs </span>= connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span><span style="color: #000000;">, Cursor)
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            results </span>=<span style="color: #000000;"> result_queue.get()
+            
+            prefix </span>= <span style="color: #800000;">"</span><span style="color: #800000;">insert into %s</span><span style="color: #800000;">"</span>%(results[0].get(<span style="color: #800000;">'</span><span style="color: #800000;">province</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> 已经设置 num 字段为unique，如果可能导致重复，则更新 update_time , 同时 times 加1</span>
+            sql = (prefix+<span style="color: #000000;">\
+            </span><span style="color: #800000;">"""</span><span style="color: #800000;">(china_id, num, update_time, head, mid, tail, mid_match, tail_match)
+            values(%(id)s, %(num)s, %(update_time)s, %(head)s, %(mid)s, %(tail)s, %(mid_match)s, %(tail_match)s)
+            ON DUPLICATE KEY UPDATE update_time=values(update_time), times=times+1</span><span style="color: #800000;">"""</span><span style="color: #000000;">) 
+            curs.executemany(sql, results)
+            
+            conn.commit()
+            result_queue.task_done()
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> pass</span>
+            <span style="color: #0000ff;">print</span><span style="color: #000000;"> err,traceback.format_exc()
+            result_queue.put(results)
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                conn.close()
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;">:
+                </span><span style="color: #0000ff;">pass</span><span style="color: #000000;">
+            conn, curs </span>= connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span><span style="color: #000000;">, Cursor)
+
+            
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> update_table_china():
+    dict_conn, dict_curs </span>= connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span><span style="color: #000000;">, DictCursor)
+    province_list </span>= set([info.get(<span style="color: #800000;">'</span><span style="color: #800000;">province</span><span style="color: #800000;">'</span>) <span style="color: #0000ff;">for</span> info <span style="color: #0000ff;">in</span><span style="color: #000000;"> table_china])
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            </span><span style="color: #0000ff;">for</span> province <span style="color: #0000ff;">in</span><span style="color: #000000;"> province_list:
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> 先按照id降序，最后获取的新号码靠前</span>
+                dict_curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+                SELECT china_id, count(*) AS num_count, update_time AS new_time
+                FROM (select * from %s order by id desc) AS temp
+                GROUP BY china_id;
+                </span><span style="color: #800000;">"""</span>%<span style="color: #000000;">(province))
+                
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> dict_curs的复用？</span>
+                dict_curs.executemany(<span style="color: #800000;">"""</span><span style="color: #800000;">
+                UPDATE china
+                SET num_count = %(num_count)s, new_time = %(new_time)s
+                WHERE id = %(china_id)s;
+                </span><span style="color: #800000;">"""</span><span style="color: #000000;">, dict_curs)
+                dict_conn.commit() 
+                
+                
+                </span><span style="color: #008000;">#</span><span style="color: #008000;"> 先按照更新时间降序</span>
+                dict_curs.execute(<span style="color: #800000;">"""</span><span style="color: #800000;">
+                SELECT china_id, update_time, num AS latest_num
+                FROM (select * from %s order by update_time desc) AS temp
+                GROUP BY china_id;
+                </span><span style="color: #800000;">"""</span>%<span style="color: #000000;">(province))
+
+                dict_curs.executemany(</span><span style="color: #800000;">"""</span><span style="color: #800000;">
+                UPDATE china
+                SET update_time = %(update_time)s, latest_num = %(latest_num)s
+                WHERE id = %(china_id)s;
+                </span><span style="color: #800000;">"""</span><span style="color: #000000;">, dict_curs)
+                dict_conn.commit()                 
+                              
+            time.sleep(</span>300<span style="color: #000000;">)
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> pass</span>
+            <span style="color: #0000ff;">print</span><span style="color: #000000;"> err,traceback.format_exc()            
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                dict_conn.close()
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;">:
+                </span><span style="color: #0000ff;">pass</span><span style="color: #000000;">
+            dict_conn, dict_curs </span>= connect_db(<span style="color: #800000;">'</span><span style="color: #800000;">mobile</span><span style="color: #800000;">'</span><span style="color: #000000;">, DictCursor)    
+            
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:        
+    
+    table_china </span>=<span style="color: #000000;"> read_table_china()
+    
+    threads </span>=<span style="color: #000000;"> []
+    
+    t </span>= threading.Thread(target=add_task)  <span style="color: #008000;">#</span><span style="color: #008000;">args接收元组，至少(a,)    </span>
+<span style="color: #000000;">    threads.append(t)        
+    
+    </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(500<span style="color: #000000;">):
+        t </span>= threading.Thread(target=<span style="color: #000000;">do_task)
+        threads.append(t)
+
+    </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(20<span style="color: #000000;">):
+        t </span>= threading.Thread(target=<span style="color: #000000;">update_table_province)
+        threads.append(t)        
+    
+    t </span>= threading.Thread(target=<span style="color: #000000;">update_table_china)
+    threads.append(t)    
+
+        
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> for t in threads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.setDaemon(True)</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.start()  </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> while True:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> pass</span>
+
+
+    <span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> threads:
+        t.start()  
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> for t in threads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> t.join() </span>
+        
+    <span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">pass</span>    </pre>
+</div>
+<h1>9.运行结果</h1>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201709/892328-20170910230259022-457352503.png" alt=""></p>
+<p> </p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201709/892328-20170910230423851-1558610512.png" alt=""></p>
+<p> </p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201709/892328-20170910230449585-2106828899.png" alt=""></p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-09-11 12:55</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7493771" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7493771);return false;">收藏</a></div>
+        </div>

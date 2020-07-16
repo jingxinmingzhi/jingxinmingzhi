@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0. 参考 yu961549745/WeiboBlackList 微博批量拉黑 1. 代码 block.py 更新内容：多线程，urllib.request 改为 requests &#x2B; session" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>wb 黑名单批量操作 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/7649965.html">
+    <span>wb 黑名单批量操作</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0. 参考</h1>
+<p><a href="https://github.com/yu961549745/WeiboBlackList" target="_blank">yu961549745/WeiboBlackList &nbsp;微博批量拉黑</a></p>
+<h1>1. 代码 block.py</h1>
+<p>更新内容：多线程，urllib.request 改为 requests + session</p>
+<p>改成从 firefox 或 chrome 读取 cookie 更方便，懒得改了</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">!/usr/bin/env python</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">from</span> requests.exceptions <span style="color: #0000ff;">import</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                                ProxyError, RetryError, InvalidSchema)
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> threading
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> Queue
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> traceback
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> logging
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_logger():
+    logger </span>= logging.getLogger(<span style="color: #800000;">"</span><span style="color: #800000;">threading_example</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+    logger.setLevel(logging.DEBUG)
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> fh = logging.FileHandler("d:/threading.log")</span>
+    fh =<span style="color: #000000;"> logging.StreamHandler()
+    fmt </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%(asctime)s - %(threadName)-10s - %(levelname)s - %(message)s</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    formatter </span>=<span style="color: #000000;"> logging.Formatter(fmt)
+    fh.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> logger
+    
+logger </span>=<span style="color: #000000;"> get_logger() 
+    
+
+  
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> block():
+    </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+        </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+            uid </span>=<span style="color: #000000;"> task_queue.get()
+            data </span>= dict(payload)  <span style="color: #008000;">#</span><span style="color: #008000;">dict</span>
+            data.update({<span style="color: #800000;">'</span><span style="color: #800000;">uid</span><span style="color: #800000;">'</span><span style="color: #000000;">: uid})
+            resp </span>= s.post(url, data=<span style="color: #000000;">data)
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
+                ProxyError, RetryError, InvalidSchema) as err:
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(uid)     
+        </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+            logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">\nuid: {}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, err, traceback.format_exc()))
+            task_queue.task_done()  </span><span style="color: #008000;">#</span><span style="color: #008000;">############## 重新 put 之前需要 task_done ，才能保证释放 task_queue.join() </span>
+<span style="color: #000000;">            task_queue.put(uid)
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">:
+                code </span>= resp.json()[<span style="color: #800000;">'</span><span style="color: #800000;">code</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+                </span><span style="color: #0000ff;">if</span> code != <span style="color: #800000;">'</span><span style="color: #800000;">100000</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+                    logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">uid: {} code: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, code))
+                </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                    logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">uid: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid))    
+            </span><span style="color: #0000ff;">except</span><span style="color: #000000;"> Exception as err:
+                logger.debug(u</span><span style="color: #800000;">'</span><span style="color: #800000;">\nuid: {}\nresp: {}\nerr: {}\ntraceback: {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(uid, resp.text, err, traceback.format_exc()))
+            </span><span style="color: #0000ff;">finally</span><span style="color: #000000;">:
+                task_queue.task_done()
+                
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> lines: request in raw format captured from Fiddler </span>
+    <span style="color: #800000;">'''</span><span style="color: #800000;">
+    ['POST http://weibo.com/aj/filter/block?ajwvr=6 HTTP/1.1',
+     'Host: weibo.com',
+     'User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0',
+     'Accept: */*',
+     'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+     'Accept-Encoding: gzip, deflate',
+     'Content-Type: application/x-www-form-urlencoded',
+     'X-Requested-With: XMLHttpRequest',
+     'Referer: http://weibo.com/u/5471246591?is_hot=1',
+     'Content-Length: 57',
+     'Cookie: your cookie###########################################',
+     'Connection: keep-alive',
+     '',
+     'uid=5471246591&amp;filter_type=1&amp;status=1&amp;interact=1&amp;follow=1']
+    </span><span style="color: #800000;">'''</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> 移除黑名单：</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [317]: url2='http://weibo.com/aj/f/delblack?ajwvr=6'</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [318]: resp = s.post(url2, data={'uid':'5209943797'})</span>
+
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [320]: resp.json()</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Out[320]: {u'code': u'100000', u'data': {}, u'msg': u''}</span>
+<span style="color: #000000;">    
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">uids.txt</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+        uids </span>= [uid.strip() <span style="color: #0000ff;">for</span> uid <span style="color: #0000ff;">in</span><span style="color: #000000;"> f.readlines()]
+
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">headers.txt</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+        lines </span>= [i.strip() <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> f.readlines()]
+    
+    url </span>= lines[0].split()[1<span style="color: #000000;">] 
+    
+    headers </span>=<span style="color: #000000;"> {}
+    </span><span style="color: #0000ff;">for</span> line <span style="color: #0000ff;">in</span> lines[2:-2<span style="color: #000000;">]:
+        k, v </span>= line.split(<span style="color: #800000;">'</span><span style="color: #800000;">: </span><span style="color: #800000;">'</span>,1)  <span style="color: #008000;">#</span><span style="color: #008000;">:space</span>
+        headers[k] =<span style="color: #000000;"> v
+        
+    data</span>=lines[-1<span style="color: #000000;">]
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> datas = [re.sub(r'uid=\d+','uid=%s'%uid ,data) for uid in uids]</span>
+    payload = dict([i.split(<span style="color: #800000;">'</span><span style="color: #800000;">=</span><span style="color: #800000;">'</span>,1) <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> data.split(<span style="color: #800000;">'</span><span style="color: #800000;">&amp;</span><span style="color: #800000;">'</span><span style="color: #000000;">)])
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> payloads = [payload.update({'uid': uid}) for uid in uids]</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> payloads = []</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> for uid in uids:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> payload.update({'uid': uid})</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> payloads.append(dict(payload))  ### dict</span>
+    
+    <span style="color: #008000;">#</span><span style="color: #008000;"> for payload in payloads:</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> r = requests.post(url, headers=headers, data=payload)</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> r.text</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> {"code":"100000","msg":"\u96b1\u85cf\u6210\u529f","data":{}}        </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> In [287]: r.json()['code']</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> Out[287]: u'100000'</span>
+<span style="color: #000000;">
+
+    s </span>=<span style="color: #000000;"> requests.Session()
+    s.headers </span>=<span style="color: #000000;"> headers
+    s.mount(</span><span style="color: #800000;">'</span><span style="color: #800000;">http://</span><span style="color: #800000;">'</span>, requests.adapters.HTTPAdapter(pool_connections=1000, pool_maxsize=1000<span style="color: #000000;">))
+    
+
+    task_queue </span>=<span style="color: #000000;"> Queue.Queue()        
+    </span><span style="color: #0000ff;">for</span> uid <span style="color: #0000ff;">in</span><span style="color: #000000;"> uids:
+        task_queue.put(uid)
+    
+    threads </span>=<span style="color: #000000;"> []
+    </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> range(100<span style="color: #000000;">):
+        t </span>= threading.Thread(target=block)  <span style="color: #008000;">#</span><span style="color: #008000;">args接收元组，至少(a,)</span>
+<span style="color: #000000;">        threads.append(t)
+
+    </span><span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> threads:
+        t.setDaemon(True) 
+        t.start()  
+      
+    task_queue.join()    
+    </span><span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">task done</span><span style="color: #800000;">'</span>
+
+        </pre>
+</div>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-11 12:21</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7649965" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7649965);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7649965, cb_entryCreatedDate = '2017-10-11 12:21', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

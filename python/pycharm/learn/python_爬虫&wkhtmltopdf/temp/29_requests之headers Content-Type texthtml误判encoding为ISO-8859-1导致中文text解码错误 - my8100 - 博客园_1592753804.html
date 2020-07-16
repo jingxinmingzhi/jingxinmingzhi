@@ -1,0 +1,138 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/requests_encoding_bug.html">
+    <span>requests之headers 'Content-Type': 'text/html'误判encoding为'ISO-8859-1'导致中文text解码错误</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>requests不设置UA 访问baidu 得到 r.headers['Content-Type'] 是text/html  使用chrome UA： Content-Type:text/html; charset=utf-8 </p>
+<h2>1.参考</h2>
+<p><a href="http://xiaorui.cc/2016/02/19/%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90python-requests%E5%BA%93%E4%B8%AD%E6%96%87%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98/" target="_blank">代码分析Python requests库中文编码问题</a></p>
+<p>iso-8859是什么？  他又被叫做Latin-1或“西欧语言”</p>
+<p>补丁：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> monkey_patch():
+    prop </span>=<span style="color: #000000;"> requests.models.Response.content
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> content(self):
+        _content </span>=<span style="color: #000000;"> prop.fget(self)
+        </span><span style="color: #0000ff;">if</span> self.encoding == <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+            encodings </span>=<span style="color: #000000;"> requests.utils.get_encodings_from_content(_content)
+            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> encodings:
+                self.encoding </span>=<span style="color: #000000;"> encodings[0]
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                self.encoding </span>=<span style="color: #000000;"> self.apparent_encoding
+            _content </span>= _content.decode(self.encoding, <span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span>).encode(<span style="color: #800000;">'</span><span style="color: #800000;">utf8</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">replace</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+            self._content </span>=<span style="color: #000000;"> _content
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> _content
+    requests.models.Response.content </span>=<span style="color: #000000;"> property(content)
+monkey_patch()</span></pre>
+</div>
+<h2>2.原因</h2>
+<div class="cnblogs_code">
+<pre>In [291]: r = requests.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://cn.python-requests.org/en/latest/</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>292]: r.headers.get(<span style="color: #800000;">'</span><span style="color: #800000;">content-type</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>292]: <span style="color: #800000;">'</span><span style="color: #800000;">text/html; charset=utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>293<span style="color: #000000;">]: r.encoding
+Out[</span>293]: <span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+
+In [</span>294]: rc = requests.get(<span style="color: #800000;">'</span><span style="color: #800000;">http://python3-cookbook.readthedocs.io/zh_CN/latest/index.html</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>296]: rc.headers.get(<span style="color: #800000;">'</span><span style="color: #800000;">content-type</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>296]: <span style="color: #800000;">'</span><span style="color: #800000;">text/html</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>298<span style="color: #000000;">]: rc.encoding
+Out[</span>298]: <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span></pre>
+</div>
+<p>response text 异常</p>
+<div class="cnblogs_code">
+<pre>In [312<span style="color: #000000;">]: rc.text
+Out[</span>312]: u<span style="color: #800000;">'</span><span style="color: #800000;">\n\n&lt;!DOCTYPE html&gt;\n&lt;!--[if IE 8]&gt;&lt;html class="no-js lt-ie9" lang="en" &gt; &lt;![endif]--&gt;\n&lt;!--[if gt IE 8]&gt;&lt;!--&gt; &lt;html class="no-js" lang="en" &gt; &lt;!--&lt;![endif]--&gt;\n&lt;head&gt;\n  &lt;meta charset="ut</span>
+f-8<span style="color: #800000;">"</span><span style="color: #800000;">&gt;\n  \n  &lt;meta name=</span><span style="color: #800000;">"</span>viewport<span style="color: #800000;">"</span><span style="color: #800000;"> content=</span><span style="color: #800000;">"</span>width=device-width, initial-scale=1.0<span style="color: #800000;">"</span><span style="color: #800000;">&gt;\n  \n  &lt;title&gt;Python Cookbook 3rd Edition Documentation &amp;mdash; python3-cookbook 2.0.0 \xe6\x96\x87\xe6\xa1\xa3&lt;/tit</span>
+le&gt;\n  \n\n  \n  \n  \n  \n\n  \n\n  \n  \n    \n\n  \n\n  \n  \n\n  \n    &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">stylesheet</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">https://media.readthedocs.org/css/sphinx_rtd_theme.css</span><span style="color: #800000;">"</span> type=<span style="color: #800000;">"</span><span style="color: #800000;">text/css</span><span style="color: #800000;">"</span> /&gt;\n  \n\n  \n        &lt;<span style="color: #000000;">l
+ink rel</span>=<span style="color: #800000;">"</span><span style="color: #800000;">index</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">\xe7\xb4\xa2\xe5\xbc\x95</span><span style="color: #800000;">"</span>\n              href=<span style="color: #800000;">"</span><span style="color: #800000;">genindex.html</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">search</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">\xe6\x90\x9c\xe7\xb4\xa2</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">search.html</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">copyright</span><span style="color: #800000;">"</span><span style="color: #000000;">
+title</span>=<span style="color: #800000;">"</span><span style="color: #800000;">\xe7\x89\x88\xe6\x9d\x83\xe6\x89\x80\xe6\x9c\x89</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">copyright.html</span><span style="color: #800000;">"</span>/&gt;\n    &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">top</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">python3-cookbook 2.0.0 \xe6\x96\x87\xe6\xa1\xa3</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">#</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">next</span><span style="color: #800000;">"</span><span style="color: #000000;"> title
+
+In [</span>313<span style="color: #000000;">]: rc.content
+Out[</span>313]: <span style="color: #800000;">'</span><span style="color: #800000;">\n\n&lt;!DOCTYPE html&gt;\n&lt;!--[if IE 8]&gt;&lt;html class="no-js lt-ie9" lang="en" &gt; &lt;![endif]--&gt;\n&lt;!--[if gt IE 8]&gt;&lt;!--&gt; &lt;html class="no-js" lang="en" &gt; &lt;!--&lt;![endif]--&gt;\n&lt;head&gt;\n  &lt;meta charset="utf</span>
+-8<span style="color: #800000;">"</span><span style="color: #800000;">&gt;\n  \n  &lt;meta name=</span><span style="color: #800000;">"</span>viewport<span style="color: #800000;">"</span><span style="color: #800000;"> content=</span><span style="color: #800000;">"</span>width=device-width, initial-scale=1.0<span style="color: #800000;">"</span><span style="color: #800000;">&gt;\n  \n  &lt;title&gt;Python Cookbook 3rd Edition Documentation &amp;mdash; python3-cookbook 2.0.0 \xe6\x96\x87\xe6\xa1\xa3&lt;/titl</span>
+e&gt;\n  \n\n  \n  \n  \n  \n\n  \n\n  \n  \n    \n\n  \n\n  \n  \n\n  \n    &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">stylesheet</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">https://media.readthedocs.org/css/sphinx_rtd_theme.css</span><span style="color: #800000;">"</span> type=<span style="color: #800000;">"</span><span style="color: #800000;">text/css</span><span style="color: #800000;">"</span> /&gt;\n  \n\n  \n        &lt;<span style="color: #000000;">li
+nk rel</span>=<span style="color: #800000;">"</span><span style="color: #800000;">index</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">\xe7\xb4\xa2\xe5\xbc\x95</span><span style="color: #800000;">"</span>\n              href=<span style="color: #800000;">"</span><span style="color: #800000;">genindex.html</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">search</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">\xe6\x90\x9c\xe7\xb4\xa2</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">search.html</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">copyright</span><span style="color: #800000;">"</span><span style="color: #000000;"> t
+itle</span>=<span style="color: #800000;">"</span><span style="color: #800000;">\xe7\x89\x88\xe6\x9d\x83\xe6\x89\x80\xe6\x9c\x89</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">copyright.html</span><span style="color: #800000;">"</span>/&gt;\n    &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">top</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">python3-cookbook 2.0.0 \xe6\x96\x87\xe6\xa1\xa3</span><span style="color: #800000;">"</span> href=<span style="color: #800000;">"</span><span style="color: #800000;">#</span><span style="color: #800000;">"</span>/&gt;\n        &lt;link rel=<span style="color: #800000;">"</span><span style="color: #800000;">next</span><span style="color: #800000;">"</span> title=</pre>
+</div>
+<p> </p>
+<p><span style="color: #ff0000;">response headers有'content-type'而且没有charset而且有'text'，同时满足三个条件导致判定'ISO-8859-1'</span></p>
+<p><span style="color: #ff0000;">参考文章说 python3 没有问题，实测有。</span></p>
+<p>C:\Program Files\Anaconda2\Lib\site-packages\requests\utils.py</p>
+<p><span style="color: #ff0000;">20180102 补充：# "Content-Type": "application/json" 对应 r.encoding 为 None</span></p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_encoding_from_headers(headers):
+    </span><span style="color: #800000;">"""</span><span style="color: #800000;">Returns encodings from given HTTP Header Dict.
+
+    :param headers: dictionary to extract encoding from.
+    :rtype: str
+    </span><span style="color: #800000;">"""</span><span style="color: #000000;">
+
+    content_type </span>= headers.get(<span style="color: #800000;">'</span><span style="color: #800000;">content-type</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+    </span><span style="color: #0000ff;">if</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> content_type:
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> None
+
+    content_type, params </span>=<span style="color: #000000;"> cgi.parse_header(content_type)
+
+    </span><span style="color: #0000ff;">if</span> <span style="color: #800000;">'</span><span style="color: #800000;">charset</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> params:
+        </span><span style="color: #0000ff;">return</span> params[<span style="color: #800000;">'</span><span style="color: #800000;">charset</span><span style="color: #800000;">'</span>].strip(<span style="color: #800000;">"</span><span style="color: #800000;">'\"</span><span style="color: #800000;">"</span><span style="color: #000000;">)
+
+    </span><span style="color: #0000ff;">if</span> <span style="color: #800000;">'</span><span style="color: #800000;">text</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> content_type:
+        </span><span style="color: #0000ff;">return</span> <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+<p>C:\Program Files\Anaconda2\Lib\site-packages\requests\adapters.py</p>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">class</span><span style="color: #000000;"> HTTPAdapter(BaseAdapter):
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> build_response(self, req, resp):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> Set encoding.</span>
+        response.encoding = get_encoding_from_headers(response.headers)</pre>
+</div>
+<h2>3.解决办法</h2>
+<p>参考文章打补丁或：</p>
+<p><span style="color: #ff0000;">20180102 补充： if resp.encoding == 'ISO-8859-1':   修改为 if r.encoding == 'ISO-8859-1' and not 'ISO-8859-1' in headers.get('content-type', ''):  即只处理按照协议最后返回的 'ISO-8859-1'</span></p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #0000ff;">if</span> r.encoding == <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">and</span> <span style="color: #0000ff;">not</span> <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">in</span> headers.get(<span style="color: #800000;">'</span><span style="color: #800000;">content-type</span><span style="color: #800000;">'</span>, <span style="color: #800000;">''</span><span style="color: #000000;">):
+        encodings </span>= requests.utils.get_encodings_from_content(resp.content)  <span style="color: #008000;">#</span><span style="color: #008000;">re.compile(r'&lt;meta.*?charset  #源代码没有利用这个方法</span>
+        <span style="color: #0000ff;">if</span><span style="color: #000000;"> encodings:
+            resp.encoding </span>=<span style="color: #000000;"> encodings[0]
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            resp.encoding </span>= resp.apparent_encoding  <span style="color: #008000;">#</span><span style="color: #008000;">models.py  chardet.detect(self.content)['encoding'] 消耗计算 # resp.text &gt;&gt;&gt; if self.encoding is None: encoding = self.apparent_encoding</span>
+        <span style="color: #0000ff;">print</span> <span style="color: #800000;">'</span><span style="color: #800000;">ISO-8859-1 changed to %s</span><span style="color: #800000;">'</span>%resp.encoding</pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-26 16:22</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7737455" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7737455);return false;">收藏</a></div>
+        </div>

@@ -1,0 +1,280 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/cosine_similarity.html">
+    <span>python之验证码识别 特征向量提取和余弦相似性比较</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h1>0.目录</h1>
+<p>1.参考<br>2.没事画个流程图<br>3.完整代码<br>4.改进方向</p>
+<h1>1.参考</h1>
+<p><a href="https://en.wikipedia.org/wiki/Cosine_similarity" target="_blank">https://en.wikipedia.org/wiki/Cosine_similarity</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E6%80%A7" target="_blank">https://zh.wikipedia.org/wiki/%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E6%80%A7</a></p>
+<p>Cosine similarity<br>Given two vectors of attributes, A and B, the cosine similarity, cos(θ), <br>is represented using a dot product and magnitude as...<br>余弦相似性通过测量两个向量的夹角的余弦值来度量它们之间的相似性。0度角的余弦值是1，<br>余弦相似度通常用于正空间，因此给出的值为0到1之间。<br>范数(norm)，是具有“长度”概念的函数。二维度的向量的欧氏范数就是箭号的长度。</p>
+<p> </p>
+<p> </p>
+<p><a href="https://zhuanlan.zhihu.com/p/24222942" target="_blank">Python 破解验证码</a></p>
+<p><a href="http://www.cnblogs.com/TTyb/p/6144740.html" target="_blank">python3验证码机器学习</a></p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201708/892328-20170830120222812-1545153052.png" alt=""></p>
+<p>这两篇文章在计算矢量大小的时候函数参数都写成 concordance调和， 而不用 coordinate坐标， 为何？？？</p>
+<p> </p>
+<p> </p>
+<p><a href="http://www.cnblogs.com/jiangu66/archive/2013/07/16/3194183.html" target="_blank">欧氏距离和余弦相似度</a></p>
+<p>numpy中提供了范数的计算工具：<strong>linalg.norm()</strong></p>
+<p>所以计算cosθ起来非常方便（假定A、B均为列向量）：</p>
+<p> </p>
+<pre name="code" class="python">num = float(A.T * B) #若为行向量则 A * B.T
+denom = linalg.norm(A) * linalg.norm(B)
+cos = num / denom #余弦值</pre>
+<h1>2.没事画个流程图</h1>
+<p><a href="http://www.cnblogs.com/my8100/p/7448283.html" target="_blank">流程图 Graphviz - Graph Visualization Software</a></p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201708/892328-20170829184854827-1419976932.png" alt=""></p>
+<h1>3.完整代码</h1>
+<div class="cnblogs_code" onclick="cnblogs_code_show('3a4ff3c2-11c0-4b8c-be4a-2e15074d5da2')"><img id="code_img_closed_3a4ff3c2-11c0-4b8c-be4a-2e15074d5da2" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_3a4ff3c2-11c0-4b8c-be4a-2e15074d5da2" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('3a4ff3c2-11c0-4b8c-be4a-2e15074d5da2',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_3a4ff3c2-11c0-4b8c-be4a-2e15074d5da2" class="cnblogs_code_hide">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">!/usr/bin/env python</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> -*- coding: UTF-8 -*</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> os
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> time
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">from</span> urlparse <span style="color: #0000ff;">import</span><span style="color: #000000;"> urljoin
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> requests
+ss </span>=<span style="color: #000000;"> requests.Session()
+ss.headers.update({</span><span style="color: #800000;">'</span><span style="color: #800000;">user-agent</span><span style="color: #800000;">'</span>:<span style="color: #800000;">'</span><span style="color: #800000;">Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0</span><span style="color: #800000;">'</span><span style="color: #000000;">})
+
+</span><span style="color: #0000ff;">from</span> PIL <span style="color: #0000ff;">import</span><span style="color: #000000;"> Image
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001431918785710e86a1a120ce04925bae155012c7fc71e000</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> 和StringIO类似，可以用一个bytes初始化BytesIO，然后，像读文件一样读取：</span>
+<span style="color: #0000ff;">from</span> io <span style="color: #0000ff;">import</span><span style="color: #000000;"> BytesIO
+</span><span style="color: #0000ff;">from</span> string <span style="color: #0000ff;">import</span><span style="color: #000000;"> ascii_letters, digits
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> numpy as np 
+
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> ip_port_type_tuple_list = []</span>
+  
+<span style="color: #0000ff;">class</span><span style="color: #000000;"> Mimvp():
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span>(self, num_width=None, feature_vectors=None, white_before_black=2, threshhold=100, max_nums=None, filepath=None, page=<span style="color: #000000;">None):
+        self.ip_port_type_tuple_list </span>=<span style="color: #000000;"> []
+        
+        </span><span style="color: #008000;">#</span><span style="color: #008000;">fluent p189</span>
+        <span style="color: #0000ff;">if</span> feature_vectors <span style="color: #0000ff;">is</span><span style="color: #000000;"> None:
+            self.feature_vectors </span>=<span style="color: #000000;"> []
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            self.feature_vectors </span>=<span style="color: #000000;"> list(feature_vectors)
+             
+        self.num_width </span>=<span style="color: #000000;"> num_width
+        self.white_before_black </span>=<span style="color: #000000;"> white_before_black
+        self.threshhold </span>=<span style="color: #000000;"> threshhold
+        self.max_nums </span>=<span style="color: #000000;"> max_nums
+
+        self.filepath </span>=<span style="color: #000000;"> filepath
+        
+        </span><span style="color: #0000ff;">if</span> page <span style="color: #0000ff;">is</span><span style="color: #000000;"> None:
+            self.url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://proxy.%s.com/free.php?proxy=in_hp</span><span style="color: #800000;">'</span>%<span style="color: #800000;">'</span><span style="color: #800000;">mimvp</span><span style="color: #800000;">'</span>
+        <span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            self.url </span>= <span style="color: #800000;">'</span><span style="color: #800000;">http://proxy.%s.com/free.php?proxy=in_hp&amp;sort=&amp;page=%s</span><span style="color: #800000;">'</span> %(<span style="color: #800000;">'</span><span style="color: #800000;">mimvp</span><span style="color: #800000;">'</span><span style="color: #000000;">, page)   
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_mimvp(self):
+
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> 预处理提取特征组需要取得 self.port_src_list</span>
+        <span style="color: #0000ff;">if</span> self.feature_vectors ==<span style="color: #000000;"> []:
+            self.extract_features()
+
+        self.load_mimvp()
+        self.get_port_list()
+        self.merge_result()
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> self.ip_port_type_tuple_list
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> load_mimvp(self):
+        resp </span>=<span style="color: #000000;"> ss.get(self.url)
+        self.ip_list </span>= re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">class='tbl-proxy-ip'.*?&gt;(.*?)&lt;</span><span style="color: #800000;">"</span><span style="color: #000000;">, resp.text)
+        self.port_src_list </span>= re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">class='tbl-proxy-port'.*?src=(.*?)\s*/&gt;</span><span style="color: #800000;">"</span>, resp.text)      <span style="color: #008000;">#</span><span style="color: #008000;">图片链接</span>
+        self.type_list = re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">class='tbl-proxy-type'.*?&gt;(.*?)&lt;</span><span style="color: #800000;">"</span><span style="color: #000000;">, resp.text)
+                 
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_port_list(self):
+        self.port_list </span>=<span style="color: #000000;"> []
+        </span><span style="color: #0000ff;">for</span> src <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.port_src_list:
+            port </span>=<span style="color: #000000;"> self.get_port(src)
+            self.port_list.append(port)
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> get_port(self, src):    
+        img </span>=<span style="color: #000000;"> self.load_image_from_src(src)
+        split_imgs </span>=<span style="color: #000000;"> self.split_image(img)
+        
+        port </span>= <span style="color: #800000;">''</span>
+        <span style="color: #0000ff;">for</span> split_img <span style="color: #0000ff;">in</span><span style="color: #000000;"> split_imgs:
+            vector </span>=<span style="color: #000000;"> self.build_vector(split_img)    
+            compare_results </span>=<span style="color: #000000;"> []
+            </span><span style="color: #0000ff;">for</span> t <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.feature_vectors:
+                cos </span>=<span style="color: #000000;"> self.cos_similarity(vector, t.values()[0])
+                compare_results.append((cos, t.keys()[0]))
+            </span><span style="color: #008000;">#</span><span style="color: #008000;"> print sorted(compare_results, reverse=True)</span>
+            port += sorted(compare_results, reverse=True)[0][1<span style="color: #000000;">]
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> port
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> port
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> load_image_from_src(self, src):
+        src </span>=<span style="color: #000000;"> urljoin(self.url, src)
+        </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> src,
+        resp </span>=<span style="color: #000000;"> ss.get(src)
+
+        fp </span>=<span style="color: #000000;"> BytesIO(resp.content)
+        img </span>=<span style="color: #000000;"> Image.open(fp)
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> img
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> split_image(self, img):
+        gray </span>= img.convert(<span style="color: #800000;">'</span><span style="color: #800000;">L</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        
+        </span><span style="color: #0000ff;">if</span> self.num_width <span style="color: #0000ff;">is</span><span style="color: #000000;"> None:
+            img.show()
+            </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> gray.getcolors()
+            self.num_width </span>= int(raw_input(<span style="color: #800000;">'</span><span style="color: #800000;">num_width:</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+            self.white_before_black </span>= int(raw_input(<span style="color: #800000;">'</span><span style="color: #800000;">white_before_black:</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+            self.threshhold </span>= int(raw_input(<span style="color: #800000;">'</span><span style="color: #800000;">BLACK &lt; (threshhold) &lt; WHITE:</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+            
+        gray_array </span>=<span style="color: #000000;"> np.array(gray)
+        bilevel_array </span>= np.where(gray_array&lt;self.threshhold,1,0)  <span style="color: #008000;">#</span><span style="color: #008000;">标记黑点为1，方便后续扫描</span>
+<span style="color: #000000;">        
+        left_list </span>=<span style="color: #000000;"> []
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> 从左到右按列求和</span>
+        vertical =<span style="color: #000000;"> bilevel_array.sum(0)
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> print vertical</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> 从左到右按列扫描，2白1黑确定为数字左边缘</span>
+        <span style="color: #0000ff;">for</span> i,c <span style="color: #0000ff;">in</span> enumerate(vertical[:-<span style="color: #000000;">self.white_before_black]):
+            </span><span style="color: #0000ff;">if</span> self.white_before_black == 1<span style="color: #000000;">:
+                </span><span style="color: #0000ff;">if</span> vertical[i] == 0 <span style="color: #0000ff;">and</span> vertical[i+1] !=<span style="color: #000000;"> 0:
+                    left_list.append(i</span>+1<span style="color: #000000;">)
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:                    
+                </span><span style="color: #0000ff;">if</span> vertical[i] == 0 <span style="color: #0000ff;">and</span> vertical[i+1] == 0 <span style="color: #0000ff;">and</span> vertical[i+2] !=<span style="color: #000000;"> 0:
+                    left_list.append(i</span>+2<span style="color: #000000;">)
+            </span><span style="color: #0000ff;">if</span> len(left_list) ==<span style="color: #000000;"> self.max_nums:
+                </span><span style="color: #0000ff;">break</span>
+                
+        <span style="color: #008000;">#</span><span style="color: #008000;"> 分割可见图片</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> bilevel = Image.fromarray(bilevel_array)    #0/1 手工提取特征 show显示黑块 还没保存gif     </span>
+        bilevel = Image.fromarray(np.where(gray_array&lt;self.threshhold,0,255<span style="color: #000000;">))   
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> the left, upper, right, and lower pixel</span>
+        split_imgs = [bilevel.crop((each_left, 0, each_left+self.num_width, img.height)) <span style="color: #0000ff;">for</span> each_left <span style="color: #0000ff;">in</span><span style="color: #000000;"> left_list]
+
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> split_imgs
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> build_vector(self, img):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> img = Image.open(img)</span>
+        img_array =<span style="color: #000000;"> np.array(img) 
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> 先遍历w，再遍历h，总共w+h维度，不需要/255，标记黑点个数等多余处理</span>
+        <span style="color: #0000ff;">return</span> list(img_array.sum(0)) + list(img_array.sum(1<span style="color: #000000;">))
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> cos_similarity(self, a, b):
+        A </span>=<span style="color: #000000;"> np.array(a)
+        B </span>=<span style="color: #000000;"> np.array(b)    
+        dot_product </span>= float(np.dot(A, B))   <span style="color: #008000;">#</span><span style="color: #008000;"> A*(B.T) 达不到目的</span>
+        magnitude_product = np.linalg.norm(A) *<span style="color: #000000;"> np.linalg.norm(B)
+        cos </span>= dot_product /<span style="color: #000000;"> magnitude_product
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> cos
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> merge_result(self):
+        </span><span style="color: #0000ff;">for</span> ip, port, _type <span style="color: #0000ff;">in</span><span style="color: #000000;"> zip(self.ip_list, self.port_list, self.type_list):
+            </span><span style="color: #0000ff;">if</span> <span style="color: #800000;">'</span><span style="color: #800000;">/</span><span style="color: #800000;">'</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> _type:
+                self.ip_port_type_tuple_list.append((ip, port, </span><span style="color: #800000;">'</span><span style="color: #800000;">both</span><span style="color: #800000;">'</span><span style="color: #000000;">))        
+            </span><span style="color: #0000ff;">elif</span> _type == <span style="color: #800000;">'</span><span style="color: #800000;">HTTPS</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+                self.ip_port_type_tuple_list.append((ip, port, </span><span style="color: #800000;">'</span><span style="color: #800000;">HTTPS</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+            </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+                self.ip_port_type_tuple_list.append((ip, port, </span><span style="color: #800000;">'</span><span style="color: #800000;">HTTP</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+  
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> extract_features(self):
+        </span><span style="color: #0000ff;">if</span> self.filepath <span style="color: #0000ff;">is</span> <span style="color: #0000ff;">not</span><span style="color: #000000;"> None:
+            img_list </span>=<span style="color: #000000;"> self.load_images_from_filepath()
+        </span><span style="color: #0000ff;">else</span><span style="color: #000000;">:
+            self.load_mimvp()
+            img_list </span>=<span style="color: #000000;"> self.load_images_from_src_list()
+        </span><span style="color: #0000ff;">for</span> img <span style="color: #0000ff;">in</span><span style="color: #000000;"> img_list:
+            split_imgs </span>=<span style="color: #000000;"> self.split_image(img)
+            </span><span style="color: #0000ff;">for</span> split_img <span style="color: #0000ff;">in</span><span style="color: #000000;"> split_imgs:
+                split_img.show()
+                </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> split_img.getcolors()
+                input </span>= raw_input(<span style="color: #800000;">'</span><span style="color: #800000;">input:</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+                vector </span>=<span style="color: #000000;"> self.build_vector(split_img)
+                item </span>=<span style="color: #000000;"> {input: vector}
+                </span><span style="color: #0000ff;">if</span> item <span style="color: #0000ff;">not</span> <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.feature_vectors:
+                    </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> item
+                    self.feature_vectors.append(item)
+            
+        </span><span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span><span style="color: #000000;"> sorted(self.feature_vectors):        
+            </span><span style="color: #0000ff;">print</span> i,<span style="color: #800000;">'</span><span style="color: #800000;">,</span><span style="color: #800000;">'</span>   
+    
+    <span style="color: #0000ff;">def</span><span style="color: #000000;"> load_images_from_filepath(self):
+        img_list </span>=<span style="color: #000000;"> []
+        postfix </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">jpg</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">png</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">gif</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">bmp</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+        </span><span style="color: #0000ff;">for</span> filename <span style="color: #0000ff;">in</span> [i <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> os.listdir(self.filepath) <span style="color: #0000ff;">if</span> i[-3:] <span style="color: #0000ff;">in</span><span style="color: #000000;"> postfix]:
+            file </span>=<span style="color: #000000;"> os.path.join(self.filepath, filename)
+            img_list.append(Image.open(file))
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> img_list
+        
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> load_images_from_src_list(self):
+        img_list </span>=<span style="color: #000000;"> []
+        </span><span style="color: #0000ff;">for</span> src <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.port_src_list:
+            img </span>=<span style="color: #000000;"> self.load_image_from_src(src)
+            img_list.append(img)
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> img_list
+    
+   
+    
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+   
+    feature_vectors </span>=<span style="color: #000000;"> [    
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">0</span><span style="color: #800000;">'</span>: [4845, 5865, 5865, 5865, 5865, 4845, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1020, 1020, 1020, 1020, 1020, 1020, 1020, 1020, 1020, 1020, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">1</span><span style="color: #800000;">'</span>: [5865, 5865, 3825, 6120, 6120, 6375, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1275, 1020, 1020, 1275, 1275, 1275, 1275, 1275, 1275, 255, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">2</span><span style="color: #800000;">'</span>: [5100, 5610, 5610, 5610, 5610, 5355, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 510, 1020, 1020, 1275, 1020, 1275, 1275, 1275, 1275, 0, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">3</span><span style="color: #800000;">'</span>: [5355, 5865, 5610, 5610, 5610, 4590, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 510, 1020, 1020, 1275, 765, 1275, 1275, 1020, 1020, 510, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">4</span><span style="color: #800000;">'</span>: [5610, 5865, 5865, 5865, 3825, 6120, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1275, 1020, 1020, 1020, 1020, 1020, 0, 1275, 1275, 1275, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">5</span><span style="color: #800000;">'</span>: [4845, 5610, 5610, 5610, 5610, 5100, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 0, 1275, 1275, 1275, 255, 1275, 1275, 1275, 1020, 510, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">6</span><span style="color: #800000;">'</span>: [4590, 5610, 5610, 5610, 5610, 5355, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 765, 1275, 1275, 1275, 255, 1020, 1020, 1020, 1020, 510, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">7</span><span style="color: #800000;">'</span>: [6120, 6120, 6120, 5100, 5355, 5610, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 0, 1275, 1275, 1275, 1275, 1275, 1275, 1275, 1275, 1275, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">8</span><span style="color: #800000;">'</span>: [4590, 5610, 5610, 5610, 5610, 4590, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 510, 1020, 1020, 1020, 510, 1020, 1020, 1020, 1020, 510, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} ,
+    {</span><span style="color: #800000;">'</span><span style="color: #800000;">9</span><span style="color: #800000;">'</span>: [5610, 5610, 5610, 5610, 5610, 4590, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 1530, 510, 1020, 1020, 1020, 255, 1275, 1275, 1275, 1275, 765, 1530, 1530, 1530, 1530, 1530, 1530, 1530<span style="color: #000000;">]} , 
+    ]   
+    
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> def __init__(self, feature_vectors=None, filepath=None, page=None):</span>
+<span style="color: #000000;">    
+    obj </span>= Mimvp(num_width=6, feature_vectors=<span style="color: #000000;">feature_vectors)
+    </span><span style="color: #008000;">#</span><span style="color: #008000;"> obj = Mimvp()    </span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> obj = Mimvp(filepath='temp/')   </span>
+<span style="color: #000000;">    
+    ip_port_type_tuple_list </span>=<span style="color: #000000;"> obj.get_mimvp()
+    
+    </span><span style="color: #0000ff;">from</span> pprint <span style="color: #0000ff;">import</span><span style="color: #000000;"> pprint
+    pprint(ip_port_type_tuple_list)
+          </span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p> </p>
+<h1>4.改进方向</h1>
+<p>记录每个分割数字的x轴实际长度，这样的话考虑到不对图片的上下留白做处理，每个实际数字的h固定，而w不定，因此建立特征向量的时候改为先遍历h，再遍历w。</p>
+<p>考虑到在比较余弦相似性的时候由于叉乘需要两个向量具有相同的维度，这里需要每次取最小维度再比较。</p>
+<p>如此，在建立特征向量集的时候不需要提前指定每张分割数字为固定宽度。</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-08-30 12:10</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7449845" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7449845);return false;">收藏</a></div>
+        </div>

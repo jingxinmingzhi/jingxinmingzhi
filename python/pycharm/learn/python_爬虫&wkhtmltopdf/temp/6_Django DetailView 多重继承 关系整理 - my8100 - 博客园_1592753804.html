@@ -1,0 +1,72 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/django_detailview.html">
+    <span>Django DetailView 多重继承 关系整理</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<p><a href="https://docs.djangoproject.com/en/2.1/topics/class-based-views/mixins/" target="_blank"> https://docs.djangoproject.com/en/2.1/topics/class-based-views/mixins/</a></p>
+<p> </p>
+<h2>1.版本信息</h2>
+<div class="cnblogs_code">
+<pre>In [157]: <span style="color: #0000ff;">import</span><span style="color: #000000;"> sys
+
+In [</span>158<span style="color: #000000;">]: sys.version
+Out[</span>158]: <span style="color: #800000;">'</span><span style="color: #800000;">3.6.5 |Anaconda, Inc.| (default, Mar 29 2018, 13:32:41) [MSC v.1900 64 bit (AMD64)]</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>159]: <span style="color: #0000ff;">import</span><span style="color: #000000;"> django
+
+In [</span>160]: django.<span style="color: #800080;">__version__</span><span style="color: #000000;">
+Out[</span>160]: <span style="color: #800000;">'</span><span style="color: #800000;">2.1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>161]: <span style="color: #0000ff;">from</span> django.views.generic.detail <span style="color: #0000ff;">import</span><span style="color: #000000;"> DetailView
+
+In [</span>162]: DetailView.<span style="color: #800080;">__mro__</span><span style="color: #000000;">
+Out[</span>162<span style="color: #000000;">]:
+(django.views.generic.detail.DetailView,
+ django.views.generic.detail.SingleObjectTemplateResponseMixin,
+ django.views.generic.base.TemplateResponseMixin,
+ django.views.generic.detail.BaseDetailView,
+ django.views.generic.detail.SingleObjectMixin,
+ django.views.generic.base.ContextMixin,
+ django.views.generic.base.View,
+ object)</span></pre>
+</div>
+<p> </p>
+<p> </p>
+<h2>1.多重继承关系和 MRO</h2>
+<p>E:\ProgramData\Anaconda3\envs\py3\Lib\site-packages\django\views\generic\detail.py</p>
+<p>E:\ProgramData\Anaconda3\envs\py3\Lib\site-packages\django\views\generic\list.py</p>
+<p>E:\ProgramData\Anaconda3\envs\py3\Lib\site-packages\django\views\generic\base.py</p>
+<p> </p>
+<p><strong>右下角<span style="color: #ff0000;">红色箭头</span>为 path 定义的 .as_view() 入口</strong></p>
+<p><strong><span style="color: #33cccc;">绿色箭头</span>代表 MRO,  顺序从左上到右下，由粗到细</strong></p>
+<p> </p>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201808/892328-20180809192514769-529508649.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-08-07 23:05</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9440117" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9440117);return false;">收藏</a></div>
+        </div>

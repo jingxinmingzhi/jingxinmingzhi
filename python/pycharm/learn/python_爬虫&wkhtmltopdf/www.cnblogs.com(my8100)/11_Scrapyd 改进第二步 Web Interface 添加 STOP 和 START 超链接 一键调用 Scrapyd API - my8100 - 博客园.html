@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0.提出问题 Scrapyd 提供的开始和结束项目的API如下，参考 Scrapyd 改进第一步: Web Interface 添加 charset=UTF-8, 避免查看 log 出现中文乱码，准备" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Scrapyd 改进第二步: Web Interface 添加 STOP 和 START 超链接, 一键调用 Scrapyd API - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapyd_2_add_stop_start.html">
+    <span>Scrapyd 改进第二步: Web Interface 添加 STOP 和 START 超链接, 一键调用 Scrapyd API</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.提出问题</h2>
+<p>Scrapyd 提供的开始和结束项目的API如下，参考 <span style="color: #ff0000;"><a id="link_post_title" class="link-post-title" href="https://www.cnblogs.com/my8100/p/scrapyd_1_add_charset_UTF-8.html" target="_blank"><span style="color: #ff0000;">Scrapyd 改进第一步: Web Interface 添加 charset=UTF-8, 避免查看 log 出现中文乱码</span></a></span>，准备继续在页面上进一步添加 START 和 STOP 超链接。</p>
+<p>&nbsp;</p>
+<p><a href="http://scrapyd.readthedocs.io/en/stable/api.html#schedule-json" target="_blank">http://scrapyd.readthedocs.io/en/stable/api.html#schedule-json</a></p>
+<p>Example request:</p>
+<div class="highlight-default">
+<div class="highlight">
+<pre>$ curl http://localhost:6800/schedule.json -d project=myproject -d spider=somespider
+</pre>
+</div>
+</div>
+<p>Example response:</p>
+<div class="highlight-default">
+<div class="highlight">
+<pre><span class="p">{<span class="s2">"status"<span class="p">: <span class="s2">"ok"<span class="p">, <span class="s2">"jobid"<span class="p">: <span class="s2">"6487ec79947edab326d6db28a2d86511e8247444"<span class="p">}</span></span></span></span></span></span></span></span></span></pre>
+</div>
+</div>
+<p><a href="http://scrapyd.readthedocs.io/en/stable/api.html#cancel-json" target="_blank">http://scrapyd.readthedocs.io/en/stable/api.html#cancel-json</a></p>
+<p>Example request:</p>
+<div class="highlight-default">
+<div class="highlight">
+<pre>$ curl http://localhost:6800/cancel.json -d project=myproject -d job=6487ec79947edab326d6db28a2d86511e8247444
+</pre>
+</div>
+</div>
+<p>Example response:</p>
+<div class="highlight-default">
+<div class="highlight">
+<pre><span class="p">{<span class="s2">"status"<span class="p">: <span class="s2">"ok"<span class="p">, <span class="s2">"prevstate"<span class="p">: <span class="s2">"running"<span class="p">}</span></span></span></span></span></span></span></span></span></pre>
+</div>
+</div>
+<p>&nbsp;</p>
+<h2>1.解决思路</h2>
+<p>尝试直接通过浏览器地址栏 GET 请求页面&nbsp;http://localhost:6800/schedule.json?project=myproject&amp;spider=somespider</p>
+<p>返回提示需要使用 POST 请求</p>
+<p>{"node_name": "pi-desktop", "status": "error", "message": "Expected one of [b'HEAD', b'object', b'POST']"}</p>
+<p>那就继续<span style="color: #ff0000;">通过 URL 查询对传参，通过 JS 发起 POST 异步请求</span>吧</p>
+<p>&nbsp;</p>
+<h2>2.修改 Scrapyd 代码</h2>
+<p><span style="color: #ff0000;"><strong>/site-packages/scrapyd/website.py</strong></span></p>
+<p>改动位置：</p>
+<p>(1) table 添加最后两列，分别用于 UTF-8 和 STOP/START 超链接，见红色代码</p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #0000ff;">def</span><span style="color: #000000;"> render(self, txrequest):
+        <span style="color: #ff0000;">cols </span></span><span style="color: #ff0000;">= 10 ######## 8</span>
+        s = <span style="color: #800000;">"</span><span style="color: #800000;">&lt;html&gt;&lt;head&gt;&lt;meta charset='UTF-8'&gt;&lt;title&gt;Scrapyd&lt;/title&gt;&lt;/head&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;body&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;h1&gt;Jobs&lt;/h1&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;p&gt;&lt;a href='..'&gt;Go back&lt;/a&gt;&lt;/p&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;table border='1'&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;&lt;th&gt;Project&lt;/th&gt;&lt;th&gt;Spider&lt;/th&gt;&lt;th&gt;Job&lt;/th&gt;&lt;th&gt;PID&lt;/th&gt;&lt;th&gt;Start&lt;/th&gt;&lt;th&gt;Runtime&lt;/th&gt;&lt;th&gt;Finish&lt;/th&gt;&lt;th&gt;Log&lt;/th&gt;</span><span style="color: #800000;">"</span>
+        <span style="color: #0000ff;">if</span><span style="color: #000000;"> self.local_items:
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;th&gt;Items&lt;/th&gt;</span><span style="color: #800000;">"</span>
+<span style="color: #ff0000;">            #cols = 9 ########
+            cols += 1 ########</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>(2) 有两处需要添加 UTF-8 超链接，分别对应 Running 和 Finished，见红色代码</p>
+<p>前面 Running 部分添加&nbsp;UTF-8 超链接后继续添加 STOP 超链接，见蓝色代码</p>
+<div class="cnblogs_code">
+<pre>            s += <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/%s/%s/%s.log'&gt;Log&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            <span style="color: #ff0000;">s </span></span><span style="color: #ff0000;">+= "&lt;td&gt;&lt;a href='/logs/UTF-8.html?project=%s&amp;spider=%s&amp;job=%s' target='_blank'&gt;UTF-8&lt;/a&gt;&lt;/td&gt;" % (p.project, p.spider, p.job) ########</span>
+<span style="color: #0000ff;">            s += "&lt;td&gt;&lt;a href='/logs/scrapyd.html?opt=cancel&amp;project=%s&amp;job_or_spider=%s' target='_blank'&gt;STOP&lt;/a&gt;&lt;/td&gt;" % (p.project, p.job) ########</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>后面 Finished&nbsp;部分添加&nbsp;UTF-8 超链接后继续添加 START 超链接，见蓝色代码</p>
+<div class="cnblogs_code">
+<pre>            s += <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/%s/%s/%s.log'&gt;Log&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            <span style="color: #ff0000;">s </span></span><span style="color: #ff0000;">+= "&lt;td&gt;&lt;a href='/logs/UTF-8.html?project=%s&amp;spider=%s&amp;job=%s' target='_blank'&gt;UTF-8&lt;/a&gt;&lt;/td&gt;" % (p.project, p.spider, p.job) ########</span>
+<span style="color: #00ff00;">            s += "&lt;td&gt;&lt;a href='/logs/scrapyd.html?opt=schedule&amp;project=%s&amp;job_or_spider=%s' target='_blank'&gt;START&lt;/a&gt;&lt;/td&gt;" % (p.project, p.spider) ########</span></pre>
+</div>
+<p>(3) 完整代码</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('800772c2-5c0f-4e92-9de8-631bf329379c')"><img id="code_img_closed_800772c2-5c0f-4e92-9de8-631bf329379c" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_800772c2-5c0f-4e92-9de8-631bf329379c" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('800772c2-5c0f-4e92-9de8-631bf329379c',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_800772c2-5c0f-4e92-9de8-631bf329379c" class="cnblogs_code_hide">
+<pre><span style="color: #0000ff;">from</span> datetime <span style="color: #0000ff;">import</span><span style="color: #000000;"> datetime
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> socket
+
+</span><span style="color: #0000ff;">from</span> twisted.web <span style="color: #0000ff;">import</span><span style="color: #000000;"> resource, static
+</span><span style="color: #0000ff;">from</span> twisted.application.service <span style="color: #0000ff;">import</span><span style="color: #000000;"> IServiceCollection
+
+</span><span style="color: #0000ff;">from</span> scrapy.utils.misc <span style="color: #0000ff;">import</span><span style="color: #000000;"> load_object
+
+</span><span style="color: #0000ff;">from</span> .interfaces <span style="color: #0000ff;">import</span><span style="color: #000000;"> IPoller, IEggStorage, ISpiderScheduler
+
+</span><span style="color: #0000ff;">from</span> six.moves.urllib.parse <span style="color: #0000ff;">import</span><span style="color: #000000;"> urlparse
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> Root(resource.Resource):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, config, app):
+        resource.Resource.</span><span style="color: #800080;">__init__</span><span style="color: #000000;">(self)
+        self.debug </span>= config.getboolean(<span style="color: #800000;">'</span><span style="color: #800000;">debug</span><span style="color: #800000;">'</span><span style="color: #000000;">, False)
+        self.runner </span>= config.get(<span style="color: #800000;">'</span><span style="color: #800000;">runner</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        logsdir </span>= config.get(<span style="color: #800000;">'</span><span style="color: #800000;">logs_dir</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        itemsdir </span>= config.get(<span style="color: #800000;">'</span><span style="color: #800000;">items_dir</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        local_items </span>= itemsdir <span style="color: #0000ff;">and</span> (urlparse(itemsdir).scheme.lower() <span style="color: #0000ff;">in</span> [<span style="color: #800000;">''</span>, <span style="color: #800000;">'</span><span style="color: #800000;">file</span><span style="color: #800000;">'</span><span style="color: #000000;">])
+        self.app </span>=<span style="color: #000000;"> app
+        self.nodename </span>= config.get(<span style="color: #800000;">'</span><span style="color: #800000;">node_name</span><span style="color: #800000;">'</span><span style="color: #000000;">, socket.gethostname())
+        self.putChild(b</span><span style="color: #800000;">''</span><span style="color: #000000;">, Home(self, local_items))
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> logsdir:
+            self.putChild(b</span><span style="color: #800000;">'</span><span style="color: #800000;">logs</span><span style="color: #800000;">'</span>, static.File(logsdir.encode(<span style="color: #800000;">'</span><span style="color: #800000;">ascii</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">ignore</span><span style="color: #800000;">'</span>), <span style="color: #800000;">'</span><span style="color: #800000;">text/plain</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> local_items:
+            self.putChild(b</span><span style="color: #800000;">'</span><span style="color: #800000;">items</span><span style="color: #800000;">'</span>, static.File(itemsdir, <span style="color: #800000;">'</span><span style="color: #800000;">text/plain</span><span style="color: #800000;">'</span><span style="color: #000000;">))
+        self.putChild(b</span><span style="color: #800000;">'</span><span style="color: #800000;">jobs</span><span style="color: #800000;">'</span><span style="color: #000000;">, Jobs(self, local_items))
+        services </span>= config.items(<span style="color: #800000;">'</span><span style="color: #800000;">services</span><span style="color: #800000;">'</span><span style="color: #000000;">, ())
+        </span><span style="color: #0000ff;">for</span> servName, servClsName <span style="color: #0000ff;">in</span><span style="color: #000000;"> services:
+          servCls </span>=<span style="color: #000000;"> load_object(servClsName)
+          self.putChild(servName.encode(</span><span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">), servCls(self))
+        self.update_projects()
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> update_projects(self):
+        self.poller.update_projects()
+        self.scheduler.update_projects()
+
+    @property
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> launcher(self):
+        app </span>=<span style="color: #000000;"> IServiceCollection(self.app, self.app)
+        </span><span style="color: #0000ff;">return</span> app.getServiceNamed(<span style="color: #800000;">'</span><span style="color: #800000;">launcher</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+    @property
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> scheduler(self):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> self.app.getComponent(ISpiderScheduler)
+
+    @property
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> eggstorage(self):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> self.app.getComponent(IEggStorage)
+
+    @property
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> poller(self):
+        </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> self.app.getComponent(IPoller)
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> Home(resource.Resource):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, root, local_items):
+        resource.Resource.</span><span style="color: #800080;">__init__</span><span style="color: #000000;">(self)
+        self.root </span>=<span style="color: #000000;"> root
+        self.local_items </span>=<span style="color: #000000;"> local_items
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> render_GET(self, txrequest):
+        vars </span>=<span style="color: #000000;"> {
+            </span><span style="color: #800000;">'</span><span style="color: #800000;">projects</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">, </span><span style="color: #800000;">'</span><span style="color: #000000;">.join(self.root.scheduler.list_projects())
+        }
+        s </span>= <span style="color: #800000;">"""</span><span style="color: #800000;">
+&lt;html&gt;
+&lt;head&gt;&lt;meta charset='UTF-8'&gt;&lt;title&gt;Scrapyd&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Scrapyd&lt;/h1&gt;
+&lt;p&gt;Available projects: &lt;b&gt;%(projects)s&lt;/b&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="/jobs"&gt;Jobs&lt;/a&gt;&lt;/li&gt;
+</span><span style="color: #800000;">"""</span> %<span style="color: #000000;"> vars
+        </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> self.local_items:
+            s </span>+= <span style="color: #800000;">'</span><span style="color: #800000;">&lt;li&gt;&lt;a href="/items/"&gt;Items&lt;/a&gt;&lt;/li&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"""</span><span style="color: #800000;">
+&lt;li&gt;&lt;a href="/logs/"&gt;Logs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://scrapyd.readthedocs.org/en/latest/"&gt;Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;How to schedule a spider?&lt;/h2&gt;
+
+&lt;p&gt;To schedule a spider you need to use the API (this web UI is only for
+monitoring)&lt;/p&gt;
+
+&lt;p&gt;Example using &lt;a href="http://curl.haxx.se/"&gt;curl&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;curl http://localhost:6800/schedule.json -d project=default -d spider=somespider&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;For more information about the API, see the &lt;a href="http://scrapyd.readthedocs.org/en/latest/"&gt;Scrapyd documentation&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</span><span style="color: #800000;">"""</span> %<span style="color: #000000;"> vars
+        </span><span style="color: #0000ff;">return</span> s.encode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> Jobs(resource.Resource):
+
+    </span><span style="color: #0000ff;">def</span> <span style="color: #800080;">__init__</span><span style="color: #000000;">(self, root, local_items):
+        resource.Resource.</span><span style="color: #800080;">__init__</span><span style="color: #000000;">(self)
+        self.root </span>=<span style="color: #000000;"> root
+        self.local_items </span>=<span style="color: #000000;"> local_items
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> render(self, txrequest):
+        cols </span>= 10 <span style="color: #008000;">#</span><span style="color: #008000;">####### 8</span>
+        s = <span style="color: #800000;">"</span><span style="color: #800000;">&lt;html&gt;&lt;head&gt;&lt;meta charset='UTF-8'&gt;&lt;title&gt;Scrapyd&lt;/title&gt;&lt;/head&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;body&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;h1&gt;Jobs&lt;/h1&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;p&gt;&lt;a href='..'&gt;Go back&lt;/a&gt;&lt;/p&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;table border='1'&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;&lt;th&gt;Project&lt;/th&gt;&lt;th&gt;Spider&lt;/th&gt;&lt;th&gt;Job&lt;/th&gt;&lt;th&gt;PID&lt;/th&gt;&lt;th&gt;Start&lt;/th&gt;&lt;th&gt;Runtime&lt;/th&gt;&lt;th&gt;Finish&lt;/th&gt;&lt;th&gt;Log&lt;/th&gt;</span><span style="color: #800000;">"</span>
+        <span style="color: #0000ff;">if</span><span style="color: #000000;"> self.local_items:
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;th&gt;Items&lt;/th&gt;</span><span style="color: #800000;">"</span>
+            <span style="color: #008000;">#</span><span style="color: #008000;">cols = 9 ########</span>
+            cols += 1 <span style="color: #008000;">#</span><span style="color: #008000;">#######</span>
+        s += <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/tr&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;&lt;th colspan='%s' style='background-color: #ddd'&gt;Pending&lt;/th&gt;&lt;/tr&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> cols
+        </span><span style="color: #0000ff;">for</span> project, queue <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.root.poller.queues.items():
+            </span><span style="color: #0000ff;">for</span> m <span style="color: #0000ff;">in</span><span style="color: #000000;"> queue.list():
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> project
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % str(m[<span style="color: #800000;">'</span><span style="color: #800000;">name</span><span style="color: #800000;">'</span><span style="color: #000000;">])
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % str(m[<span style="color: #800000;">'</span><span style="color: #800000;">_job</span><span style="color: #800000;">'</span><span style="color: #000000;">])
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/tr&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;&lt;th colspan='%s' style='background-color: #ddd'&gt;Running&lt;/th&gt;&lt;/tr&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> cols
+        </span><span style="color: #0000ff;">for</span> p <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.root.launcher.processes.values():
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;</span><span style="color: #800000;">"</span>
+            <span style="color: #0000ff;">for</span> a <span style="color: #0000ff;">in</span> [<span style="color: #800000;">'</span><span style="color: #800000;">project</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">spider</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">job</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">pid</span><span style="color: #800000;">'</span><span style="color: #000000;">]:
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> getattr(p, a)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % p.start_time.replace(microsecond=<span style="color: #000000;">0)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % (datetime.now().replace(microsecond=0) - p.start_time.replace(microsecond=<span style="color: #000000;">0))
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/%s/%s/%s.log'&gt;Log&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/UTF-8.html?project=%s&amp;spider=%s&amp;job=%s' target='_blank'&gt;UTF-8&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> % (p.project, p.spider, p.job) <span style="color: #008000;">#</span><span style="color: #008000;">#######</span>
+            s += <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/scrapyd.html?opt=cancel&amp;project=%s&amp;job_or_spider=%s' target='_blank'&gt;STOP&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> % (p.project, p.job) <span style="color: #008000;">#</span><span style="color: #008000;">#######</span>
+            <span style="color: #0000ff;">if</span><span style="color: #000000;"> self.local_items:
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/items/%s/%s/%s.jl'&gt;Items&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/tr&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;&lt;th colspan='%s' style='background-color: #ddd'&gt;Finished&lt;/th&gt;&lt;/tr&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> cols
+        </span><span style="color: #0000ff;">for</span> p <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.root.launcher.finished:
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;tr&gt;</span><span style="color: #800000;">"</span>
+            <span style="color: #0000ff;">for</span> a <span style="color: #0000ff;">in</span> [<span style="color: #800000;">'</span><span style="color: #800000;">project</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">spider</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">job</span><span style="color: #800000;">'</span><span style="color: #000000;">]:
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> getattr(p, a)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % p.start_time.replace(microsecond=<span style="color: #000000;">0)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % (p.end_time.replace(microsecond=0) - p.start_time.replace(microsecond=<span style="color: #000000;">0))
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;%s&lt;/td&gt;</span><span style="color: #800000;">"</span> % p.end_time.replace(microsecond=<span style="color: #000000;">0)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/%s/%s/%s.log'&gt;Log&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/UTF-8.html?project=%s&amp;spider=%s&amp;job=%s' target='_blank'&gt;UTF-8&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> % (p.project, p.spider, p.job) <span style="color: #008000;">#</span><span style="color: #008000;">#######</span>
+            s += <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/logs/scrapyd.html?opt=schedule&amp;project=%s&amp;job_or_spider=%s' target='_blank'&gt;START&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> % (p.project, p.spider) <span style="color: #008000;">#</span><span style="color: #008000;">#######</span>
+            <span style="color: #0000ff;">if</span><span style="color: #000000;"> self.local_items:
+                s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;td&gt;&lt;a href='/items/%s/%s/%s.jl'&gt;Items&lt;/a&gt;&lt;/td&gt;</span><span style="color: #800000;">"</span> %<span style="color: #000000;"> (p.project, p.spider, p.job)
+            s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/tr&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/table&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/body&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+        s </span>+= <span style="color: #800000;">"</span><span style="color: #800000;">&lt;/html&gt;</span><span style="color: #800000;">"</span><span style="color: #000000;">
+
+        txrequest.setHeader(</span><span style="color: #800000;">'</span><span style="color: #800000;">Content-Type</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">text/html; charset=utf-8</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        txrequest.setHeader(</span><span style="color: #800000;">'</span><span style="color: #800000;">Content-Length</span><span style="color: #800000;">'</span><span style="color: #000000;">, len(s))
+
+        </span><span style="color: #0000ff;">return</span> s.encode(<span style="color: #800000;">'</span><span style="color: #800000;">utf-8</span><span style="color: #800000;">'</span>)</pre>
+</div>
+<span class="cnblogs_code_collapse">/site-packages/scrapyd/website.py</span></div>
+<p>&nbsp;</p>
+<h2>3.新建&nbsp;scrapyd.html</h2>
+<p>根据&nbsp;<a href="http://scrapyd.readthedocs.io/en/stable/config.html" target="_blank">http://scrapyd.readthedocs.io/en/stable/config.html</a>&nbsp;<span style="color: #ff0000;">确定 Scrapyd 所使用的&nbsp;logs_dir，在该目录下添加如下文件</span></p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('90ebcb96-062e-4584-aff5-1432116a0b6d')"><img id="code_img_closed_90ebcb96-062e-4584-aff5-1432116a0b6d" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_90ebcb96-062e-4584-aff5-1432116a0b6d" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('90ebcb96-062e-4584-aff5-1432116a0b6d',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_90ebcb96-062e-4584-aff5-1432116a0b6d" class="cnblogs_code_hide">
+<pre><span style="color: #0000ff;">&lt;</span><span style="color: #800000;">html</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">head</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">meta </span><span style="color: #ff0000;">charset</span><span style="color: #0000ff;">="UTF-8"</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">meta </span><span style="color: #ff0000;">name</span><span style="color: #0000ff;">="viewport"</span><span style="color: #ff0000;"> content</span><span style="color: #0000ff;">="width=device-width, initial-scale=1.0"</span><span style="color: #0000ff;">&gt;</span>
+    <span style="color: #0000ff;">&lt;</span><span style="color: #800000;">title</span><span style="color: #0000ff;">&gt;</span>scrapyd<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">title</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">head</span><span style="color: #0000ff;">&gt;</span>
+
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">body</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">p</span><span style="color: #0000ff;">&gt;</span>仅用于内网环境下执行 scrapyd API<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">p</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">div </span><span style="color: #ff0000;">id</span><span style="color: #0000ff;">="result"</span><span style="color: #0000ff;">&gt;&lt;/</span><span style="color: #800000;">div</span><span style="color: #0000ff;">&gt;</span>
+
+<span style="color: #0000ff;">&lt;</span><span style="color: #800000;">script</span><span style="color: #0000ff;">&gt;</span>
+<span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;"> parseQueryString(url) {
+    </span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> urlParams </span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;"> {};
+    url.replace(
+        </span><span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> RegExp(</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">([^?=&amp;]+)(=([^&amp;]*))?</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">, </span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">g</span><span style="background-color: #f5f5f5; color: #000000;">"</span><span style="background-color: #f5f5f5; color: #000000;">),
+        </span><span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;">($</span><span style="background-color: #f5f5f5; color: #000000;">0</span><span style="background-color: #f5f5f5; color: #000000;">, $</span><span style="background-color: #f5f5f5; color: #000000;">1</span><span style="background-color: #f5f5f5; color: #000000;">, $</span><span style="background-color: #f5f5f5; color: #000000;">2</span><span style="background-color: #f5f5f5; color: #000000;">, $</span><span style="background-color: #f5f5f5; color: #000000;">3</span><span style="background-color: #f5f5f5; color: #000000;">) {
+            urlParams[$</span><span style="background-color: #f5f5f5; color: #000000;">1</span><span style="background-color: #f5f5f5; color: #000000;">] </span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;"> $</span><span style="background-color: #f5f5f5; color: #000000;">3</span><span style="background-color: #f5f5f5; color: #000000;">;
+        }
+    );
+    </span><span style="background-color: #f5f5f5; color: #0000ff;">return</span><span style="background-color: #f5f5f5; color: #000000;"> urlParams;
+}
+
+</span><span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;"> curl(opt, project, job_or_spider) {
+    console.log(opt);
+    console.log(project);
+    console.log(job_or_spider);    
+    </span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> formdata </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> FormData();
+    formdata.append(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">project</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">, project);
+    </span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;">(opt </span><span style="background-color: #f5f5f5; color: #000000;">==</span> <span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">cancel</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">) {
+        formdata.append(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">job</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">, job_or_spider);
+    } </span><span style="background-color: #f5f5f5; color: #0000ff;">else</span><span style="background-color: #f5f5f5; color: #000000;"> {
+        formdata.append(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">spider</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">, job_or_spider);
+    }
+
+    </span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> req </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">new</span><span style="background-color: #f5f5f5; color: #000000;"> XMLHttpRequest();
+    req.onreadystatechange </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">function</span><span style="background-color: #f5f5f5; color: #000000;">() {
+        </span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;"> (</span><span style="background-color: #f5f5f5; color: #0000ff;">this</span><span style="background-color: #f5f5f5; color: #000000;">.readyState </span><span style="background-color: #f5f5f5; color: #000000;">==</span> <span style="background-color: #f5f5f5; color: #000000;">4</span><span style="background-color: #f5f5f5; color: #000000;">) {
+            </span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;"> (</span><span style="background-color: #f5f5f5; color: #0000ff;">this</span><span style="background-color: #f5f5f5; color: #000000;">.status </span><span style="background-color: #f5f5f5; color: #000000;">==</span> <span style="background-color: #f5f5f5; color: #000000;">200</span><span style="background-color: #f5f5f5; color: #000000;">) {
+                document.querySelector(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">#result</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">).innerHTML </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">this</span><span style="background-color: #f5f5f5; color: #000000;">.responseText;
+            } </span><span style="background-color: #f5f5f5; color: #0000ff;">else</span><span style="background-color: #f5f5f5; color: #000000;"> {
+                alert(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">status code: </span><span style="background-color: #f5f5f5; color: #000000;">'</span> <span style="background-color: #f5f5f5; color: #000000;">+</span> <span style="background-color: #f5f5f5; color: #0000ff;">this</span><span style="background-color: #f5f5f5; color: #000000;">.status);
+            }
+        } </span><span style="background-color: #f5f5f5; color: #0000ff;">else</span><span style="background-color: #f5f5f5; color: #000000;"> {
+            document.querySelector(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">#result</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">).innerHTML </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">this</span><span style="background-color: #f5f5f5; color: #000000;">.readyState;
+        }
+    };
+    req.open(</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">post</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">, window.location.protocol</span><span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">//</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;">window.location.host</span><span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">/</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;">opt</span><span style="background-color: #f5f5f5; color: #000000;">+</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">.json</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">, Async </span><span style="background-color: #f5f5f5; color: #000000;">=</span> <span style="background-color: #f5f5f5; color: #0000ff;">true</span><span style="background-color: #f5f5f5; color: #000000;">);    req.send(formdata);
+}
+
+</span><span style="background-color: #f5f5f5; color: #0000ff;">var</span><span style="background-color: #f5f5f5; color: #000000;"> kwargs </span><span style="background-color: #f5f5f5; color: #000000;">=</span><span style="background-color: #f5f5f5; color: #000000;"> parseQueryString(location.search);
+</span><span style="background-color: #f5f5f5; color: #0000ff;">if</span><span style="background-color: #f5f5f5; color: #000000;"> (kwargs.opt </span><span style="background-color: #f5f5f5; color: #000000;">==</span> <span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">cancel</span><span style="background-color: #f5f5f5; color: #000000;">'</span> <span style="background-color: #f5f5f5; color: #000000;">||</span><span style="background-color: #f5f5f5; color: #000000;"> kwargs.opt </span><span style="background-color: #f5f5f5; color: #000000;">==</span> <span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">schedule</span><span style="background-color: #f5f5f5; color: #000000;">'</span><span style="background-color: #f5f5f5; color: #000000;">) {
+    curl(kwargs.opt, kwargs.project, kwargs.job_or_spider);          
+} 
+</span><span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">script</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">body</span><span style="color: #0000ff;">&gt;</span>
+<span style="color: #0000ff;">&lt;/</span><span style="color: #800000;">html</span><span style="color: #0000ff;">&gt;</span></pre>
+</div>
+<span class="cnblogs_code_collapse">scrapyd.html</span></div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>4.实现效果</h2>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180715183824277-1929454739.png" alt="" /></p>
+<p>&nbsp;</p>
+<h3>(1) 点击 STOP 超链接</h3>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180715183927242-1427021321.png" alt="" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>(2) 返回 Jobs 页面</h3>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180715184104690-981677398.png" alt="" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>(3) 点击 START 超链接</h3>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180715184211676-179138073.png" alt="" /></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>(4) 返回 Jobs 页面</h3>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180715184339119-1038398588.png" alt="" /></p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-15 18:47</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9314490" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(9314490);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 9314490, cb_entryCreatedDate = '2018-07-15 18:47', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

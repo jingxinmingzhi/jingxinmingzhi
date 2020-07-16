@@ -1,0 +1,132 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/scrapy_jobdir_to_redis.html">
+    <span>scrapy_redis 相关: 将 jobdir 保存的爬虫进度转移到 Redis</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<p><a href="https://www.cnblogs.com/my8100/p/scrapy_hidden_bug_of_requests_queue.html" target="_blank"> Scrapy 隐含 bug: 强制关闭爬虫后从 requests.queue 读取的已保存 request 数量可能有误</a></p>
+<h2>1.说明</h2>
+<p>Scrapy 设置 jobdir，停止爬虫后，保存文件目录结构：</p>
+<div class="cnblogs_code">
+<pre>crawl/apps/<span style="color: #000000;">
+├── <span style="color: #ff0000;">requests.queue</span>
+│   ├── active.json
+│   ├── <span style="color: #ff0000;">p0</span>
+│   └── <span style="color: #ff0000;">p1</span>
+├── <span style="color: #ff0000;">requests.seen</span>
+└── spider.state</span></pre>
+</div>
+<p><strong>requests.queue/p0</strong> 文件保存 priority=0 的未调度 request， <span style="color: #ff0000;">p-1 对应实际 priority=1 的高优先级 request，</span><span style="color: #ff0000;">转移到 redis 有序集合时，score 值越小排序越靠前，因此取 score 为 -1。</span>以此类推，p1 对应 priority=-1 的低优先级 request。</p>
+<p><strong>requests.seen</strong> 保存请求指纹过滤器对已入队 request 的 hash 值，每行一个值。</p>
+<p><a href="https://doc.scrapy.org/en/latest/topics/jobs.html?highlight=spider.state#keeping-persistent-state-between-batches" target="_blank">spider.state 涉及自定义属性的持久化存储</a>，不在本文处理范围以内。</p>
+<p> </p>
+<h2>2.实现代码</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">import</span><span style="color: #000000;"> os
+</span><span style="color: #0000ff;">from</span> os.path <span style="color: #0000ff;">import</span><span style="color: #000000;"> join
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> re
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> struct
+
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> redis
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> sadd_dupefilter(jobdir, redis_server, name):
+    </span><span style="color: #800000;">"""</span><span style="color: #800000;">See python/lib/site-packages/scrapy/dupefilters.py</span><span style="color: #800000;">"""</span><span style="color: #000000;">
+    
+    file </span>= join(jobdir, <span style="color: #800000;">'</span><span style="color: #800000;">requests.seen</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    with open(file) as f:
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">Processing %s, it may take minutes...</span><span style="color: #800000;">'</span>%<span style="color: #000000;">file)
+        key </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%s:dupefilter</span><span style="color: #800000;">'</span>%<span style="color: #000000;">name
+        </span><span style="color: #0000ff;">for</span> x <span style="color: #0000ff;">in</span><span style="color: #000000;"> f:
+            redis_server.sadd(key, x.rstrip())
+    </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">Result: {} {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(key, redis_server.scard(key)))
+
+
+</span><span style="color: #0000ff;">def</span><span style="color: #000000;"> zadd_requests(jobdir, redis_server, name):
+    </span><span style="color: #800000;">"""</span><span style="color: #800000;">See python/lib/site-packages/queuelib/queue.py</span><span style="color: #800000;">"""</span><span style="color: #000000;">
+    
+    SIZE_FORMAT </span>= <span style="color: #800000;">"</span><span style="color: #800000;">&gt;L</span><span style="color: #800000;">"</span><span style="color: #000000;">
+    SIZE_SIZE </span>=<span style="color: #000000;"> struct.calcsize(SIZE_FORMAT)
+    
+    key </span>= <span style="color: #800000;">'</span><span style="color: #800000;">%s:requests</span><span style="color: #800000;">'</span>%<span style="color: #000000;">name
+    queue_dir </span>= join(jobdir, <span style="color: #800000;">'</span><span style="color: #800000;">requests.queue</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+    file_list </span>=<span style="color: #000000;"> os.listdir(queue_dir)
+    file_score_dict </span>= dict([(f, int(f[1:])) <span style="color: #0000ff;">for</span> f <span style="color: #0000ff;">in</span><span style="color: #000000;"> file_list 
+                                                </span><span style="color: #0000ff;">if</span> re.match(r<span style="color: #800000;">'</span><span style="color: #800000;">^p-?\d+$</span><span style="color: #800000;">'</span><span style="color: #000000;">, f)])
+    </span><span style="color: #0000ff;">for</span> (file, score) <span style="color: #0000ff;">in</span><span style="color: #000000;"> file_score_dict.items():
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">Processing %s, it may take minutes...</span><span style="color: #800000;">'</span>%<span style="color: #000000;">file)
+        f </span>= open(join(queue_dir, file), <span style="color: #800000;">'</span><span style="color: #800000;">rb+</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+        qsize </span>=<span style="color: #000000;"> f.read(SIZE_SIZE)
+        total_size, </span>=<span style="color: #000000;"> struct.unpack(SIZE_FORMAT, qsize)
+        f.seek(0, os.SEEK_END)
+
+        actual_size </span>=<span style="color: #000000;"> 0
+        </span><span style="color: #0000ff;">while</span><span style="color: #000000;"> True:
+            </span><span style="color: #0000ff;">if</span> f.tell() ==<span style="color: #000000;"> SIZE_SIZE:
+                </span><span style="color: #0000ff;">break</span><span style="color: #000000;">
+            f.seek(</span>-<span style="color: #000000;">SIZE_SIZE, os.SEEK_CUR)
+            size, </span>=<span style="color: #000000;"> struct.unpack(SIZE_FORMAT, f.read(SIZE_SIZE)) 
+            f.seek(</span>-size-<span style="color: #000000;">SIZE_SIZE, os.SEEK_CUR)
+            data </span>=<span style="color: #000000;"> f.read(size)
+            redis_server.execute_command(</span><span style="color: #800000;">'</span><span style="color: #800000;">ZADD</span><span style="color: #800000;">'</span><span style="color: #000000;">, key, score, data)
+            f.seek(</span>-<span style="color: #000000;">size, os.SEEK_CUR)
+            actual_size </span>+= 1
+        <span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">total_size {}, actual_size {}, score {}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                total_size, actual_size, score))
+        </span><span style="color: #0000ff;">print</span>(<span style="color: #800000;">'</span><span style="color: #800000;">Result: {} {}</span><span style="color: #800000;">'</span>.format(key, redis_server.zlexcount(key, <span style="color: #800000;">'</span><span style="color: #800000;">-</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">+</span><span style="color: #800000;">'</span><span style="color: #000000;">)))
+
+
+</span><span style="color: #0000ff;">if</span> <span style="color: #800080;">__name__</span> == <span style="color: #800000;">'</span><span style="color: #800000;">__main__</span><span style="color: #800000;">'</span><span style="color: #000000;">:
+    name </span>= <span style="color: #800000;">'</span><span style="color: #800000;">test</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    jobdir </span>= <span style="color: #800000;">'</span><span style="color: #800000;">/home/yourproject/crawl/apps</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    database_num </span>= 0
+    <span style="color: #008000;">#</span><span style="color: #008000;"> apps/</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> ├── requests.queue</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> │   ├── active.json</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> │   ├── p0</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> │   └── p1</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> ├── requests.seen</span>
+    <span style="color: #008000;">#</span><span style="color: #008000;"> └── spider.state</span>
+<span style="color: #000000;">    
+    password </span>= <span style="color: #800000;">'</span><span style="color: #800000;">password</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    host </span>= <span style="color: #800000;">'</span><span style="color: #800000;">127.0.0.1</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    port </span>= <span style="color: #800000;">'</span><span style="color: #800000;">6379</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    redis_server </span>= redis.StrictRedis.from_url(<span style="color: #800000;">'</span><span style="color: #800000;">redis://:{password}@{host}:{port}/{database_num}</span><span style="color: #800000;">'</span><span style="color: #000000;">.format(
+                                                password</span>=password, host=<span style="color: #000000;">host,
+                                                port</span>=port, database_num=<span style="color: #000000;">database_num))
+    
+    sadd_dupefilter(jobdir, redis_server, name)
+    zadd_requests(jobdir, redis_server, name)</span></pre>
+</div>
+<p> </p>
+<p> </p>
+<h2>3.运行结果</h2>
+<p><img src="https://images2018.cnblogs.com/blog/892328/201807/892328-20180711190610613-1246052797.png" alt=""></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-07-11 19:07</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=9296120" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(9296120);return false;">收藏</a></div>
+        </div>

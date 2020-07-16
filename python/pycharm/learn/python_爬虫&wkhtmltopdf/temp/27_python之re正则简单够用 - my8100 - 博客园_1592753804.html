@@ -1,0 +1,195 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/python_re.html">
+    <span>python之re正则简单够用</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p> </p>
+<h2>1.参考</h2>
+<p><a href="http://www.cnblogs.com/huxi/archive/2010/07/04/1771073.html" target="_blank">Python正则表达式指南</a></p>
+<p><a href="https://docs.python.org/2/library/re.html" target="_blank">https://docs.python.org/2/library/re.html</a></p>
+<p><a href="https://docs.python.org/2/howto/regex.html" target="_blank">https://docs.python.org/2/howto/regex.html</a></p>
+<p><a href="https://docs.python.org/3/library/re.html" target="_blank">https://docs.python.org/3/library/re.html</a></p>
+<table border="0">
+<tbody>
+<tr>
+<td>string</td>
+<td>re</td>
+<td>备注</td>
+</tr>
+<tr>
+<td> </td>
+<td>re.match(pattern, string, flags=0)</td>
+<td>at the start of the string</td>
+</tr>
+<tr>
+<td>S.find(sub [,start [,end]]) -&gt; int</td>
+<td>re.search(pattern, string, flags=0)</td>
+<td>Scan through string looking for a match</td>
+</tr>
+<tr>
+<td>S.replace(old, new[, count]) -&gt; string</td>
+<td>re.findall(pattern, string, flags=0)</td>
+<td>re.finditer</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h2>2.分组 m.group()</h2>
+<p>xx</p>
+<div class="cnblogs_code">
+<pre>In [560<span style="color: #000000;">]: m.group?
+Docstring:
+group([group1, ...]) </span>-&gt; str <span style="color: #0000ff;">or</span><span style="color: #000000;"> tuple.
+Return subgroup(s) of the match by indices </span><span style="color: #0000ff;">or</span><span style="color: #000000;"> names.
+For 0 returns the entire match.
+Type:      builtin_function_or_method
+
+In [</span>542]: m=re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(-{1,2}(gr))</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">pro---gram-files</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>543]: m.group()  <span style="color: #008000;">#</span><span style="color: #008000;">自带</span>
+Out[543]: <span style="color: #800000;">'</span><span style="color: #800000;">--gr</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>544]: <span style="color: #ff00ff;">m.group(0)</span>  <span style="color: #008000;">#</span><span style="color: #008000;">自带，返回整个匹配到的字符串 For 0 returns the entire match. 注意 m.string 是被检索的完整原文。。。</span>
+Out[544]: <span style="color: #800000;">'</span><span style="color: #800000;">--gr</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>545]: m.group(1<span style="color: #000000;">)
+Out[</span>545]: <span style="color: #800000;">'</span><span style="color: #800000;">--gr</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>546]: m.group(2<span style="color: #000000;">)
+Out[</span>546]: <span style="color: #800000;">'</span><span style="color: #800000;">gr</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>547]: m.group(3)  <span style="color: #008000;">#</span><span style="color: #008000;">加的 （ <span style="color: #ff0000;">不满足则报错</span></span>
+---------------------------------------------------------------------------<span style="color: #000000;">
+IndexError                                Traceback (most recent call last)
+</span>&lt;ipython-input-547-71a2c7935517&gt; <span style="color: #0000ff;">in</span> &lt;module&gt;<span style="color: #000000;">()
+</span>----&gt; 1 m.group(3<span style="color: #000000;">)
+
+IndexError: no such group
+
+In [</span>548]: m.group(1,2)  <span style="color: #008000;">#</span><span style="color: #008000;">选择多个分组，返回tuple</span>
+Out[548]: (<span style="color: #800000;">'</span><span style="color: #800000;">--gr</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">gr</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>549]: m.<span style="color: #ff00ff;">groups</span>()  <span style="color: #008000;">#</span><span style="color: #008000;">选择所有分组</span>
+Out[549]: (<span style="color: #800000;">'</span><span style="color: #800000;">--gr</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">gr</span><span style="color: #800000;">'</span>)</pre>
+</div>
+<p> </p>
+<p>m.groupdict 用于命名分组</p>
+<div class="cnblogs_code">
+<pre>In [557<span style="color: #000000;">]: m.groupdict?
+Docstring:
+groupdict([default</span>=None]) -&gt;<span style="color: #000000;"> dict.
+Return a dictionary containing all the named subgroups of the match,
+keyed by the subgroup name. The default argument </span><span style="color: #0000ff;">is</span> used <span style="color: #0000ff;">for</span><span style="color: #000000;"> groups
+that did </span><span style="color: #0000ff;">not</span> participate <span style="color: #0000ff;">in</span><span style="color: #000000;"> the match
+Type:      builtin_function_or_method
+
+In [</span>558]: m=re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(-{1,2}(?P&lt;GR&gt;gr))</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">pro---gram-files</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>559<span style="color: #000000;">]: m.groupdict()
+Out[</span>559]: {<span style="color: #800000;">'</span><span style="color: #800000;">GR</span><span style="color: #800000;">'</span>: <span style="color: #800000;">'</span><span style="color: #800000;">gr</span><span style="color: #800000;">'</span>}</pre>
+</div>
+<p> </p>
+<h2>3.提取 re.findall()</h2>
+<p>re.findall(pattern, string, flags=0)</p>
+<div class="cnblogs_code">
+<pre>In [97]: text = <span style="color: #800000;">"</span><span style="color: #800000;">He was carefully disguised but captured quickly by police.</span><span style="color: #800000;">"</span><span style="color: #000000;">
+
+In [</span>98]: re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">\w+ly</span><span style="color: #800000;">"</span><span style="color: #000000;">, text)  #相当于 m.group(0)
+Out[</span>98]: [<span style="color: #800000;">'</span><span style="color: #800000;">carefully</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">quickly</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>99]: re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">(\w+)ly</span><span style="color: #800000;">"</span><span style="color: #000000;">, text)  #手动加单个括号限定内容，相当于返回 m.group(1)
+Out[</span>99]: [<span style="color: #800000;">'</span><span style="color: #800000;">careful</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">quick</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>100]: re.findall(r<span style="color: #800000;">"</span><span style="color: #800000;">((\w+)(ly))</span><span style="color: #800000;">"</span><span style="color: #000000;">, text)  #多个括号，从左到右数 (，相当于返回 m.groups()
+Out[</span>100]: [(<span style="color: #800000;">'</span><span style="color: #800000;">carefully</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">careful</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">ly</span><span style="color: #800000;">'</span>), (<span style="color: #800000;">'</span><span style="color: #800000;">quickly</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">quick</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">ly</span><span style="color: #800000;">'</span>)]</pre>
+<p>  In [102]: re.findall(r"((1\w+)(ly))", text)<br>  Out[102]: []</p>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<h2>4.替换 re.sub() </h2>
+<p>re.sub(pattern, repl, string, count=0, flags=0)</p>
+<p>repl 里面的 前向引用 Backreferences, such as <code class="docutils literal"><span class="pre">\6</span></code>, are replaced with the substring matched by group 6 in the pattern. 也可以通过 func 实现。</p>
+<p>注意 mysql regexp 不支持 \1</p>
+<p><a href="https://stackoverflow.com/questions/4122393/negative-backreferences-in-mysql-regexp" target="_blank">https://stackoverflow.com/questions/4122393/negative-backreferences-in-mysql-regexp</a>  提到 unless you can install/use LIB_MYSQLUDF_PREG.</p>
+<p><a href="https://stackoverflow.com/questions/7058209/reference-to-groups-in-a-mysql-regex" target="_blank">https://stackoverflow.com/questions/7058209/reference-to-groups-in-a-mysql-regex</a></p>
+<div class="cnblogs_code">
+<pre>In [158]: <span style="color: #0000ff;">def</span><span style="color: #000000;"> func(m):
+     ...:     </span><span style="color: #0000ff;">return</span> m.group(<span style="color: #800000;">'</span><span style="color: #800000;">DEF</span><span style="color: #800000;">'</span>)+<span style="color: #800000;">'</span> <span style="color: #800000;">'</span>+m.group(2)  <span style="color: #008000;">#</span><span style="color: #008000;">别名</span>
+<span style="color: #000000;">     ...:
+
+In [</span>159]: re.sub(r<span style="color: #800000;">'</span><span style="color: #800000;">(<span style="color: #ff00ff;">?P&lt;DEF&gt;</span>def)\s+([a-z]+)\s*\(\s*\):</span><span style="color: #800000;">'</span>, <span style="color: #ff00ff;">func</span>, <span style="color: #800000;">'</span><span style="color: #800000;">def func(): def f():</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>159]: <span style="color: #800000;">'</span><span style="color: #800000;">def func def f</span><span style="color: #800000;">'</span><span style="color: #000000;">
+
+In [</span>160]: re.sub(r<span style="color: #800000;">'</span><span style="color: #800000;">(?P&lt;DEF&gt;def)\s+([a-z]+)\s*\(\s*\):</span><span style="color: #800000;">'</span>, <span style="color: #ff00ff;">r'\1 \2'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">def func(): def f():</span><span style="color: #800000;">'</span>)  <span style="color: #008000;">#</span><span style="color: #008000;">不支持 \别名</span>
+Out[160]: <span style="color: #800000;">'</span><span style="color: #800000;">def func def f</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+<h2>5. Backreferences 前向引用在 pattern</h2>
+<h3>5.1扑克牌找对子</h3>
+<div class="cnblogs_code">
+<pre>In [204]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.).*\1</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">ab123</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+
+In [</span>205]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.).*\1</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">ab121</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>205]: &lt;_sre.SRE_Match at 0x71ca120&gt;<span style="color: #000000;">
+
+In [</span>206<span style="color: #000000;">]: _.group()
+Out[</span>206]: <span style="color: #800000;">'</span><span style="color: #800000;">121</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+<h3>5.2连续多个相同</h3>
+<div class="cnblogs_code">
+<pre>In [207]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">.{3}</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">1122</span><span style="color: #800000;">'</span>)  <span style="color: #008000;">#</span><span style="color: #008000;">错误</span>
+Out[207]: &lt;_sre.SRE_Match at 0x71b94a8&gt;<span style="color: #000000;">
+
+In [</span>208]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.){3}</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">1122</span><span style="color: #800000;">'</span>) <span style="color: #008000;">#</span><span style="color: #008000;">错误</span>
+Out[208]: &lt;_sre.SRE_Match at 0x71ca198&gt;<span style="color: #000000;">
+
+In [</span>209]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.)\1\1</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">1122</span><span style="color: #800000;">'</span>) <span style="color: #008000;">#</span><span style="color: #008000;">正确</span>
+<span style="color: #000000;">
+In [</span>210]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.)\1\1</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">1112</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>210]: &lt;_sre.SRE_Match at 0x71ca210&gt;<span style="color: #000000;">
+
+In [</span>211]: re.search(r<span style="color: #800000;">'</span><span style="color: #800000;">(.)\1{2}</span><span style="color: #800000;">'</span>,<span style="color: #800000;">'</span><span style="color: #800000;">1112</span><span style="color: #800000;">'</span><span style="color: #000000;">)
+Out[</span>211]: &lt;_sre.SRE_Match at 0x71ca288&gt;<span style="color: #000000;">
+
+In [</span>212<span style="color: #000000;">]: _.group()
+Out[</span>212]: <span style="color: #800000;">'</span><span style="color: #800000;">111</span><span style="color: #800000;">'</span></pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-30 10:34</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7750738" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7750738);return false;">收藏</a></div>
+        </div>

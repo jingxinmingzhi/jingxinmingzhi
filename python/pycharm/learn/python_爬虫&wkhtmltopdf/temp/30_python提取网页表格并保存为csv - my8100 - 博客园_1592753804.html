@@ -1,0 +1,195 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/save_html_table_to_csv.html">
+    <span>python提取网页表格并保存为csv</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p> </p>
+<h1>1.参考</h1>
+<p><a href="http://www.w3school.com.cn/html/html_tables.asp" target="_blank">W3C HTML 表格</a></p>
+<h2>表格标签</h2>
+<table class="dataintable">
+<tbody>
+<tr><th>表格</th><th>描述</th></tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_table.asp">&lt;table&gt;</a></td>
+<td>定义表格</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_caption.asp">&lt;caption&gt;</a></td>
+<td>定义表格标题。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_th.asp">&lt;th&gt;</a></td>
+<td>定义表格的表头。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_tr.asp">&lt;tr&gt;</a></td>
+<td>定义表格的行。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_td.asp">&lt;td&gt;</a></td>
+<td>定义表格单元。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_thead.asp">&lt;thead&gt;</a></td>
+<td>定义表格的页眉。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_tbody.asp">&lt;tbody&gt;</a></td>
+<td>定义表格的主体。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_tfoot.asp">&lt;tfoot&gt;</a></td>
+<td>定义表格的页脚。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_col.asp">&lt;col&gt;</a></td>
+<td>定义用于表格列的属性。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/tags/tag_colgroup.asp">&lt;colgroup&gt;</a></td>
+<td>定义表格列的组。</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p> </p>
+<p>表格元素定位</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171022150848834-1257069681.jpg" alt=""></p>
+<p><span style="color: #ff0000;">参看网页源代码并没有 thead 和 tbody。。。</span></p>
+<div class="cnblogs_code">
+<pre>&lt;table <span style="color: #0000ff;">class</span>=<span style="color: #800000;">"</span><span style="color: #800000;">wikitable sortable</span><span style="color: #800000;">"</span> style=<span style="color: #800000;">"</span><span style="color: #800000;">text-align: center; font-size: 85%; width: auto; table-layout: fixed;</span><span style="color: #800000;">"</span>&gt;
+　　&lt;caption&gt;List of text editors&lt;/caption&gt;
+　　&lt;tr&gt;
+　　　　&lt;th style=<span style="color: #800000;">"</span><span style="color: #800000;">width: 12em</span><span style="color: #800000;">"</span>&gt;Name&lt;/th&gt;
+　　　　&lt;th&gt;Creator&lt;/th&gt;
+　　　　&lt;th&gt;First public release&lt;/th&gt;
+　　　　&lt;th data-sort-type=<span style="color: #800000;">"</span><span style="color: #800000;">number</span><span style="color: #800000;">"</span>&gt;Latest stable version&lt;/th&gt;
+　　　　&lt;th&gt;Latest Release Date&lt;/th&gt;
+　　　　&lt;th&gt;&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Programming_language</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Programming language</span><span style="color: #800000;">"</span>&gt;Programming language&lt;/a&gt;&lt;/th&gt;
+　　　　&lt;th data-sort-type=<span style="color: #800000;">"</span><span style="color: #800000;">currency</span><span style="color: #800000;">"</span>&gt;Cost (&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/United_States_dollar</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">United States dollar</span><span style="color: #800000;">"</span>&gt;US$&lt;/a&gt;)&lt;/th&gt;
+　　　　&lt;th&gt;&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Software_license</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Software license</span><span style="color: #800000;">"</span>&gt;Software license&lt;/a&gt;&lt;/th&gt;
+　　　　&lt;th&gt;&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Free_and_open-source_software</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Free and open-source software</span><span style="color: #800000;">"</span>&gt;Open source&lt;/a&gt;&lt;/th&gt;
+　　　　&lt;th&gt;&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Command-line_interface</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Command-line interface</span><span style="color: #800000;">"</span>&gt;Cli available&lt;/a&gt;&lt;/th&gt;
+　　　　&lt;th&gt;Minimum installed size&lt;/th&gt;
+　　&lt;/tr&gt;
+　　&lt;tr&gt;
+　　　　&lt;th </pre>
+</div>
+<h1>2.提取表格数据</h1>
+<p>表格标题可能出现超链接，导致标题被拆分，</p>
+<p>也可能不带表格标题。。</p>
+<div class="cnblogs_code">
+<pre>&lt;caption&gt;Text editor support <span style="color: #0000ff;">for</span> remote file editing over <br>　　&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Lists_of_network_protocols</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Lists of network protocols</span><span style="color: #800000;">"</span>&gt;network protocols&lt;/a&gt;<br>&lt;/caption&gt;</pre>
+</div>
+<p> </p>
+<p>表格内容换行</p>
+<div class="cnblogs_code">
+<pre>&lt;td&gt;<br>　　&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Plan_9_from_Bell_Labs</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Plan 9 from Bell Labs</span><span style="color: #800000;">"</span>&gt;Plan 9&lt;/a&gt;<br>　　 <span style="color: #0000ff;">and</span> <br>　　&lt;a href=<span style="color: #800000;">"</span><span style="color: #800000;">/wiki/Inferno_(operating_system)</span><span style="color: #800000;">"</span> title=<span style="color: #800000;">"</span><span style="color: #800000;">Inferno (operating system)</span><span style="color: #800000;">"</span>&gt;Inferno&lt;/a&gt;<br>&lt;/td&gt;</pre>
+</div>
+<p> </p>
+<p>tag 规律</p>
+<table border="0">
+<tbody>
+<tr>
+<td>table</td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td>thead tr1</td>
+<td><span style="color: #ff0000;">th</span></td>
+<td><span style="color: #ff0000;">th</span></td>
+<td><span style="color: #ff0000;">th</span></td>
+<td><span style="color: #ff0000;">th</span></td>
+</tr>
+<tr>
+<td>tbody tr2</td>
+<td><span style="color: #ff0000;">td/th</span></td>
+<td rowspan="3" colspan="3"><span style="color: #ff0000;">td</span></td>
+</tr>
+<tr>
+<td>tbody tr3</td>
+<td><span style="color: #ff0000;">td/th</span></td>
+</tr>
+<tr>
+<td>tbody tr3</td>
+<td><span style="color: #ff0000;">td/th</span></td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<h3>2.1提取所有表格标题列表</h3>
+<div class="cnblogs_code">
+<pre>filenames =<span style="color: #000000;"> []
+
+</span><span style="color: #0000ff;">for</span> index, table <span style="color: #0000ff;">in</span> enumerate(response.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//table</span><span style="color: #800000;">'</span><span style="color: #000000;">)):
+    caption </span>= table.xpath(<span style="color: #800000;">'</span><span style="color: #800000;"><span style="color: #ff0000;">string(</span>./caption)</span><span style="color: #800000;">'</span>).<span style="color: #ff0000;">extract_first()</span>    <span style="color: #008000;">#提取caption tag里面的所有text，包括子节点内的和文本子节点，</span><span style="color: #008000;">这样也行 caption = <span style="color: #ff0000;">''.join</span>(table.xpath('./caption//text()').<span style="color: #ff0000;">extract()</span>)</span>
+    filename = str(index+1)+<span style="color: #800000;">'</span><span style="color: #800000;">_</span><span style="color: #800000;">'</span>+caption <span style="color: #0000ff;">if</span> caption <span style="color: #0000ff;">else</span> str(index+1<span style="color: #000000;">)  #xpath 要用到 table 计数，从[1]开始
+    filenames.append(re.sub(r</span><span style="color: #800000;">'</span><span style="color: #800000;">[^\w\s()]</span><span style="color: #800000;">'</span>,<span style="color: #800000;">''</span>,filename))    <span style="color: #008000;">#</span><span style="color: #008000;">移除特殊符号</span>
+<span style="color: #000000;">
+
+In [</span>233<span style="color: #000000;">]: filenames
+Out[</span>233<span style="color: #000000;">]:
+[u</span><span style="color: #800000;">'</span><span style="color: #800000;">1_List of text editors</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">2_Text editor support for various operating systems</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">3_Available languages for the UI</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">4_Text editor support for common document interfaces</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">5_Text editor support for basic editing features</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">6_Text editor support for programming features (see source code editor)</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">7_Text editor support for other programming features</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ </span><span style="color: #800000;">'</span><span style="color: #800000;">8</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">9_Text editor support for key bindings</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">10_Text editor support for remote file editing over network protocols</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">11_Text editor support for some of the most common character encodings</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">12_Right to left (RTL)  bidirectional (bidi) support</span><span style="color: #800000;">'</span><span style="color: #000000;">,
+ u</span><span style="color: #800000;">'</span><span style="color: #800000;">13_Support for newline characters in line endings</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<p> </p>
+<h3>2.2每个表格分别写入csv文件</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #0000ff;">for</span> index, filename <span style="color: #0000ff;">in</span><span style="color: #000000;"> enumerate(filenames):
+    </span><span style="color: #0000ff;">print</span><span style="color: #000000;"> filename
+    with open(</span><span style="color: #800000;">'</span><span style="color: #800000;">%s.csv</span><span style="color: #800000;">'</span>%filename,<span style="color: #800000;">'</span><span style="color: #800000;">wb</span><span style="color: #800000;">'</span><span style="color: #000000;">) as fp:
+        writer </span>=<span style="color: #000000;"> csv.writer(fp)
+        </span><span style="color: #0000ff;">for</span> tr <span style="color: #0000ff;">in</span> response.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//table[%s]/tr</span><span style="color: #800000;">'</span>%(index+1<span style="color: #000000;">)):
+            writer.writerow([i.xpath(</span><span style="color: #800000;">'</span><span style="color: #800000;">string(.)</span><span style="color: #800000;">'</span>)<span style="color: #ff00ff;">.extract_first().replace(u'\xa0', u' ').strip().encode('utf-8','replace')</span> <span style="color: #0000ff;">for</span> i <span style="color: #0000ff;">in</span> <span style="color: #ff0000;">tr.xpath('./*')</span>])  #xpath组合，限定 tag 范围，<span style="color: #ff0000;">tr.xpath('./th | ./td')</span></pre>
+</div>
+<p> </p>
+<p>代码处理 .replace(u'\xa0', u' ')</p>
+<p><a href="http://www.cnblogs.com/my8100/p/7709371.html" target="_blank">HTML转义字符&amp;npsp；表示non-breaking space，unicode编码为u'\xa0',超出gbk编码范围？</a></p>
+<p>使用 'w' 写csv文件，会出现如下问题，使用'wb' 即可解决问题</p>
+<p><a href="https://www.crifan.com/python_csv_writer_writerow_redundant_new_line/" target="_blank">【已解决】Python中通过csv的writerow输出的内容有多余的空行 – 在路上</a></p>
+<p>所有表格写入同一excel文件的不同工作表 sheet，需要使用xlwt</p>
+<p><a href="http://www.guanggua.com/question/5705588-python-creating-excel-workbook-and-dumping-csv-files-as-worksheets.html" target="_blank">python ︰ 创建 excel 工作簿和倾倒 csv 文件作为工作表</a></p>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-22 16:11</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7710448" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7710448);return false;">收藏</a></div>
+        </div>

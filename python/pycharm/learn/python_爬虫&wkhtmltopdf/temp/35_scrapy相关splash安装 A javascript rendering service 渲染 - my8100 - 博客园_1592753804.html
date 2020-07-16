@@ -1,0 +1,254 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/splash_install.html">
+    <span>scrapy相关：splash安装 A javascript rendering service 渲染</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>splash： 美人鱼  溅，泼 </p>
+<h1>1.参考</h1>
+<p><a href="http://www.jianshu.com/p/4052926bc12c" target="_blank">Splash使用初体验</a> </p>
+<p>docker在windows下的安装</p>
+<p> </p>
+<p><a href="https://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/" target="_blank">https://blog.scrapinghub.com/2015/03/02/handling-javascript-in-scrapy-with-splash/</a></p>
+<p><a href="https://github.com/scrapinghub/splash">Splash</a> is our in-house solution for JavaScript rendering, implemented in Python using <a href="https://twistedmatrix.com/">Twisted</a> and <a href="http://qt-project.org/">QT</a>.  官方博客介绍，splash 是 scrapinghub 的内部解决方案？？？</p>
+<p><a href="https://scrapinghub.com/" target="_blank">https://scrapinghub.com/ </a></p>
+<p>We're the creators and the main maintainers of Scrapy. 创始人和维护者...背后的大佬</p>
+<p> </p>
+<p><a href="https://github.com/scrapinghub/splash" target="_blank">github: scrapinghub/splash</a></p>
+<p>Splash is a javascript rendering service with an HTTP API. It's a lightweight browser with an HTTP API, implemented in Python 3 using Twisted and QT5.</p>
+<p>It's fast, lightweight and state-less which makes it easy to distribute. 用于渲染js页面</p>
+<p><a href="http://splash.readthedocs.io/en/latest/index.html" target="_blank">http://splash.readthedocs.io/en/latest/index.html</a></p>
+<p>splash 官方文档</p>
+<p><a href="https://github.com/scrapy-plugins/scrapy-splash" target="_blank">github: scrapy-plugins/scrapy-splash</a></p>
+<p>This library provides <a href="https://github.com/scrapy/scrapy">Scrapy</a> and JavaScript integration using <a href="https://github.com/scrapinghub/splash">Splash</a>. 如何在 scrapy 中使用 splash</p>
+<p> </p>
+<p><a href="http://splash.readthedocs.io/en/stable/api.html#request-filters" target="_blank">http://splash.readthedocs.io/en/stable/api.html#request-filters</a>　　</p>
+<p>Splash supports filtering requests based on <a class="reference external" href="https://adblockplus.org/">Adblock Plus</a> rules.  还没有搞定</p>
+<p> </p>
+<h1>2.安装使用</h1>
+<p><a href="https://stackoverflow.com/questions/30345623/scraping-dynamic-content-using-python-scrapy" target="_blank">https://stackoverflow.com/questions/30345623/scraping-dynamic-content-using-python-scrapy</a></p>
+<p>提到 <code><a href="https://github.com/scrapinghub/scrapyjs#installation" rel="noreferrer">ScrapyJS</a></code>，但是链接地址跳转 https://github.com/scrapy-plugins/scrapy-splash#installation</p>
+<p>https://pypi.python.org/pypi/scrapyjs</p>
+<p>https://pypi.python.org/pypi/scrapy-splash</p>
+<h2>2.1 安装 scrapy-splash</h2>
+<div class="cnblogs_code">
+<pre>C:\Users\win7&gt;pip install scrapy-<span style="color: #000000;">splash
+Collecting scrapy</span>-<span style="color: #000000;">splash
+  Downloading scrapy_splash</span>-0.7.2-py2.py3-none-<span style="color: #000000;">any.whl
+Installing collected packages: scrapy</span>-<span style="color: #000000;">splash
+Successfully installed scrapy</span>-splash-0.7.2</pre>
+</div>
+<h2>2.2 通过 docker 安装 image：scrapinghub/splash</h2>
+<p>官网找到下载链接</p>
+<p><a href="https://store.docker.com/editions/community/docker-ce-desktop-windows" target="_blank">https://store.docker.com/editions/community/docker-ce-desktop-windows</a></p>
+<div class="styles__subSectionTitle___15rsa">Get Docker Community Edition for Windows</div>
+<div class="dMarkdown">
+<p>Docker for Windows is available for free.</p>
+<p>Requires Microsoft Windows 10 Professional or Enterprise 64-bit. <span style="color: #ff0000;">For previous versions get <a href="https://www.docker.com/products/docker-toolbox"><span style="color: #ff0000;">Docker Toolbox</span></a>.</span></p>
+<p> </p>
+<p>右键管理员安装，最好勾选非必要项？？？</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171018180834443-1277637993.jpg" alt=""></p>
+<p> </p>
+<p>右键管理员启动 Docker Quickstart Terminal ，提示没找到 bash.exe</p>
+<p><img src="https://images2017.cnblogs.com/blog/892328/201710/892328-20171018182221771-415490502.jpg" alt=""></p>
+<p>输出：</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('da4d2a49-9b0a-449b-b27f-3f4322b088da')"><img id="code_img_closed_da4d2a49-9b0a-449b-b27f-3f4322b088da" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt=""><img id="code_img_opened_da4d2a49-9b0a-449b-b27f-3f4322b088da" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('da4d2a49-9b0a-449b-b27f-3f4322b088da',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="">
+<div id="cnblogs_code_open_da4d2a49-9b0a-449b-b27f-3f4322b088da" class="cnblogs_code_hide">
+<pre><span style="color: #000000;">Creating CA: C:\Users\win7\.docker\machine\certs\ca.pem
+Creating client certificate: C:\Users\win7\.docker\machine\certs\cert.pem
+Running pre</span>-<span style="color: #000000;">create checks...
+(default) Image cache directory does </span><span style="color: #0000ff;">not</span><span style="color: #000000;"> exist, creating it at C:\Users\win7\.docker\machine\cache...
+(default) No default Boot2Docker ISO found locally, downloading the latest release...
+(default) Latest release </span><span style="color: #0000ff;">for</span> github.com/boot2docker/boot2docker <span style="color: #0000ff;">is</span> v17.09.0-<span style="color: #000000;">ce
+(default) Downloading C:\Users\win7\.docker\machine\cache\boot2docker.iso </span><span style="color: #0000ff;">from</span> https://github.com/boot2docker/boot2docker/releases/download/v17.09.0-ce/<span style="color: #000000;">boot2docker.iso...
+(default) 0</span>%....10%....20%....30%....40%....50%....60%....70%....80%....90%....100%<span style="color: #000000;">
+Creating machine...
+(default) Copying C:\Users\win7\.docker\machine\cache\boot2docker.iso to C:\Users\win7\.docker\machine\machines\default\boot2docker.iso...
+(default) Creating VirtualBox VM...
+(default) Creating SSH key...
+(default) Starting the VM...
+(default) Check network to re</span>-create <span style="color: #0000ff;">if</span><span style="color: #000000;"> needed...
+(default) Windows might ask </span><span style="color: #0000ff;">for</span> the permission to create a network adapter. Sometimes, such confirmation window <span style="color: #0000ff;">is</span> minimized <span style="color: #0000ff;">in</span><span style="color: #000000;"> the taskbar.
+(default) Found a new host</span>-only adapter: <span style="color: #800000;">"</span><span style="color: #800000;">VirtualBox Host-Only Ethernet Adapter #2</span><span style="color: #800000;">"</span><span style="color: #000000;">
+(default) Windows might ask </span><span style="color: #0000ff;">for</span> the permission to configure a network adapter. Sometimes, such confirmation window <span style="color: #0000ff;">is</span> minimized <span style="color: #0000ff;">in</span><span style="color: #000000;"> the taskbar.
+(default) Windows might ask </span><span style="color: #0000ff;">for</span> the permission to configure a dhcp server. Sometimes, such confirmation window <span style="color: #0000ff;">is</span> minimized <span style="color: #0000ff;">in</span><span style="color: #000000;"> the taskbar.
+(default) Waiting </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> an IP...
+Waiting </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> machine to be running, this may take a few minutes...
+Detecting operating system of created instance...
+Waiting </span><span style="color: #0000ff;">for</span><span style="color: #000000;"> SSH to be available...
+Detecting the provisioner...
+Provisioning with boot2docker...
+Copying certs to the local machine directory...
+Copying certs to the remote machine...
+Setting Docker configuration on the remote daemon...
+Checking connection to Docker...
+Docker </span><span style="color: #0000ff;">is</span> up <span style="color: #0000ff;">and</span><span style="color: #000000;"> running!
+To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: D:\Program Files\Docker Toolbox\docker</span>-<span style="color: #000000;">machine.exe env default
+
+
+
+                        </span><span style="color: #008000;">#</span><span style="color: #008000;">#         .</span>
+                  <span style="color: #008000;">#</span><span style="color: #008000;"># ## ##        ==</span>
+               <span style="color: #008000;">#</span><span style="color: #008000;"># ## ## ## ##    ===</span>
+           /<span style="color: #800000;">"""""""""""""""</span><span style="color: #800000;">""\___/ ===
+      ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+           \______ o           __/
+             \    \         __/
+              \____\_______/
+
+docker is configured to use the default machine with IP 192.168.99.100
+For help getting started, check out the docs at https://docs.docker.com
+
+Start interactive shell
+
+win7@win7-PC MINGW64 ~
+$ docker info
+Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
+Images: 0
+Server Version: 17.09.0-ce
+Storage Driver: aufs
+ Root Dir: /mnt/sda1/var/lib/docker/aufs
+ Backing Filesystem: extfs
+ Dirs: 0
+ Dirperm1 Supported: true
+Logging Driver: json-file
+Cgroup Driver: cgroupfs
+Plugins:
+ Volume: local
+ Network: bridge host macvlan null overlay
+ Log: awslogs fluentd gcplogs gelf journald json-file logentries splunk syslog
+Swarm: inactive
+Runtimes: runc
+Default Runtime: runc
+Init Binary: docker-init
+containerd version: 06b9cb35161009dcb7123345749fef02f7cea8e0
+runc version: 3f2f8b84a77f73d38244dd690525642a72156c64
+init version: 949e6fa
+Security Options:
+ seccomp
+  Profile: default
+Kernel Version: 4.4.89-boot2docker
+Operating System: Boot2Docker 17.09.0-ce (TCL 7.2); HEAD : 06d5c35 - Wed Sep 27 23:22:43 UTC 2017
+OSType: linux
+Architecture: x86_64
+CPUs: 1
+Total Memory: 995.8MiB
+Name: default
+ID: O33J:6GDF:AQ6P:RBM7:6KLF:OZHY:2N3J:QZKV:YIJT:G3AI:XCPD:NZ3G
+Docker Root Dir: /mnt/sda1/var/lib/docker
+Debug Mode (client): false
+Debug Mode (server): true
+ File Descriptors: 17
+ Goroutines: 26
+ System Time: 2017-10-18T09:58:42.414047781Z
+ EventsListeners: 0
+Registry: https://index.docker.io/v1/
+Labels:
+ provider=virtualbox
+Experimental: false
+Insecure Registries:
+ 127.0.0.0/8
+Live Restore Enabled: false
+
+
+win7@win7-PC MINGW64 ~
+$ ipconfig
+
+Windows IP 配置
+
+
+以太网适配器 lan:
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   本地链接 IPv6 地址. . . . . . . . : fe80::f950:bf55:726b:b7a6%14
+   IPv4 地址 . . . . . . . . . . . . : 192.168.144.100
+   子网掩码  . . . . . . . . . . . . : 255.255.255.0
+   默认网关. . . . . . . . . . . . . : 192.168.144.254
+
+以太网适配器 VirtualBox Host-Only Network #2:
+
+   连接特定的 DNS 后缀 . . . . . . . :
+   本地链接 IPv6 地址. . . . . . . . : fe80::1c18:13ad:7ed2:c0ff%29
+   IPv4 地址 . . . . . . . . . . . . : 192.168.99.1
+   子网掩码  . . . . . . . . . . . . : 255.255.255.0
+   默认网关. . . . . . . . . . . . . :
+
+隧道适配器 isatap.{CE007B04-2C7A-4A52-8BBF-1BCB4682EEB9}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+
+隧道适配器 Teredo Tunneling Pseudo-Interface:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+
+隧道适配器 isatap.{93C68FD9-301C-484C-AFCB-5549CA24453B}:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+
+win7@win7-PC MINGW64 ~
+$</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p> </p>
+<p>里面重要信息:</p>
+<div class="cnblogs_code">
+<pre><span style="color: #000000;">(default) Copying C:\Users\win7\.docker\machine\cache\boot2docker.iso to C:\Users\win7\.docker\machine\machines\default\boot2docker.iso...
+(default) Creating VirtualBox VM...
+
+docker </span><span style="color: #0000ff;">is</span> configured to use the default machine with IP 192.168.99.100<span style="color: #000000;">
+For help getting started, check out the docs at https:</span>//docs.docker.com</pre>
+</div>
+<p> putty 连接：</p>
+<div class="cnblogs_code">
+<pre><span style="color: #ff0000;">192.168.99.100
+22
+
+docker
+tcuser</span></pre>
+</div>
+<p> 第一次需要从docker hub下载相关镜像文件</p>
+<div class="cnblogs_code">
+<pre>sudo docker pull scrapinghub/splash</pre>
+</div>
+<p> 后面每次启动splash服务，并通过http，https，telnet提供服务</p>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;">通常一般使用http模式 ，可以只启动一个8050就好  </span><span style="color: #008000;">
+#</span><span style="color: #008000;">Splash 将运行在 0.0.0.0 at ports 8050 (http), 8051 (https) and 5023 (telnet).</span>
+<span style="color: #ff0000;">sudo docker run -p 5023:5023 -p 8050:8050 -p 8051:8051 scrapinghub/</span><span style="color: #000000;"><span style="color: #ff0000;">splash</span><br></span></pre>
+</div>
+<p> 浏览器打开</p>
+<p><a href="http://192.168.99.100:8050" target="_blank">http://192.168.99.100:8050</a></p>
+</div>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-19 17:45</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7688326" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(7688326);return false;">收藏</a></div>
+        </div>

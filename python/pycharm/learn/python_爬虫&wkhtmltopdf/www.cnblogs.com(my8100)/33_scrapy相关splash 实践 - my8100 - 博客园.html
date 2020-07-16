@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:description" content="0. 1.参考 https://github.com/scrapy-plugins/scrapy-splash#configuration 以此为准 scrapy相关：splash安装 A javas" />
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>scrapy相关：splash 实践 - my8100 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="//common.cnblogs.com/favicon.ico?v=20200522" type="image/x-icon" />
+    
+    <link rel="stylesheet" href="https://www.cnblogs.com/css/blog-common.min.css" />
+    <link id="MainCss" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd.min.css" />
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="https://www.cnblogs.com/skins/imetro_hd/bundle-imetro_hd-mobile.min.css" />
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/my8100/rss" />
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/my8100/rsd.xml" />
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/my8100/wlwmanifest.xml" />
+    <script src="https://common.cnblogs.com/scripts/jquery-2.2.0.min.js"></script>
+    <script src="https://www.cnblogs.com/js/blog-common.min.js"></script>
+    <script>
+        var currentBlogId = 266418;
+        var currentBlogApp = 'my8100';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var skinName = 'iMetro_HD';
+    </script>
+    
+    
+    
+</head>
+<body>
+    <a name="top"></a>
+    
+    
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/my8100/"><img id="blogLogo" src="https://www.cnblogs.com/skins/custom/images/logo.gif" alt="返回主页" /></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/my8100/">my8100</a>
+</h1>
+<h2>
+
+</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/my8100/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/my8100">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/my8100/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			
+			<span id="stats_post_count">随笔 - 
+86&nbsp; </span>
+<span id="stats_article_count">文章 - 
+0&nbsp; </span>
+<span id="stats-comment_count">评论 - 
+11</span>
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class = "postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/splash_practice.html">
+    <span>scrapy相关：splash 实践</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <p>0.</p>
+<p>&nbsp;</p>
+<h1>1.参考</h1>
+<p><a href="https://github.com/scrapy-plugins/scrapy-splash#configuration" target="_blank">https://github.com/scrapy-plugins/scrapy-splash#configuration</a></p>
+<p>以此为准</p>
+<p><a href="http://www.cnblogs.com/my8100/p/splash_install.html" target="_blank">scrapy相关：splash安装 A javascript rendering service 渲染</a></p>
+<ol>
+<li>启动&nbsp;Docker Quickstart Terminal</li>
+<li>使用 putty 连接如下ip，端口22，用户名/密码：docker/tcuser</li>
+<li>开启服务：<ol>
+<li>　　<span style="color: #ff0000;">sudo docker run -p 5023:5023 -p 8050:8050 -p 8051:8051 scrapinghub/splash</span></li>
+</ol></li>
+<li>浏览器打开：<a href="http://192.168.99.100:8050/" target="_blank">http://192.168.99.100:8050/</a></li>
+</ol>
+<div class="cnblogs_code">
+<pre>docker <span style="color: #0000ff;">is</span> configured to use the default machine with IP <span style="color: #ff0000;">192.168.99.100</span><span style="color: #000000;">
+For help getting started, check out the docs at https:</span>//<span style="color: #000000;">docs.docker.com
+
+Start interactive shell
+
+win7@win7</span>-PC MINGW64 ~<span style="color: #000000;">
+$</span></pre>
+</div>
+<p>&nbsp;</p>
+<h1>2.实践</h1>
+<h2>2.1新建项目后修改 settings.py</h2>
+<p>ROBOTSTXT_OBEY 改为 False，同时添加如下内容：</p>
+<div class="cnblogs_code" onclick="cnblogs_code_show('23d5fff6-5dd1-43f7-81d2-40df638f1b04')"><img id="code_img_closed_23d5fff6-5dd1-43f7-81d2-40df638f1b04" class="code_img_closed" src="https://images.cnblogs.com/OutliningIndicators/ContractedBlock.gif" alt="" /><img id="code_img_opened_23d5fff6-5dd1-43f7-81d2-40df638f1b04" class="code_img_opened" style="display: none;" onclick="cnblogs_code_hide('23d5fff6-5dd1-43f7-81d2-40df638f1b04',event)" src="https://images.cnblogs.com/OutliningIndicators/ExpandedBlockStart.gif" alt="" />
+<div id="cnblogs_code_open_23d5fff6-5dd1-43f7-81d2-40df638f1b04" class="cnblogs_code_hide">
+<pre><span style="color: #800000;">'''</span><span style="color: #800000;">https://github.com/scrapy-plugins/scrapy-splash#configuration</span><span style="color: #800000;">'''</span>
+<span style="color: #008000;">#</span><span style="color: #008000;"> 1.Add the Splash server address to settings.py of your Scrapy project like this:</span>
+SPLASH_URL = <span style="color: #800000;">'</span><span style="color: #800000;">http://192.168.99.100:8050</span><span style="color: #800000;">'</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> 2.Enable the Splash middleware by adding it to DOWNLOADER_MIDDLEWARES in your settings.py file </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> and changing HttpCompressionMiddleware priority:</span>
+DOWNLOADER_MIDDLEWARES =<span style="color: #000000;"> {
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">scrapy_splash.SplashCookiesMiddleware</span><span style="color: #800000;">'</span>: 723<span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">scrapy_splash.SplashMiddleware</span><span style="color: #800000;">'</span>: 725<span style="color: #000000;">,
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware</span><span style="color: #800000;">'</span>: 810<span style="color: #000000;">,
+}
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> Order 723 is just before HttpProxyMiddleware (750) in default scrapy settings.</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> HttpCompressionMiddleware priority should be changed in order to allow advanced response processing; </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> see https://github.com/scrapy/scrapy/issues/1895 for details.</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> 3.Enable SplashDeduplicateArgsMiddleware by adding it to SPIDER_MIDDLEWARES in your settings.py:</span>
+SPIDER_MIDDLEWARES =<span style="color: #000000;"> {
+    </span><span style="color: #800000;">'</span><span style="color: #800000;">scrapy_splash.SplashDeduplicateArgsMiddleware</span><span style="color: #800000;">'</span>: 100<span style="color: #000000;">,
+}
+</span><span style="color: #008000;">#</span><span style="color: #008000;"> This middleware is needed to support cache_args feature; </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> it allows to save disk space by not storing duplicate Splash arguments multiple times in a disk request queue. </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> If Splash 2.1+ is used the middleware also allows to save network traffic by not sending these duplicate arguments to Splash server multiple times.</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> 4.Set a custom DUPEFILTER_CLASS:</span>
+DUPEFILTER_CLASS = <span style="color: #800000;">'</span><span style="color: #800000;">scrapy_splash.SplashAwareDupeFilter</span><span style="color: #800000;">'</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> 5.If you use Scrapy HTTP cache then a custom cache storage backend is required. </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> scrapy-splash provides a subclass of scrapy.contrib.httpcache.FilesystemCacheStorage:</span>
+HTTPCACHE_STORAGE = <span style="color: #800000;">'</span><span style="color: #800000;">scrapy_splash.SplashAwareFSCacheStorage</span><span style="color: #800000;">'</span>
+<span style="color: #008000;">#</span><span style="color: #008000;"> If you use other cache storage then it is necesary to subclass it </span><span style="color: #008000;">
+#</span><span style="color: #008000;"> and replace all scrapy.util.request.request_fingerprint calls with scrapy_splash.splash_request_fingerprint.</span>
+
+<span style="color: #008000;">#</span><span style="color: #008000;"> Note</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> Steps (4) and (5) are necessary because Scrapy doesn't provide a way to override request fingerprints calculation algorithm globally; this could change in future.</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> There are also some additional options available. Put them into your settings.py if you want to change the defaults:</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> SPLASH_COOKIES_DEBUG is False by default. Set to True to enable debugging cookies in the SplashCookiesMiddleware. This option is similar to COOKIES_DEBUG for the built-in scarpy cookies middleware: it logs sent and received cookies for all requests.</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> SPLASH_LOG_400 is True by default - it instructs to log all 400 errors from Splash. They are important because they show errors occurred when executing the Splash script. Set it to False to disable this logging.</span><span style="color: #008000;">
+#</span><span style="color: #008000;"> SPLASH_SLOT_POLICY is scrapy_splash.SlotPolicy.PER_DOMAIN by default. It specifies how concurrency &amp; politeness are maintained for Splash requests, and specify the default value for slot_policy argument for SplashRequest, which is described below.</span></pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<h2>2.2 编写基本 spider</h2>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"> -*- coding: utf-8 -*-</span>
+<span style="color: #0000ff;">import</span><span style="color: #000000;"> scrapy
+</span><span style="color: #0000ff;">from</span> scrapy_splash <span style="color: #0000ff;">import</span><span style="color: #000000;"> SplashRequest
+</span><span style="color: #0000ff;">from</span> scrapy.shell <span style="color: #0000ff;">import</span><span style="color: #000000;"> inspect_response
+</span><span style="color: #0000ff;">import</span><span style="color: #000000;"> base64
+</span><span style="color: #0000ff;">from</span> PIL <span style="color: #0000ff;">import</span><span style="color: #000000;"> Image
+</span><span style="color: #0000ff;">from</span> io <span style="color: #0000ff;">import</span><span style="color: #000000;"> BytesIO
+
+
+</span><span style="color: #0000ff;">class</span><span style="color: #000000;"> CnblogsSpider(scrapy.Spider):
+    name </span>= <span style="color: #800000;">'</span><span style="color: #800000;">cnblogs</span><span style="color: #800000;">'</span><span style="color: #000000;">
+    allowed_domains </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">cnblogs.com</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+    start_urls </span>= [<span style="color: #800000;">'</span><span style="color: #800000;">https://www.cnblogs.com/</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+    
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> start_requests(self):
+        </span><span style="color: #0000ff;">for</span> url <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.start_urls:
+            </span><span style="color: #0000ff;">yield</span> <span style="color: #ff00ff;">SplashRequest</span>(url, self.parse, args={<span style="color: #800000;">'</span><span style="color: #800000;">wait</span><span style="color: #800000;">'</span>: 0.5<span style="color: #000000;">})    
+
+    </span><span style="color: #0000ff;">def</span><span style="color: #000000;"> parse(self, response):
+        inspect_response(response, self)  </span><span style="color: #008000;">#</span><span style="color: #008000;">#######################</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>调试 view(response) 是个txt。。。另存为 html 使用浏览器浏览即可。</p>
+<h2>2.3&nbsp;编写截图 spider</h2>
+<p>同时参考<a href="https://stackoverflow.com/questions/45172260/scrapy-splash-screenshots" target="_blank">&nbsp;https://stackoverflow.com/questions/45172260/scrapy-splash-screenshots</a></p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #0000ff;">def</span><span style="color: #000000;"> start_requests(self):
+        splash_args </span>=<span style="color: #000000;"> {
+            </span><span style="color: #800000;">'</span><span style="color: #800000;">html</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">,
+            </span><span style="color: #800000;">'</span><span style="color: #800000;">png</span><span style="color: #800000;">'</span>: 1<span style="color: #000000;">,
+            #</span><span style="color: #800000;">'</span><span style="color: #800000;">width</span><span style="color: #800000;">'</span>: 1024, <span style="color: #008000;">#</span><span style="color: #008000;">默认1027*768,4:3</span>
+            #<span style="color: #800000;">'</span><span style="color: #800000;">render_all</span><span style="color: #800000;">'</span>: 1, <span style="color: #008000;">#</span><span style="color: #008000;">长图截屏，不提供则是第一屏，需要同时提供 wait,否则报错</span>
+            #<span style="color: #800000;">'</span><span style="color: #800000;">wait</span><span style="color: #800000;">'</span>: 0.5<span style="color: #000000;">,
+            
+        }
+             
+        </span><span style="color: #0000ff;">for</span> url <span style="color: #0000ff;">in</span><span style="color: #000000;"> self.start_urls:
+            </span><span style="color: #0000ff;">yield</span> SplashRequest(url, self.parse, <span style="color: #ff00ff;">endpoint='render.json'</span>, args=splash_args)</pre>
+</div>
+<p>&nbsp;</p>
+<p><a href="http://splash.readthedocs.io/en/latest/api.html?highlight=wait#render-png" target="_blank">http://splash.readthedocs.io/en/latest/api.html?highlight=wait#render-png</a></p>
+<p><code class="docutils literal"><span class="pre">render_all=1</span></code>&nbsp;requires non-zero&nbsp;<a class="reference internal" href="http://splash.readthedocs.io/en/latest/api.html?highlight=wait#arg-wait"><span class="std std-ref"><span class="highlighted">wait</span></span></a>&nbsp;parameter. This is an unfortunate restriction, but it seems that this is the only way to make rendering work reliably with&nbsp;<code class="docutils literal"><span class="pre">render_all=1</span></code>.</p>
+<p><a href="https://github.com/scrapy-plugins/scrapy-splash#responses" target="_blank">https://github.com/scrapy-plugins/scrapy-splash#responses</a></p>
+<h3>Responses</h3>
+<p>scrapy-splash returns Response subclasses for Splash requests:</p>
+<ul>
+<li>SplashResponse is returned for binary Splash responses - e.g. for /render.png responses;</li>
+<li>SplashTextResponse is returned when the result is text - e.g. for /render.html responses;</li>
+<li><span style="color: #ff00ff;">SplashJsonResponse</span> is returned when the result is a JSON object - e.g. for /render.json responses or /execute responses when script returns a Lua table.</li>
+</ul>
+<p><span style="color: #ff00ff;">SplashJsonResponse</span> provide extra features:</p>
+<ul>
+<li><code>response.data</code>&nbsp;attribute contains response data decoded from JSON; you can access it like&nbsp;<code>response.data['html']</code>.</li>
+</ul>
+<p>show 另存文件</p>
+<div class="cnblogs_code">
+<pre>    <span style="color: #0000ff;">def</span><span style="color: #000000;"> parse(self, response):
+        </span><span style="color: #008000;">#</span><span style="color: #008000;"> In [6]: response.data.keys()</span>
+        <span style="color: #008000;">#</span><span style="color: #008000;"> Out[6]: [u'title', u'url', u'geometry', u'html', u'png', u'requestedUrl']        </span>
+<span style="color: #ff00ff;">    
+        imgdata = base64.b64decode(response.data['png'</span><span style="color: #000000;"><span style="color: #ff00ff;">])</span>
+        img </span>=<span style="color: #000000;"> Image.open(BytesIO(imgdata))
+        img.show()
+        filename </span>= <span style="color: #800000;">'</span><span style="color: #800000;">some_image.png</span><span style="color: #800000;">'</span><span style="color: #000000;">
+        with open(filename, </span><span style="color: #800000;">'</span><span style="color: #800000;">wb</span><span style="color: #800000;">'</span><span style="color: #000000;">) as f:
+            f.write(imgdata)        
+        inspect_response(response, self)  </span><span style="color: #008000;">#</span><span style="color: #008000;">#######################</span></pre>
+</div>
+<p>&nbsp;</p>
+<p>x</p>
+<p>&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2017-10-19 17:56</span>&nbsp;
+<a href="https://www.cnblogs.com/my8100/">my8100</a>&nbsp;
+阅读(<span id="post_view_count">...</span>)&nbsp;
+评论(<span id="post_comment_count">...</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=7691885" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(7691885);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="https://common.cnblogs.com/highlight/9.12.0/highlight.min.js"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 266418, cb_blogApp = 'my8100', cb_blogUserGuid = '640a064e-6bcd-e511-9fc1-ac853d9f53cc';
+    var cb_entryId = 7691885, cb_entryCreatedDate = '2017-10-19 17:56', cb_postType = 1; 
+    loadViewCount(cb_entryId);
+    loadSideColumnAd();
+</script><a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<script>
+    var commentManager = new blogCommentManager();
+    commentManager.renderComments(0);
+</script>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+    <div id="comment_form_container"></div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"></div>
+    <div id="opt_under_post"></div>
+    <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+    <script>
+        var mobileVisit = screen.width < 500;
+        window.googletag = window.googletag || { cmd: [] };
+        googletag.cmd.push(function () {
+            googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1592365906576-0').addService(googletag.pubads());
+            if (!mobileVisit) {
+                googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1592366332455-0').addService(googletag.pubads());
+            }
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+        });
+    </script>
+    <div id="cnblogs_c1" class="c_ad_block">
+        <div id='div-gpt-ad-1592365906576-0' style='width: 300px; height: 250px;'>
+            <script>
+                if (canShowAdsense()) {
+                    googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592365906576-0'); });
+                }
+                else {
+                    $('#cnblogs_c1').hide();
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_news"></div>
+    <div id="cnblogs_c2" class="c_ad_block">
+        <div id='div-gpt-ad-1592366332455-0' style='width: 468px; height: 60px;'>
+            <script>
+                if (!mobileVisit) {
+                    if (canShowAdsense()) {
+                        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1592366332455-0'); });
+                    } else {
+                        $('#cnblogs_c2').hide();
+                    }
+                }
+            </script>
+        </div>
+    </div>
+    <div id="under_post_kb"></div>
+    <div id="HistoryToday" class="c_ad_block"></div>
+    <script type="text/javascript">
+        fixPostBody();
+        deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);        deliverAdT2();
+        deliverAdC1();
+        deliverAdC2();
+        loadNewsAndKb();
+        loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);        LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+        GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+        loadOptUnderPost();
+        GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<div id="sidebar_news" class="newsItem">
+            <script>loadBlogNews();</script>
+</div>
+
+<div id="sidebar_ad"></div>
+			<div id="blog-calendar" style="display:none"></div><script>loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright &copy; 2020 my8100
+<br /><span id="poweredby">Powered by .NET Core on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+</body>
+</html>

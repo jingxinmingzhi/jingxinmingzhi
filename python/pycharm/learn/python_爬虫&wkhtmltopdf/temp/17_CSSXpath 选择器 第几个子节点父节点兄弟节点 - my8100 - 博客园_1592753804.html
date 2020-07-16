@@ -1,0 +1,161 @@
+<div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/my8100/p/8984719.html">
+    <span>CSS/Xpath 选择器 第几个子节点/父节点/兄弟节点</span>
+    
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                
+<div id="cnblogs_post_body" class="blogpost-body ">
+    <h2>0.参考</h2>
+<h2>1.初始化</h2>
+<div class="cnblogs_code">
+<pre>In [325]: <span style="color: #0000ff;">from</span> scrapy <span style="color: #0000ff;">import</span><span style="color: #000000;"> Selector
+
+In [</span>326]: text=<span style="color: #800000;">"""</span><span style="color: #800000;">
+     ...: &lt;div&gt;
+     ...:     &lt;a&gt;1a&lt;/a&gt;
+     ...:     &lt;p&gt;2p&lt;/p&gt;
+     ...:     &lt;p&gt;3p&lt;/p&gt;
+     ...: &lt;/div&gt;</span><span style="color: #800000;">"""</span><span style="color: #000000;">
+
+In [</span>327]: sel=Selector(text=<span style="color: #000000;">text)
+
+In [</span>328]: <span style="color: #0000ff;">print</span><span style="color: #000000;">(sel.extract())
+</span>&lt;html&gt;&lt;body&gt;&lt;div&gt;
+    &lt;a&gt;1a&lt;/a&gt;
+    &lt;p&gt;2p&lt;/p&gt;
+    &lt;p&gt;3p&lt;/p&gt;
+&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</pre>
+</div>
+<h2>2.Xpath 父节点/上一个下一个兄弟节点</h2>
+<div class="cnblogs_code">
+<pre>In [329]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//a/<span style="color: #ff00ff;">parent::</span>*/p</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>329]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>330]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//p/<span style="color: #ff00ff;">preceding-sibling::</span>a</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>330]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>331]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//a/<span style="color: #ff00ff;">following-sibling::</span>p</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>331]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<h2>3.CSS 第几个子节点</h2>
+<h3>3.1 通用</h3>
+<div class="cnblogs_code">
+<pre><span style="color: #008000;">#</span><span style="color: #008000;"><span style="color: #ff0000;">完整子节点列表</span>，从第一个子节点开始计数，并且满足子节点tag限定</span>
+In [332]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">a<span style="color: #ff0000;">:nth-child(1)</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>332]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+</span><span style="color: #008000;">#</span><span style="color: #008000;"><span style="color: #ff0000;">完整子节点列表</span>，从最后一个子节点开始计数，并且满足子节点tag限定</span>
+In [333]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">a<span style="color: #ff0000;">:nth-last-child(1)</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>333<span style="color: #000000;">]: []
+
+
+In [</span>334]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-child(1)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>334<span style="color: #000000;">]: []
+
+In [</span>335]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-child(2)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>335]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>336]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-child(3)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>336]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>337]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-last-child(1)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>337]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>338]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-last-child(2)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>338]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>339]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:nth-last-child(3)</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>339]: []</pre>
+</div>
+<h3>3.2 特别指代</h3>
+<div class="cnblogs_code">
+<pre>In [340]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">a<span style="color: #ff0000;">:first-child</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>340]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>341]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">a<span style="color: #ff0000;">:last-child</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>341<span style="color: #000000;">]: []
+
+In [</span>342]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:first-child</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>342<span style="color: #000000;">]: []
+
+In [</span>343]: sel.css(<span style="color: #800000;">'</span><span style="color: #800000;">p:last-child</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>343]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<h3>3.3 上述 -child 修改为 -of-type ，仅对 过滤后的相应子节点列表 进行计数</h3>
+<h2>4.Xpath 第几个子节点</h2>
+<div class="cnblogs_code">
+<pre>In [344]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>344]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;div&gt;\n    &lt;a&gt;1a&lt;/a&gt;\n    &lt;p&gt;2p&lt;/p&gt;\n    &lt;p&gt;3p&lt;/p&gt;\n&lt;/div&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>345]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/*</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>345]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>346]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/node()</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>346]: [<span style="color: #800000;">'</span><span style="color: #800000;">\n    </span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">\n    </span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">\n    </span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>347]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/a</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>347]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>348]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/p</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>348]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span>, <span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>349<span style="color: #000000;">]:
+
+In [</span>349]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/a[1]</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>349]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>350]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/a[last()]</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>350]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>351<span style="color: #000000;">]:
+
+In [</span>351]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/p<span style="color: #ff0000;">[1]</span></span><span style="color: #800000;">'</span>).extract()    <span style="color: #008000;">#</span><span style="color: #008000;">相当于过滤后的子节点列表</span>
+Out[351]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>352]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/p<span style="color: #ff0000;">[last()]</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>352]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>353]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/p<span style="color: #ff0000;">[last()-1]</span></span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>353]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;2p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>354<span style="color: #000000;">]:
+
+In [</span>354]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/*[1]</span><span style="color: #800000;">'</span>).extract()        <span style="color: #008000;">#</span><span style="color: #008000;">完整子节点列表</span>
+Out[354]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;a&gt;1a&lt;/a&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>355]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/*[last()]</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>355]: [<span style="color: #800000;">'</span><span style="color: #800000;">&lt;p&gt;3p&lt;/p&gt;</span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>356<span style="color: #000000;">]:
+
+In [</span>356]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/node()[1]</span><span style="color: #800000;">'</span>).extract()   <span style="color: #008000;">#</span><span style="color: #008000;">包括纯文本    </span>
+Out[356]: [<span style="color: #800000;">'</span><span style="color: #800000;">\n    </span><span style="color: #800000;">'</span><span style="color: #000000;">]
+
+In [</span>357]: sel.xpath(<span style="color: #800000;">'</span><span style="color: #800000;">//div/node()[last()]</span><span style="color: #800000;">'</span><span style="color: #000000;">).extract()
+Out[</span>357]: [<span style="color: #800000;">'</span><span style="color: #800000;">\n</span><span style="color: #800000;">'</span>]</pre>
+</div>
+<p> </p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+    <div id="blog_post_info"></div>
+    <div class="clear"></div>
+    <div id="post_next_prev"></div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2018-05-03 12:13</span> 
+<a href="https://www.cnblogs.com/my8100/">my8100</a> 
+阅读(<span id="post_view_count">...</span>) 
+评论(<span id="post_comment_count">...</span>) 
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=8984719" rel="nofollow">编辑</a> 
+<a href="javascript:void(0)" onclick="AddToWz(8984719);return false;">收藏</a></div>
+        </div>

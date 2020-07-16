@@ -1,0 +1,4 @@
+﻿  test_c99.c
+E:\study\visual studio\test\test\test\test\test_c99.c(5,9): error C2057: 应输入常量表达式
+E:\study\visual studio\test\test\test\test\test_c99.c(5,9): error C2466: 不能分配常量大小为 0 的数组
+E:\study\visual studio\test\test\test\test\test_c99.c(5,14): error C2059: 语法错误:“}”
